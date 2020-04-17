@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body style="margin: auto; text-align: center;">
+	{% if sample %}
+		<form action="{{ url_for('create_sample')}}" method="post">
+			<input type="number" name="size">
+			<input type="submit" name="submit">
+		</form>
+
+
+	{% endif %}
+
+	{% if graphs %}
+	<h1>Results for sample</h1>
+	<img src="{{ graphs[0]}}">
+	<img src="{{ graphs[1]}}">
+	{% endif %}
+	<footer>
+		<a href="/">Home</a>
+	</footer>
+</body>
+</html>
