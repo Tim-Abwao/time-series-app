@@ -1,0 +1,47 @@
+body {
+	margin: auto;
+	text-align: center;
+	font-size: 1.25em;
+	color: darkslategrey;
+	max-width: 1000px;
+}
+a {
+	text-decoration: underline;
+	color: steelblue;
+}
+a:hover {
+	text-decoration: none;
+	color: darkcyan;
+}
+th, td {
+	border-bottom: 1px solid #ddd;
+}
+input, select {
+	padding: 8px;
+	box-shadow: 4px 7px 10px grey;
+	border-radius: 10px;
+	margin: 15px;
+	width: 220px;
+	background-color: white;
+}
+footer {
+	position: fixed;
+	bottom: 10px;
+	left: 30px;
+}
+.button {
+	background-color: slategrey;
+	padding: 10px 30px;
+	border-radius: 10px;
+	margin: 2%;
+	font-size: 0.8em;
+}
+.button:hover {
+	background-color: #404040;
+	box-shadow: 5px 10px 10px black;
+	font-size: 0.9em;
+	color: #fff;
+}
+.content {
+	margin: 2% 10%;
+}

@@ -18,13 +18,13 @@ def get_graphs(data):
                                               '_plot.png']]
     plt.figure(figsize=(10, 6))
     plt.plot(data)
-    plt.savefig(graphs[0])
+    plt.savefig(graphs[0], transparent=True)
 
     fig1 = plt.figure(figsize=(10, 8))
     ax1 = fig1.add_subplot(211)
     plot_acf(data.values, ax=ax1, color='coral')
     ax2 = fig1.add_subplot(212)
     plot_pacf(data.values, ax=ax2, color='coral')
-    plt.savefig(graphs[1])
+    plt.savefig(graphs[1], transparent=True)
 
     return graphs

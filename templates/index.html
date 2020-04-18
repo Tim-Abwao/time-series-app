@@ -1,14 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+	<title>Time Series App</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='tstyle.css')}}">
+	<style type="text/css">
+		body {
+			background: url({{ url_for('static', filename='home_background_large.jpg')}}) no-repeat fixed;
+			background-size: cover;
+		}
+		@media only screen and (max-width: 768px) {
+			body {
+				background: url({{ url_for('static', filename='home_background_small.jpg')}}) no-repeat fixed;
+				background-size: cover;
+			}
+		}
+	</style>
 </head>
-<body style="margin: auto; text-align: center;">
-	<h1>Time Series App</h1>
-	<p>Please select:</p>
-	<a href="{{url_for('upload_file')}}"><button>Upload a file</button></a>
-	<a href="{{ url_for('create_sample')}}"><button>Create a sample</button></a>
-
-
+<body >
+	<div class="content">
+		<h1>Time Series App</h1>
+		<p>A simple app to learn about, and apply <a href="https://en.wikipedia.org/wiki/Time_series">time series analysis</a> techniques.</p>
+		<p>In a nutshell, Time Series Analysis(TSA) purposes to learn the underlying patterns in data over time, and leverage them to predict future outlooks.</p>
+		<p>This handy app allows you two options to see TSA in action:</p>
+		<a href="{{url_for('upload_file')}}"><button class="button">Upload a file</button></a>
+		<a href="{{ url_for('create_sample')}}"><button class="button">Create a sample</button></a>
+	</div>
+	<footer >
+		<a href="/">Back to Home</a>
+	</footer>
 </body>
 </html>

@@ -2,13 +2,15 @@ from flask import Flask, flash, render_template, url_for, request, redirect
 from ts_functions import get_graphs, clear_old_files
 import os
 from werkzeug.utils import secure_filename
+from datetime import date
 import pandas as pd
 import numpy as np
 
 
 UPLOAD_FOLDER = 'static/files'
 ALLOWED_EXTENSIONS = {'csv'}
-
+frequencies={'H':'Hours', 'D':'Days', 'B':'Business days', 'w':'Weeks',
+             'M':'Months', 'Q':'Quarters', 'Y':'Years'}
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
@@ -59,11 +61,16 @@ def process_file(filename):
 @app.route('/sample', methods=['GET', 'POST'])
 def create_sample():
     if request.method == 'GET':
-        return render_template('processing_sample.html', sample=True)
+        today=date.today().isoformat()
+        return render_template('processing_sample.html', sample=True,
+                               frequencies=frequencies, today=today)
     if request.method == 'POST':
-        size = int(request.form['size'])
-        ts = pd.Series(np.random.rand(size),
-                       index=pd.date_range('2020-01-01', periods=size))
+        start = request.form['start']
+        stop = request.form['stop']
+        frequency = request.form['frequency']
+        index=pd.date_range(start, stop, freq=frequency)
+        size=len(index)
+        ts = pd.Series(np.random.rand(size), index=index)
         graphs = get_graphs(ts)
         return render_template('processing_sample.html', graphs=graphs)
 

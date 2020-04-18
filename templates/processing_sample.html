@@ -1,13 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+	<title>Processing Sample Time Series</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='tstyle.css')}}">
+	<style type="text/css">
+		body {
+			background: url({{ url_for('static', filename='home_background_large.jpg')}}) no-repeat fixed;
+			background-size: cover;
+		}
+		@media only screen and (max-width: 768px) {
+			body {
+				background: url({{ url_for('static', filename='home_background_small.jpg')}}) no-repeat fixed;
+				background-size: cover;
+			}
+		}
+	</style>
 </head>
-<body style="margin: auto; text-align: center;">
+<body >
 	{% if sample %}
+	<h1>Creating a sample</h1>
+	<p>Please fill the form below:</p>
 		<form action="{{ url_for('create_sample')}}" method="post">
-			<input type="number" name="size">
-			<input type="submit" name="submit">
+			Start date <input type="date" name="start" min='2020-01-01' max="{{ today }}"><br>
+			End date <input type="date" name="stop" min='{{ today }}' max="2038-01-01"><br>
+			Frequency:  <select name="frequency">
+			{% for frequency in frequencies %}
+				<option value="{{ frequency }}">{{frequencies[frequency] }}</option>
+			{% endfor %}
+						</select><br>
+			<input class="button" type="submit" value="submit">
 		</form>
 
 
@@ -18,8 +40,8 @@
 	<img src="{{ graphs[0]}}">
 	<img src="{{ graphs[1]}}">
 	{% endif %}
-	<footer>
-		<a href="/">Home</a>
+	<footer >
+		<a href="/">Back to Home</a>
 	</footer>
 </body>
 </html>
