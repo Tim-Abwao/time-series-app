@@ -18,7 +18,7 @@ def get_graphs(data):
     graphs = ['static/files/' + t+i for i in ['_acf_pacf_plots.png',
                                               '_plot.png']]
     plt.figure(figsize=(10, 6))
-    plt.plot(data)
+    plt.plot(data, color='seagreen')
     plt.xticks(rotation=90)
     plt.title('A line-plot of the data', size=20, pad=10)
     plt.savefig(graphs[0], transparent=True)
@@ -46,8 +46,8 @@ def fit_tsmodels(data):
     graphs_names=[]
     for model, values in models_dict.items():   
         plt.figure(figsize=(10,6))
-        plt.plot(data, label='Original', color='skyblue')
-        plt.plot(values, label='Modelled', color='seagreen')
+        plt.plot(data, label='Original', color='seagreen')
+        plt.plot(values, label='Modelled', color='orangered')
         plt.legend()
         plt.title(model+' Model Fit', size=20, pad=10)
         plt.xticks(rotation=90)

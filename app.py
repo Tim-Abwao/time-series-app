@@ -55,8 +55,9 @@ def process_file(filename):
     clear_old_files('png')
     results, results_graphs = fit_tsmodels(ts)
     graphs = get_graphs(ts) + results_graphs
+    totals = results.sum().round(2).to_numpy()
     return render_template('processing_file.html', graphs=graphs,
-                           filename=filename, results=results)
+                           filename=filename, results=results, totals=totals)
 
 
 @app.route('/sample', methods=['GET', 'POST'])
@@ -75,7 +76,8 @@ def create_sample():
         clear_old_files('png')
         results, results_graphs = fit_tsmodels(ts)
         graphs = get_graphs(ts) + results_graphs
-        return render_template('processing_sample.html', graphs=graphs, results=results)
+        totals = results.sum().round(2).to_numpy()
+        return render_template('processing_sample.html', graphs=graphs, results=results, totals=totals)
 
     return redirect(url_for('create_sample'))
 if __name__ == '__main__':

@@ -21,10 +21,14 @@
 <h1>Results for {{ filename }}</h1>
 	<div>
 		<h2>1. Graphical Output:</h2>
+		<p>Graphs reveal the trend in the data at a glance; and help discover seasonality/cyclic tendencies present in the data. <a href="https://en.wikipedia.org/wiki/Autocorrelation">Autocorrelation</a> and <a href="https://en.wikipedia.org/wiki/Partial_autocorrelation_function">Partial-Autocorrelation</a> plots can inform on a suitable model to begin fitting. </p>
+		<p>Graphs are also very useful in visualising the goodness of fit.</p>
+		<blockquote><b>Note:</b>The results below are for automatically fitted models. In practice, to achieve relatively accurate results, models would often need to be fine-tuned.</blockquote>
 			{% for graph in range(6) %}
 				<img src="{{ graphs[graph]}}">
 			{% endfor %}
 		<h2>2. Numerical output</h2>
+		<p>A 14-period sample of the results, just to see how the numbers vary.</p>
 			<table>
 				<tr>
 					<td>Index</td><td>Actual Data</td><td>AR(Autoreg)</td><td>SARIMAX</td><td>Exponential Smoothing</td>
@@ -34,6 +38,11 @@
 					<td>{{ index }}</td><td>{{ values[0] }}</td><td>{{ values['AR'] }}</td><td>{{ values['SARIMAX'] }}</td><td>{{ values['Exponential Smoothing'] }}</td>
 				</tr>
 				{% endfor %}
+				<tr><td><b>Totals</b></td>
+					{% for total in totals %}
+					<td><b>{{ total }}</b></td>
+					{% endfor %}
+				</tr>
 			</table>
 	</div>
 	<footer >
