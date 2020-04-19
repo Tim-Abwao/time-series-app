@@ -1,24 +1,20 @@
-Package         Version
---------------- -------
-click           7.1.1  
-cycler          0.10.0 
-Flask           1.1.2  
-gunicorn        20.0.4 
-itsdangerous    1.1.0  
-Jinja2          2.11.2 
-kiwisolver      1.2.0  
-MarkupSafe      1.1.1  
-matplotlib      3.2.1  
-numpy           1.18.2 
-pandas          1.0.3  
-patsy           0.5.1  
-pip             20.0.2 
-pkg-resources   0.0.0  
-pyparsing       2.4.7  
-python-dateutil 2.8.1  
-pytz            2019.3 
-scipy           1.4.1  
-setuptools      39.0.1 
-six             1.14.0 
-statsmodels     0.11.1 
-Werkzeug        1.0.1  
+click==7.1.1
+cycler==0.10.0
+Flask==1.1.2
+gunicorn==20.0.4
+itsdangerous==1.1.0
+Jinja2==2.11.2
+kiwisolver==1.2.0
+MarkupSafe==1.1.1
+matplotlib==3.2.1
+numpy==1.18.2
+pandas==1.0.3
+patsy==0.5.1
+pkg-resources==0.0.0
+pyparsing==2.4.7
+python-dateutil==2.8.1
+pytz==2019.3
+scipy==1.4.1
+six==1.14.0
+statsmodels==0.11.1
+Werkzeug==1.0.1
