@@ -1,5 +1,5 @@
 from flask import Flask, flash, render_template, url_for, request, redirect
-from ts_functions import get_graphs, clear_old_files
+from ts_functions import get_graphs, clear_old_files, fit_tsmodels
 import os
 from werkzeug.utils import secure_filename
 from datetime import date
@@ -52,10 +52,11 @@ def upload_file():
 def process_file(filename):
     ts = pd.read_csv('static/files/' + filename, index_col=0)
     ts.index = pd.to_datetime(ts.index)
-    graphs = get_graphs(ts)
-
+    clear_old_files('png')
+    results, results_graphs = fit_tsmodels(ts)
+    graphs = get_graphs(ts) + results_graphs
     return render_template('processing_file.html', graphs=graphs,
-                           filename=filename)
+                           filename=filename, results=results)
 
 
 @app.route('/sample', methods=['GET', 'POST'])
@@ -70,10 +71,12 @@ def create_sample():
         frequency = request.form['frequency']
         index=pd.date_range(start, stop, freq=frequency)
         size=len(index)
-        ts = pd.Series(np.random.rand(size), index=index)
-        graphs = get_graphs(ts)
-        return render_template('processing_sample.html', graphs=graphs)
+        ts = pd.Series(np.random.rand(size)*5000, index=index)
+        clear_old_files('png')
+        results, results_graphs = fit_tsmodels(ts)
+        graphs = get_graphs(ts) + results_graphs
+        return render_template('processing_sample.html', graphs=graphs, results=results)
 
-
+    return redirect(url_for('create_sample'))
 if __name__ == '__main__':
     app.run(debug=True)

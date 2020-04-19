@@ -13,7 +13,9 @@
 			body {
 				background: url({{ url_for('static', filename='home_background_small.jpg')}}) no-repeat fixed;
 				background-size: cover;
+				max-width: 90%;
 			}
+
 		}
 	</style>
 </head>
@@ -22,8 +24,8 @@
 	<h1>Creating a sample</h1>
 	<p>Please fill the form below:</p>
 		<form action="{{ url_for('create_sample')}}" method="post">
-			Start date <input type="date" name="start" min='2020-01-01' max="{{ today }}"><br>
-			End date <input type="date" name="stop" min='{{ today }}' max="2038-01-01"><br>
+			Start date: <input type="date" name="start" min='2020-01-01' max="{{ today }}"><br>
+			End date: <input type="date" name="stop" min='{{ today }}' max="2038-01-01"><br>
 			Frequency:  <select name="frequency">
 			{% for frequency in frequencies %}
 				<option value="{{ frequency }}">{{frequencies[frequency] }}</option>
@@ -37,8 +39,21 @@
 
 	{% if graphs %}
 	<h1>Results for sample</h1>
-	<img src="{{ graphs[0]}}">
-	<img src="{{ graphs[1]}}">
+	<h2>1. Graphical Output:</h2>
+			{% for graph in range(6) %}
+				<img src="{{ graphs[graph]}}">
+			{% endfor %}
+		<h2>2. Numerical output</h2>
+			<table>
+				<tr>
+					<td>Index</td><td>Actual Data</td><td>AR(Autoreg)</td><td>SARIMAX</td><td>Exponential Smoothing</td>
+				</tr>
+				{% for index, values in results.iterrows() %}
+				<tr>
+					<td>{{ index }}</td><td>{{ values[0] }}</td><td>{{ values['AR'] }}</td><td>{{ values['SARIMAX'] }}</td><td>{{ values['Exponential Smoothing'] }}</td>
+				</tr>
+				{% endfor %}
+			</table>
 	{% endif %}
 	<footer >
 		<a href="/">Back to Home</a>

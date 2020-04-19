@@ -19,9 +19,23 @@
 </head>
 <body style="margin: auto; text-align: center;">
 <h1>Results for {{ filename }}</h1>
-	<img src="{{ graphs[0]}}">
-	<img src="{{ graphs[1]}}">
-
+	<div>
+		<h2>1. Graphical Output:</h2>
+			{% for graph in range(6) %}
+				<img src="{{ graphs[graph]}}">
+			{% endfor %}
+		<h2>2. Numerical output</h2>
+			<table>
+				<tr>
+					<td>Index</td><td>Actual Data</td><td>AR(Autoreg)</td><td>SARIMAX</td><td>Exponential Smoothing</td>
+				</tr>
+				{% for index, values in results.iterrows() %}
+				<tr>
+					<td>{{ index }}</td><td>{{ values[0] }}</td><td>{{ values['AR'] }}</td><td>{{ values['SARIMAX'] }}</td><td>{{ values['Exponential Smoothing'] }}</td>
+				</tr>
+				{% endfor %}
+			</table>
+	</div>
 	<footer >
 		<a href="/">Back to Home</a>
 	</footer>
