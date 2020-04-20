@@ -61,7 +61,7 @@ def process_file(filename):
     try:
         data = pd.read_csv('static/files/' + filename, index_col=0)
         data.index = pd.to_datetime(data.index)
-    except (UnicodeDecodeError):
+    except (UnicodeDecodeError, ZeroDivisionError):
         clear_old_files('csv')
         return redirect(url_for('upload_file'))
     clear_old_files('png')  # removing outdated graphs
@@ -89,7 +89,7 @@ def create_sample():
             totals = results.sum().round(2).to_numpy()
             return render_template('processing_sample.html', graphs=graphs,
                                    results=results, totals=totals)
-        except (IndexError, ValueError):
+        except (IndexError, ValueError, ZeroDivisionError):
             today = date.today().isoformat()
             return render_template('processing_sample.html', sample=True,
                                    frequencies=frequencies, today=today,
