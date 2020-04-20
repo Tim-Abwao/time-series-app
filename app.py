@@ -32,31 +32,38 @@ def index():
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
-        # checking if the post request has the file part
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
+        try:
+            # checking if the post request has the file part
+            if 'file' not in request.files:
+                flash('No file part')
+                return redirect(request.url)
 
-        file = request.files['file']
-        # if user haven't selected a file, browsers usually
-        # submit an empty part ('')
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
-        # processing filename and saving file
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            clear_old_files('csv')  # removing outdated uploads
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('process_file', filename=filename))
+            file = request.files['file']
+            # if user haven't selected a file, browsers usually submit an empty
+            # part ('')
+            if file.filename == '':
+                flash('No selected file')
+                return redirect(request.url)
+            # processing filename and saving file
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                clear_old_files('csv')  # removing outdated uploads
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                return redirect(url_for('process_file', filename=filename))
+        except (RuntimeError):
+            pass
     return render_template('upload.html')
 
 
 @app.route('/processing_<filename>')
 def process_file(filename):
     # importing data from uploaded file
-    data = pd.read_csv('static/files/' + filename, index_col=0)
-    data.index = pd.to_datetime(data.index)
+    try:
+        data = pd.read_csv('static/files/' + filename, index_col=0)
+        data.index = pd.to_datetime(data.index)
+    except (UnicodeDecodeError):
+        clear_old_files('csv')
+        return redirect(url_for('upload_file'))
     clear_old_files('png')  # removing outdated graphs
     results, results_graphs = fit_tsmodels(data)  # fitting  models
     graphs = get_graphs(data) + results_graphs
@@ -68,23 +75,30 @@ def process_file(filename):
 @app.route('/sample', methods=['GET', 'POST'])
 def create_sample():
     if request.method == 'POST':
-        start = request.form['start']
-        stop = request.form['stop']
-        frequency = request.form['frequency']
-        # creating user-defined sample
-        index = pd.date_range(start, stop, freq=frequency)
-        size = len(index)
-        data = pd.Series(np.random.rand(size)*5000, index=index)
-        clear_old_files('png')  # removing old graphs
-        results, results_graphs = fit_tsmodels(data)
-        graphs = get_graphs(data) + results_graphs
-        totals = results.sum().round(2).to_numpy()
-        return render_template('processing_sample.html', graphs=graphs,
-                               results=results, totals=totals)
+        try:
+            start = request.form['start']
+            stop = request.form['stop']
+            frequency = request.form['frequency']
+            # creating user-defined sample
+            index = pd.date_range(start, stop, freq=frequency)
+            size = len(index)
+            data = pd.Series(np.random.rand(size)*5000, index=index)
+            clear_old_files('png')  # removing old graphs
+            results, results_graphs = fit_tsmodels(data)
+            graphs = get_graphs(data) + results_graphs
+            totals = results.sum().round(2).to_numpy()
+            return render_template('processing_sample.html', graphs=graphs,
+                                   results=results, totals=totals)
+        except (IndexError, ValueError):
+            today = date.today().isoformat()
+            return render_template('processing_sample.html', sample=True,
+                                   frequencies=frequencies, today=today,
+                                   input_error=True)
+
     today = date.today().isoformat()
     return render_template('processing_sample.html', sample=True,
                            frequencies=frequencies, today=today)
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()

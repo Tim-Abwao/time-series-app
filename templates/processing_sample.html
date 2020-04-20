@@ -24,13 +24,16 @@
 	<h1>Creating a sample</h1>
 	<p>Please fill the form below:</p>
 		<form action="{{ url_for('create_sample')}}" method="post">
-			Start date: <input type="date" name="start" min='2020-01-01' max="{{ today }}"><br>
-			End date: <input type="date" name="stop" min='{{ today }}' max="2038-01-01"><br>
+			Start date: <input type="date" name="start" min='2020-01-01' max="{{ today }}" required><br>
+			End date: <input type="date" name="stop" min='{{ today }}' max="2038-01-01" required><br>
 			Frequency:  <select name="frequency">
 			{% for frequency in frequencies %}
 				<option value="{{ frequency }}">{{frequencies[frequency] }}</option>
 			{% endfor %}
 						</select><br>
+			{% if input_error %}
+			<span style="color: orangered;">Please widen the date range, or lower the frequency.</span><br>
+			{% endif %}
 			<input class="button" type="submit" value="submit">
 		</form>
 
@@ -42,9 +45,12 @@
 		<h2>1. Graphical Output:</h2>
 			<p>Graphs reveal the trend in the data, at a glance. They also help discover seasonal and/or cyclic tendencies present in the data.</p>
 			<p><a href="https://en.wikipedia.org/wiki/Autocorrelation">Autocorrelation</a> and <a href="https://en.wikipedia.org/wiki/Partial_autocorrelation_function">Partial-Autocorrelation</a> plots can provide hints on a suitable model to begin fitting. <a href="https://en.wikipedia.org/wiki/Box%E2%80%93Jenkins_method#Autocorrelation_and_partial_autocorrelation_plots">This article</a> describes how.</p>
+			{% for graph in range(2) %}
+				<img src="{{ graphs[graph]}}">
+			{% endfor %}
 			<p>Graphs are also very useful in visualising the goodness of fit. In general, a good model should reasonably replicate the behaviour in the data used.</p>
 			<blockquote><b>Note:</b> The results below are for automatically fitted models. In practice, to achieve relatively accurate results, models would often need further fine-tuning.</blockquote>
-			{% for graph in range(6) %}
+			{% for graph in range(2, 6) %}
 				<img src="{{ graphs[graph]}}">
 			{% endfor %}
 		<h2>2. Numerical output</h2>
