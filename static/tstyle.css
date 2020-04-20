@@ -19,7 +19,7 @@ table {
 	margin: 5%;
 }
 th, td {
-	padding: 0px 7px;
+	padding: 7px 14px;
 }
 tr:nth-child(even) {
 	background-color: rgb(119, 136, 153, 0.5);

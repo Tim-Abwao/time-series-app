@@ -9,52 +9,57 @@ import numpy as np
 
 UPLOAD_FOLDER = 'static/files'
 ALLOWED_EXTENSIONS = {'csv'}
-frequencies={'H':'Hours', 'D':'Days', 'B':'Business days', 'w':'Weeks',
-             'M':'Months', 'Q':'Quarters', 'Y':'Years'}
+frequencies = {'D': 'Days', 'B': 'Business days', 'w': 'Weeks',
+               'M': 'Months', 'Q': 'Quarters', 'Y': 'Years'}
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024
 
 
 def allowed_file(filename):
+    """
+    Checks whether a file's extension is supported/allowed.
+    """
     return '.' in filename and \
-            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 @app.route('/')
 def index():
-    return render_template('index.html', start=True)
+    return render_template('index.html')
 
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
-        # check if the post request has the file part
+        # checking if the post request has the file part
         if 'file' not in request.files:
             flash('No file part')
             return redirect(request.url)
+
         file = request.files['file']
-        # if user does not select file, browser also
-        # submit an empty part without filename
+        # if user haven't selected a file, browsers usually
+        # submit an empty part ('')
         if file.filename == '':
             flash('No selected file')
             return redirect(request.url)
+        # processing filename and saving file
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            clear_old_files('csv')
+            clear_old_files('csv')  # removing outdated uploads
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('process_file',
-                                    filename=filename))
+            return redirect(url_for('process_file', filename=filename))
     return render_template('upload.html')
 
 
 @app.route('/processing_<filename>')
 def process_file(filename):
-    ts = pd.read_csv('static/files/' + filename, index_col=0)
-    ts.index = pd.to_datetime(ts.index)
-    clear_old_files('png')
-    results, results_graphs = fit_tsmodels(ts)
-    graphs = get_graphs(ts) + results_graphs
+    # importing data from uploaded file
+    data = pd.read_csv('static/files/' + filename, index_col=0)
+    data.index = pd.to_datetime(data.index)
+    clear_old_files('png')  # removing outdated graphs
+    results, results_graphs = fit_tsmodels(data)  # fitting  models
+    graphs = get_graphs(data) + results_graphs
     totals = results.sum().round(2).to_numpy()
     return render_template('processing_file.html', graphs=graphs,
                            filename=filename, results=results, totals=totals)
@@ -62,23 +67,24 @@ def process_file(filename):
 
 @app.route('/sample', methods=['GET', 'POST'])
 def create_sample():
-    if request.method == 'GET':
-        today=date.today().isoformat()
-        return render_template('processing_sample.html', sample=True,
-                               frequencies=frequencies, today=today)
     if request.method == 'POST':
         start = request.form['start']
         stop = request.form['stop']
         frequency = request.form['frequency']
-        index=pd.date_range(start, stop, freq=frequency)
-        size=len(index)
-        ts = pd.Series(np.random.rand(size)*5000, index=index)
-        clear_old_files('png')
-        results, results_graphs = fit_tsmodels(ts)
-        graphs = get_graphs(ts) + results_graphs
+        # creating user-defined sample
+        index = pd.date_range(start, stop, freq=frequency)
+        size = len(index)
+        data = pd.Series(np.random.rand(size)*5000, index=index)
+        clear_old_files('png')  # removing old graphs
+        results, results_graphs = fit_tsmodels(data)
+        graphs = get_graphs(data) + results_graphs
         totals = results.sum().round(2).to_numpy()
-        return render_template('processing_sample.html', graphs=graphs, results=results, totals=totals)
+        return render_template('processing_sample.html', graphs=graphs,
+                               results=results, totals=totals)
+    today = date.today().isoformat()
+    return render_template('processing_sample.html', sample=True,
+                           frequencies=frequencies, today=today)
 
-    return redirect(url_for('create_sample'))
+
 if __name__ == '__main__':
     app.run(debug=True)

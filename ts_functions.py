@@ -7,53 +7,71 @@ import glob
 import os
 
 
-def clear_old_files(extension):
-    old_files = glob.glob('static/files/*.' + extension, recursive=True)
+def clear_old_files(extension, filepath='static/files/*.'):
+    """
+    A utility function to remove old files of {extension} format, from the
+    {filepath} folder.
+    """
+    old_files = glob.glob(filepath + extension, recursive=True)
     for file in old_files:
         os.remove(file)
 
 
 def get_graphs(data):
+    """
+    A function that produces a lineplot of the data, and ACF & PACF plots.
+    It then saves the graphs as png files, and returns their location.
+    """
+    # time-stamping graph names
     t = str(datetime.now())
-    graphs = ['static/files/' + t+i for i in ['_acf_pacf_plots.png',
-                                              '_plot.png']]
-    plt.figure(figsize=(10, 6))
-    plt.plot(data, color='seagreen')
+    graphs_names = ['static/files/' + t + i for i in ['_acf_pacf_plots.png',
+                                                      '_plot.png']]
+    # line plot
+    plt.figure(figsize=(8, 4.5))
+    plt.plot(data, color='navy')
     plt.xticks(rotation=90)
-    plt.title('A line-plot of the data', size=20, pad=10)
-    plt.savefig(graphs[0], transparent=True)
-
-    fig1 = plt.figure(figsize=(10, 8))
+    plt.title('A line-plot of the data', size=15, pad=10)
+    plt.savefig(graphs_names[0], transparent=True)
+    # acf & pacf plots
+    fig1 = plt.figure(figsize=(8, 6))
     ax1 = fig1.add_subplot(211)
-    plot_acf(data.values, ax=ax1, color='coral')
+    plot_acf(data.values, ax=ax1, color='navy')
     ax2 = fig1.add_subplot(212)
-    plot_pacf(data.values, ax=ax2, color='coral')
-    plt.savefig(graphs[1], transparent=True)
+    plot_pacf(data.values, ax=ax2, color='navy')
+    plt.savefig(graphs_names[1], transparent=True)
+    return graphs_names
 
-    return graphs
 
 def fit_tsmodels(data):
-    t = str(datetime.now())
-    start = data.index[int(len(data)*0.3)]
+    """
+    This function fits AR, SARIMAX and Holt-Winters Exponential Smoothing
+    models on the {data}. It then makes predictions over 60% of the data,
+    plots graphs to show model-fit, and saves them as png files. FInally, a
+    dataframe of sample results, and list of graph locations are returned.
+
+    """
+    # to predict over 60% of the data
+    start = data.index[int(len(data)*0.4)]
     end = data.index[-1]
     pred1 = sm.tsa.AutoReg(data, lags=10).fit().predict(start, end)
     pred2 = sm.tsa.SARIMAX(data).fit().predict(start, end)
     pred3 = sm.tsa.ExponentialSmoothing(data).fit().predict(start, end)
-    
-    models_dict={'AR':pred1, 'SARIMAX':pred2, 'Exponential Smoothing':pred3}
-    df=pd.DataFrame({**models_dict})
+    # getting sample results as a dataframe
+    models_dict = {'AR': pred1, 'SARIMAX': pred2,
+                   'Exponential Smoothing': pred3}
+    df = pd.DataFrame({**models_dict})
     results = pd.concat([data, df], axis=1).tail(14).round(2)
-    graphs_names=[]
-    for model, values in models_dict.items():   
-        plt.figure(figsize=(10,6))
-        plt.plot(data, label='Original', color='seagreen')
-        plt.plot(values, label='Modelled', color='orangered')
+    # plotting results
+    graphs_names = []
+    t = str(datetime.now())
+    for model, values in models_dict.items():
+        plt.figure(figsize=(8, 4.5))
+        plt.plot(data, label='Original', color='navy')
+        plt.plot(values, label='Modelled', color='aqua')
         plt.legend()
-        plt.title(model+' Model Fit', size=20, pad=10)
+        plt.title(model+' Model Fit', size=15, pad=10)
         plt.xticks(rotation=90)
-        name='static/files/' + '_'.join([t, model])+'.png'
+        name = 'static/files/' + '_'.join([t, model]) + '.png'
         graphs_names.append(name)
         plt.savefig(name, transparent=True)
-        
-        
-    return results, graphs_names 
+    return results, graphs_names

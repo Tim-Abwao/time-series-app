@@ -39,10 +39,11 @@
 
 	{% if graphs %}
 	<h1>Results for sample</h1>
-	<h2>1. Graphical Output:</h2>
-		<p>Graphs reveal the trend in the data at a glance; and help discover seasonality/cyclic tendencies present in the data. <a href="https://en.wikipedia.org/wiki/Autocorrelation">Autocorrelation</a> and <a href="https://en.wikipedia.org/wiki/Partial_autocorrelation_function">Partial-Autocorrelation</a> plots can inform on a suitable model to begin fitting. </p>
-		<p>Graphs are also very useful in visualising the goodness of fit.</p>
-		<blockquote><b>Note:</b>The results below are for automatically fitted models. In practice, to achieve relatively accurate results, models would often need to be fine-tuned.</blockquote>
+		<h2>1. Graphical Output:</h2>
+			<p>Graphs reveal the trend in the data, at a glance. They also help discover seasonal and/or cyclic tendencies present in the data.</p>
+			<p><a href="https://en.wikipedia.org/wiki/Autocorrelation">Autocorrelation</a> and <a href="https://en.wikipedia.org/wiki/Partial_autocorrelation_function">Partial-Autocorrelation</a> plots can provide hints on a suitable model to begin fitting. <a href="https://en.wikipedia.org/wiki/Box%E2%80%93Jenkins_method#Autocorrelation_and_partial_autocorrelation_plots">This article</a> describes how.</p>
+			<p>Graphs are also very useful in visualising the goodness of fit. In general, a good model should reasonably replicate the behaviour in the data used.</p>
+			<blockquote><b>Note:</b> The results below are for automatically fitted models. In practice, to achieve relatively accurate results, models would often need further fine-tuning.</blockquote>
 			{% for graph in range(6) %}
 				<img src="{{ graphs[graph]}}">
 			{% endfor %}
