@@ -20,8 +20,9 @@
 <body style="margin: auto; text-align: center;">
 	<h1>Upload new File</h1>
 	<h3>A quick word about uploads</h3>
-	<p>For now, files to be uploaded should be in CSV format, and no larger than 5MB.</p>
-    <p>The data should have at least 25 rows, with a dated index as shown below:</p>
+	<p>Please upload files in CSV format.</p>
+    <p>The data should have at least 21 rows</p>
+    <p>The index should consist of dates, shown below:</p>
 
 	<table style="margin: auto; text-align: center;">
 		<tr><th>Date-like Index</th><th>Data</th></tr>
@@ -34,6 +35,9 @@
       <input type=file name=file>
       <input class="button" type=submit value=Upload>
     </form>
+    {% if input_error %}
+    <br><span style="color: orangered;">{{input_error}}</span><br>
+    {% endif %}
 
     <footer >
     	<a href="/">Back to Home</a>

@@ -23,6 +23,7 @@
 	{% if sample %}
 	<h1>Creating a sample</h1>
 	<p>Please fill the form below:</p>
+	<blockquote><b>Note:</b> The sample is created using a random number generator. Real world time series data is likely to have some patterns, and therefore wouldn't be purely random.</blockquote>
 		<form action="{{ url_for('create_sample')}}" method="post">
 			Start date: <input type="date" name="start" min='2020-01-01' max="{{ today }}" required><br>
 			End date: <input type="date" name="stop" min='{{ today }}' max="2038-01-01" required><br>
@@ -32,7 +33,7 @@
 			{% endfor %}
 						</select><br>
 			{% if input_error %}
-			<span style="color: orangered;">Please widen the date range, or lower the frequency.</span><br>
+			<span style="color: orangered;">{{input_error}}</span><br>
 			{% endif %}
 			<input class="button" type="submit" value="submit">
 		</form>

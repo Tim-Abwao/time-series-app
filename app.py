@@ -39,7 +39,7 @@ def upload_file():
                 return redirect(request.url)
 
             file = request.files['file']
-            # if user haven't selected a file, browsers usually submit an empty
+            # if user hasn't selected a file, browsers usually submit an empty
             # part ('')
             if file.filename == '':
                 flash('No selected file')
@@ -55,14 +55,16 @@ def upload_file():
     return render_template('upload.html')
 
 
-@app.route('/processing_<filename>')
+@app.route('/processing_<filename>', methods=['GET', 'POST'])
 def process_file(filename):
     # importing data from uploaded file
     try:
         data = pd.read_csv('static/files/' + filename, index_col=0)
         data.index = pd.to_datetime(data.index)
-    except (UnicodeDecodeError, ZeroDivisionError):
-        clear_old_files('csv')
+        if len(data) <= 21:  # avoiding errors due to small samples
+            return redirect(url_for('upload_file'))
+    except (ValueError):  # raised if file isn't standard CSV
+        clear_old_files('csv')  # removing the bad uploaded file
         return redirect(url_for('upload_file'))
     clear_old_files('png')  # removing outdated graphs
     results, results_graphs = fit_tsmodels(data)  # fitting  models
@@ -74,6 +76,7 @@ def process_file(filename):
 
 @app.route('/sample', methods=['GET', 'POST'])
 def create_sample():
+    today = date.today().isoformat()
     if request.method == 'POST':
         try:
             start = request.form['start']
@@ -89,16 +92,19 @@ def create_sample():
             totals = results.sum().round(2).to_numpy()
             return render_template('processing_sample.html', graphs=graphs,
                                    results=results, totals=totals)
-        except (IndexError, ValueError, ZeroDivisionError):
-            today = date.today().isoformat()
-            return render_template('processing_sample.html', sample=True,
-                                   frequencies=frequencies, today=today,
-                                   input_error=True)
+        except (IndexError, ValueError):  # due to small sample size
+            input_error = 'Please try again... Generated sample too small.'
+        except ZeroDivisionError:  # raised when sample size=21, because of
+            # statsmodel's Autoreg function set up here with lags <=10
+            input_error = 'Please increase sample size.'
 
-    today = date.today().isoformat()
+        return render_template('processing_sample.html', sample=True,
+                               frequencies=frequencies, today=today,
+                               input_error=input_error)
+
     return render_template('processing_sample.html', sample=True,
                            frequencies=frequencies, today=today)
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
