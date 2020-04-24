@@ -13,7 +13,7 @@ frequencies = {'D': 'Days', 'B': 'Business days', 'w': 'Weeks',
                'M': 'Months', 'Q': 'Quarters', 'Y': 'Years'}
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 15 * 1024 * 1024
 
 
 def allowed_file(filename):
@@ -60,6 +60,7 @@ def process_file(filename):
     # importing data from uploaded file
     try:
         data = pd.read_csv('static/files/' + filename, index_col=0)
+        data = data.iloc[:, -1]  # selecting last column for analysis
         data.index = pd.to_datetime(data.index)
         if len(data) <= 21:  # avoiding errors due to small samples
             return redirect(url_for('upload_file'))
@@ -107,4 +108,4 @@ def create_sample():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()

@@ -1,24 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Processing Sample Time Series</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='tstyle.css')}}">
-	<style type="text/css">
-		body {
-			background: url({{ url_for('static', filename='home_background_large.jpg')}}) no-repeat fixed;
-			background-size: cover;
-		}
-		@media only screen and (max-width: 768px) {
-			body {
-				background: url({{ url_for('static', filename='home_background_small.jpg')}}) no-repeat fixed;
-				background-size: cover;
-				max-width: 90%;
-			}
-
-		}
-	</style>
-</head>
+{% extends 'base.html' %}
+{% block title %} Processing Sample Time Series {% endblock %}
+{% block body %}
 <body >
 	{% if sample %}
 	<h1>Creating a sample</h1>
@@ -77,3 +59,4 @@
 	</footer>
 </body>
 </html>
+{% endblock %}

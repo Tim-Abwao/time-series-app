@@ -1,22 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Time Series App</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='tstyle.css')}}">
-	<style type="text/css">
-		body {
-			background: url({{ url_for('static', filename='home_background_large.jpg')}}) no-repeat fixed;
-			background-size: cover;
-		}
-		@media only screen and (max-width: 768px) {
-			body {
-				background: url({{ url_for('static', filename='home_background_small.jpg')}}) no-repeat fixed;
-				background-size: cover;
-			}
-		}
-	</style>
-</head>
+{% extends 'base.html' %}
+{% block title %} Time Series App {% endblock %}
+{% block body %}
 <body >
 	<div class="content">
 		<h1>Time Series App</h1>
@@ -29,3 +13,4 @@
 
 </body>
 </html>
+{% endblock %}

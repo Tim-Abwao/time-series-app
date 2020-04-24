@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{% block title %}{% endblock %}</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='tstyle.css')}}">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style type="text/css">
+		body {
+			background: url({{ url_for('static', filename='home_background_large.jpg')}}) no-repeat fixed;
+			background-size: cover;
+		}
+		@media only screen and (max-width: 768px) {
+			body {
+				background: url({{ url_for('static', filename='home_background_small.jpg')}}) no-repeat fixed;
+				background-size: cover;
+			}
+		}
+	</style>
+</head>
+{% block body %} Body content {% endblock %}

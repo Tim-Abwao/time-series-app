@@ -1,34 +1,24 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Uploading File</title>
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='tstyle.css')}}">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<style type="text/css">
-		body {
-			background: url({{ url_for('static', filename='home_background_large.jpg')}}) no-repeat fixed;
-			background-size: cover;
-		}
-		@media only screen and (max-width: 768px) {
-			body {
-				background: url({{ url_for('static', filename='home_background_small.jpg')}}) no-repeat fixed;
-				background-size: cover;
-			}
-		}
-	</style>
-</head>
+{% extends 'base.html' %}
+{% block title %} Uploading File {% endblock %}
+{% block body %}
 <body style="margin: auto; text-align: center;">
 	<h1>Upload new File</h1>
-	<h3>A quick word about uploads</h3>
-	<p>Please upload files in CSV format.</p>
-    <p>The data should have at least 21 rows</p>
-    <p>The index should consist of dates, shown below:</p>
-
+	<div style="text-align: left;">
+		<h3>A quick word about uploads...</h3>
+		<ul >
+			<li>Please upload files in CSV format</li>
+			<li>Files should be no larger than 15MB </li>
+			<li>The data to be processed should be in the last column</li>
+	    	<li>The data should have at least 21 rows</li>
+	   		<li>The index should consist of dates.</li>
+	   	</ul>
+	</div>
+	<p> For example,</p>
 	<table style="margin: auto; text-align: center;">
-		<tr><th>Date-like Index</th><th>Data</th></tr>
-		<tr><td>2020-01-01</td><td>140.25</td></tr>
-		<tr><td>2020-01-02</td><td>187.50</td></tr>
-		<tr><td>...</td><td>...</td></tr>
+		<tr><th>Index(Date)</th><th> ... </th><th>Data</th></tr>
+		<tr><td>2020-01-01</td><td> ... </td><td>140.25</td></tr>
+		<tr><td>2020-01-02</td><td> ... </td><td>187.50</td></tr>
+		<tr><td> ... </td><td> ... </td><td> ... </td></tr>
 
 	</table>
     <form method=post enctype=multipart/form-data>
@@ -44,3 +34,4 @@
 	</footer>
 </body>
 </html>
+{% endblock %}
