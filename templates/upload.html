@@ -1,37 +1,55 @@
 {% extends 'base.html' %}
 {% block title %} Uploading Files {% endblock %}
 {% block body %}
+
 <body style="margin: auto; text-align: center;">
 	<h1>Uploading files</h1>
 	<div class="content" style="text-align: left;">
 		<h3>A quick word about uploads...</h3>
-		<ul >
+		<ul>
 			<li>Please upload files in CSV format</li>
 			<li>Files should be no larger than 15MB </li>
 			<li>The data to be processed should be in the last column</li>
-	    	<li>The data should have at least 21 rows</li>
-	   		<li>The index should consist of dates, in standard fromats.</li>
-	   	</ul>
+			<li>The data should have at least 21 rows</li>
+			<li>The index should consist of dates, in standard fromats.</li>
+		</ul>
 	</div>
 	<p> For example,</p>
 	<table style="margin: auto; text-align: center;">
-		<tr><th>Index(Date)</th><th> ... </th><th>Data</th></tr>
-		<tr><td>2020-01-01</td><td> ... </td><td>140.25</td></tr>
-		<tr><td>2020-01-02</td><td> ... </td><td>187.50</td></tr>
-		<tr><td> ... </td><td> ... </td><td> ... </td></tr>
+		<tr>
+			<th>Index(Date)</th>
+			<th> ... </th>
+			<th>Data</th>
+		</tr>
+		<tr>
+			<td>2020-01-01</td>
+			<td> ... </td>
+			<td>140.25</td>
+		</tr>
+		<tr>
+			<td>2020-01-02</td>
+			<td> ... </td>
+			<td>187.50</td>
+		</tr>
+		<tr>
+			<td> ... </td>
+			<td> ... </td>
+			<td> ... </td>
+		</tr>
 
 	</table>
-    <form method=post enctype=multipart/form-data>
-      <input type=file name=file>
-      <input class="button" type=submit value=Upload>
-    </form>
-    {% if input_error %}
-    <br><span style="color: orangered;">{{input_error}}</span><br>
-    {% endif %}
+	<form method=post enctype=multipart/form-data>
+		<input type=file name=file>
+		<input class="button" type=submit value=Upload>
+	</form>
+	{% if input_error %}
+	<br><span style="color: orangered;">{{input_error}}</span><br>
+	{% endif %}
 
-    <footer >
-    	<a href="/">Back to Home</a>
+	<footer>
+		<a href="/">Back to Home</a>
 	</footer>
 </body>
+
 </html>
 {% endblock %}

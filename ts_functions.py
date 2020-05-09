@@ -7,7 +7,7 @@ import glob
 import os
 
 
-def clear_old_files(extension, filepath='static/files/*.'):
+def clear_old_files(extension, filepath="static/files/*."):
     """
     A utility function to remove old files of {extension} format, from the
     {filepath} folder.
@@ -24,20 +24,21 @@ def get_graphs(data):
     """
     # time-stamping graph names
     t = str(datetime.now())
-    graphs_names = ['static/files/' + t + i for i in ['_acf_pacf_plots.png',
-                                                      '_plot.png']]
+    graphs_names = [
+        "static/files/" + t + i for i in ["_acf_pacf_plots.png", "_plot.png"]
+    ]
     # line plot
     plt.figure(figsize=(8, 4.5))
-    plt.plot(data, color='navy')
+    plt.plot(data, color="navy")
     plt.xticks(rotation=90)
-    plt.title('A line-plot of the data', size=15, pad=10)
+    plt.title("A line-plot of the data", size=15, pad=10)
     plt.savefig(graphs_names[0], transparent=True)
     # acf & pacf plots
     fig1 = plt.figure(figsize=(8, 6))
     ax1 = fig1.add_subplot(211)
-    plot_acf(data.values, ax=ax1, color='navy')
+    plot_acf(data.values, ax=ax1, color="navy")
     ax2 = fig1.add_subplot(212)
-    plot_pacf(data.values, ax=ax2, color='navy')
+    plot_pacf(data.values, ax=ax2, color="navy")
     plt.savefig(graphs_names[1], transparent=True)
     return graphs_names
 
@@ -51,14 +52,14 @@ def fit_tsmodels(data):
 
     """
     # to predict over 60% of the data
-    start = data.index[int(len(data)*0.4)]
+    start = data.index[int(len(data) * 0.4)]
     end = data.index[-1]
     pred1 = sm.tsa.AutoReg(data, lags=10).fit().predict(start, end)
     pred2 = sm.tsa.SARIMAX(data).fit().predict(start, end)
     pred3 = sm.tsa.ExponentialSmoothing(data).fit().predict(start, end)
     # getting sample results as a dataframe
-    models_dict = {'AR': pred1, 'SARIMAX': pred2,
-                   'Exponential Smoothing': pred3}
+    models_dict = {"AR": pred1, "SARIMAX": pred2,
+                   "Exponential Smoothing": pred3}
     df = pd.DataFrame({**models_dict})
     results = pd.concat([data, df], axis=1).tail(14).round(2)
     # plotting results
@@ -66,12 +67,12 @@ def fit_tsmodels(data):
     t = str(datetime.now())
     for model, values in models_dict.items():
         plt.figure(figsize=(8, 4.5))
-        plt.plot(data, label='Original', color='navy')
-        plt.plot(values, label='Modelled', color='aqua')
+        plt.plot(data, label="Original", color="navy")
+        plt.plot(values, label="Modelled", color="aqua")
         plt.legend()
-        plt.title(model+' Model Fit', size=15, pad=10)
+        plt.title(model + " Model Fit", size=15, pad=10)
         plt.xticks(rotation=90)
-        name = 'static/files/' + '_'.join([t, model]) + '.png'
+        name = "static/files/" + "_".join([t, model]) + ".png"
         graphs_names.append(name)
         plt.savefig(name, transparent=True)
     return results, graphs_names
