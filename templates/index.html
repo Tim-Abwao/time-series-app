@@ -6,20 +6,22 @@
 	<div class="content">
 		<h1>Time Series App</h1>
 		<hr>
-
 		<p>A simple app to learn about, and apply <a href="https://en.wikipedia.org/wiki/Time_series">time series
-				analysis</a> techniques.</p>
+				analysis</a> techniques. A <a href="{{ url_for("glossary")}}">glossary of terms</a> is available to help
+			get familiar with the main concepts.</p>
 		<p>In a nutshell, Time Series Analysis purposes to learn and emulate the behaviour of data over time. Time
 			Series Forecasting then leverages this knowledge to estimate future values.</p>
 	</div>
-	<img style="width:90%;" src="{{ url_for('static', filename='ts.png')}}">
-
+	<figure style="margin: 4%;">
+		<img src="{{ url_for('static', filename='ts.png')}}" alt="Time series results image">
+		<figcaption> An example of time series analysis results, plotted.</figcaption>
+	</figure>
 	<div class="content">
-		<p>This handy app allows you two options to see this in action:</p>
-		<a href="{{url_for('upload_file')}}"><button class="button">Upload a file</button></a>
-		<a href="{{ url_for('create_sample')}}"><button class="button">Create a sample</button></a>
+		<p>To give it a try, you can upload a file or create a sample to analyse:</p>
+		<a href="{{url_for('upload_file')}}"><button class="hvr-wobble-horizontal button">Upload a file</button></a>
+		<a href="{{ url_for('create_sample')}}"><button class="hvr-wobble-horizontal button">Create a
+				sample</button></a>
 	</div>
-
 </body>
 
 </html>

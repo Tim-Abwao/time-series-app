@@ -3,11 +3,11 @@
 {% block body %}
 
 <body>
+	<div class="content">
 	{% if sample %}
 	<h1>Creating a sample</h1>
 	<p>Please fill the form below:</p>
-	<blockquote><b>Note:</b> The sample is created using a random number generator. Real world time series data tends to
-		have some patterns, and is less likely to be purely random.</blockquote>
+	<blockquote><b>Note:</b> The sample is created using a random number generator. </blockquote>
 	<form action="{{ url_for('create_sample')}}" method="post">
 		Start date: <input type="date" name="start" min='2020-01-01' max="{{ today }}" required><br>
 		End date: <input type="date" name="stop" min='{{ today }}' max="2038-01-01" required><br>
@@ -21,7 +21,7 @@
 		{% endif %}
 		<input class="button" type="submit" value="submit">
 	</form>
-
+	</div>
 
 	{% endif %}
 
@@ -51,8 +51,7 @@
 		<p>Graphs are also very useful in assessing the goodness of fit. In general, a good model should reasonably
 			replicate the behaviour of the data used.</p>
 	</div>
-	<blockquote><b>Note:</b>The results below are for automatically fitted models. In practice, to achieve relatively
-		accurate results, models would often need further fine-tuning.</blockquote>
+	<blockquote><b>Note:</b> The results below are for automatically fitted models. In practice, to achieve reliable results, models often need further fine-tuning.</blockquote>
 	{% for graph in range(2, 6) %}
 	<img src="{{ graphs[graph]}}">
 	{% endfor %}
@@ -87,7 +86,7 @@
 	</table>
 	{% endif %}
 	<footer>
-		<a href="/">Back to Home</a>
+		<a class="hvr-wobble-horizontal button" href="/">Back to Home</a>
 	</footer>
 </body>
 

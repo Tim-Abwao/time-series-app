@@ -26,8 +26,8 @@ def allowed_file(filename):
     """
     Checks whether a file's extension is supported/allowed.
     """
-    return "." in filename and filename.rsplit(".", 1)[1].lower()\
-           in ALLOWED_EXTENSIONS
+    return "." in filename and \
+           filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 @app.route("/")
@@ -103,8 +103,8 @@ def create_sample():
             graphs = get_graphs(data) + results_graphs
             totals = results.sum().round(2).to_numpy()
             return render_template(
-                "processing_sample.html", graphs=graphs,
-                results=results, totals=totals
+                "processing_sample.html", graphs=graphs, results=results,
+                totals=totals
             )
         except (IndexError, ValueError):  # due to small sample size
             input_error = "Please try again... Generated sample too small."
@@ -121,11 +121,14 @@ def create_sample():
         )
 
     return render_template(
-        "processing_sample.html",
-        sample=True,
-        frequencies=frequencies,
+        "processing_sample.html", sample=True, frequencies=frequencies,
         today=today
     )
+
+
+@app.route("/glossary")
+def glossary():
+    return render_template("glossary.html")
 
 
 if __name__ == "__main__":

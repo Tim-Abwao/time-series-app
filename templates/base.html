@@ -6,13 +6,12 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">
 		body {
-			background: url({{ url_for('static', filename='home_background_large.jpg')}}) no-repeat fixed;
-			background-size: cover;
+			background-color: silver;
+			background: url({{ url_for('static', filename='home_background_large.jpg')}});
 		}
-		@media only screen and (max-width: 768px) {
+		@media only screen and (max-width: 640px) {
 			body {
-				background: url({{ url_for('static', filename='home_background_small.jpg')}}) no-repeat fixed;
-				background-size: cover;
+				background: url({{ url_for('static', filename='home_background_small.jpg')}})
 			}
 		}
 	</style>
