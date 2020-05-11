@@ -4,87 +4,24 @@
 
 <body>
 	<div class="content">
-	{% if sample %}
-	<h1>Creating a sample</h1>
-	<p>Please fill the form below:</p>
-	<blockquote><b>Note:</b> The sample is created using a random number generator. </blockquote>
-	<form action="{{ url_for('create_sample')}}" method="post">
-		Start date: <input type="date" name="start" min='2020-01-01' max="{{ today }}" required><br>
-		End date: <input type="date" name="stop" min='{{ today }}' max="2038-01-01" required><br>
-		Frequency: <select name="frequency">
-			{% for frequency in frequencies %}
-			<option value="{{ frequency }}">{{frequencies[frequency] }}</option>
-			{% endfor %}
-		</select><br>
-		{% if input_error %}
-		<span style="color: orangered;">{{input_error}}</span><br>
-		{% endif %}
-		<input class="button" type="submit" value="submit">
-	</form>
+		<h1>Creating a sample</h1>
+		<p>Please fill the form below:</p>
+		<blockquote><b>Note:</b> The sample is created using a random number generator. </blockquote>
+		<form action="{{ url_for('create_sample')}}" method="post">
+			Start date: <input type="date" name="start" min='2020-01-01' max="{{ today }}" required><br>
+			End date: <input type="date" name="stop" min='{{ today }}' max="2038-01-01" required><br>
+			Frequency: <select name="frequency">
+				{% for frequency in frequencies %}
+				<option value="{{ frequency }}">{{frequencies[frequency] }}</option>
+				{% endfor %}
+			</select><br>
+			{% if input_error %}
+			<span style="color: orangered;">{{input_error}}</span><br>
+			{% endif %}
+			<input class="button" type="submit" value="submit">
+		</form>
 	</div>
 
-	{% endif %}
-
-	{% if graphs %}
-	<h1>Results for Sample</h1>
-	<h2>1. Graphical Output:</h2>
-	<div class="info">
-
-		<p>Graphs help visualise the trend in the data. For instance, if there has been an increase or decrease in the
-			data values over time.</p>
-		<p>Graphs also help discover seasonal and/or cyclic tendencies present in the data. These usually appear as
-			evenly-spaces peaks and/or troughs</p>
-	</div>
-	<img src="{{ graphs[0]}}">
-	<div class="info">
-		<p><a href="https://en.wikipedia.org/wiki/Autocorrelation">Autocorrelation</a> and <a
-				href="https://en.wikipedia.org/wiki/Partial_autocorrelation_function">Partial-Autocorrelation</a> plots
-			can provide hints on a suitable model to begin fitting. <a
-				href="https://en.wikipedia.org/wiki/Box%E2%80%93Jenkins_method#Autocorrelation_and_partial_autocorrelation_plots">This
-				article</a> describes how.</p>
-	</div>
-
-	{% for graph in range(1,2) %}
-	<img src="{{ graphs[graph]}}">
-	{% endfor %}
-	<div class="info">
-		<p>Graphs are also very useful in assessing the goodness of fit. In general, a good model should reasonably
-			replicate the behaviour of the data used.</p>
-	</div>
-	<blockquote><b>Note:</b> The results below are for automatically fitted models. In practice, to achieve reliable results, models often need further fine-tuning.</blockquote>
-	{% for graph in range(2, 6) %}
-	<img src="{{ graphs[graph]}}">
-	{% endfor %}
-
-	<h2>2. Numerical output</h2>
-	<div class="info">
-		<p>A 14-period sample of the results, just to see how the numbers vary.</p>
-	</div>
-	<table>
-		<tr>
-			<td>Index</td>
-			<td>Actual Data</td>
-			<td>AR(Autoreg)</td>
-			<td>SARIMAX</td>
-			<td>Exponential Smoothing</td>
-		</tr>
-		{% for index, values in results.iterrows() %}
-		<tr>
-			<td>{{ index }}</td>
-			<td>{{ values[0] }}</td>
-			<td>{{ values['AR'] }}</td>
-			<td>{{ values['SARIMAX'] }}</td>
-			<td>{{ values['Exponential Smoothing'] }}</td>
-		</tr>
-		{% endfor %}
-		<tr>
-			<td><b>Totals</b></td>
-			{% for total in totals %}
-			<td><b>{{ total }}</b></td>
-			{% endfor %}
-		</tr>
-	</table>
-	{% endif %}
 	<footer>
 		<a class="hvr-wobble-horizontal button" href="/">Back to Home</a>
 	</footer>

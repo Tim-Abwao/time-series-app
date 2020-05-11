@@ -1,5 +1,5 @@
 from flask import Flask, flash, render_template, url_for, request, redirect
-from ts_functions import get_graphs, clear_old_files, fit_tsmodels
+from ts_functions import clear_old_files, TimeSeriesPredictions, TimeSeriesGraphs
 import os
 from werkzeug.utils import secure_filename
 from datetime import date
@@ -26,8 +26,7 @@ def allowed_file(filename):
     """
     Checks whether a file's extension is supported/allowed.
     """
-    return "." in filename and \
-           filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 @app.route("/")
@@ -74,14 +73,22 @@ def process_file(filename):
         clear_old_files("csv")  # removing the bad uploaded file
         return redirect(url_for("upload_file"))
     clear_old_files("png")  # removing outdated graphs
-    results, results_graphs = fit_tsmodels(data)  # fitting  models
-    graphs = get_graphs(data) + results_graphs
-    totals = results.sum().round(2).to_numpy()
+    predictions = TimeSeriesPredictions(data)  # fitting  models
+    results = predictions.results
+    sample = predictions.sample
+    totals = sample.sum().round(2).to_numpy()
+    plot = TimeSeriesGraphs(data, results)
+    graphs = {
+        "acf&pacf": plot.acf_pacf,
+        "lineplot": plot.lineplot,
+        "model_fit": plot.modelfit,
+    }
+
     return render_template(
         "processing_file.html",
         graphs=graphs,
         filename=filename,
-        results=results,
+        sample=sample,
         totals=totals,
     )
 
@@ -99,12 +106,23 @@ def create_sample():
             size = len(index)
             data = pd.Series(np.random.rand(size) * 5000, index=index)
             clear_old_files("png")  # removing old graphs
-            results, results_graphs = fit_tsmodels(data)
-            graphs = get_graphs(data) + results_graphs
-            totals = results.sum().round(2).to_numpy()
+            predictions = TimeSeriesPredictions(data)  # fitting  models
+            results = predictions.results
+            sample = predictions.sample
+            totals = sample.sum().round(2).to_numpy()
+            plot = TimeSeriesGraphs(data, results)
+            graphs = {
+                "acf&pacf": plot.acf_pacf,
+                "lineplot": plot.lineplot,
+                "model_fit": plot.modelfit,
+            }
+
             return render_template(
-                "processing_sample.html", graphs=graphs, results=results,
-                totals=totals
+                "processing_file.html",
+                graphs=graphs,
+                filename="Sample",
+                sample=sample,
+                totals=totals,
             )
         except (IndexError, ValueError):  # due to small sample size
             input_error = "Please try again... Generated sample too small."
@@ -114,15 +132,13 @@ def create_sample():
 
         return render_template(
             "processing_sample.html",
-            sample=True,
             frequencies=frequencies,
             today=today,
             input_error=input_error,
         )
 
     return render_template(
-        "processing_sample.html", sample=True, frequencies=frequencies,
-        today=today
+        "processing_sample.html", sample=True, frequencies=frequencies, today=today
     )
 
 
@@ -132,4 +148,4 @@ def glossary():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)

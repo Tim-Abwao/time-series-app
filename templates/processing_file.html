@@ -14,7 +14,7 @@
 				evenly-spaces peaks and/or troughs</p>
 
 		</div>
-		<img src="{{ graphs[0]}}">
+		<img src="{{ graphs["lineplot"]}}">
 		<div class="info">
 			<p><a href="https://en.wikipedia.org/wiki/Autocorrelation">Autocorrelation</a> and <a
 					href="https://en.wikipedia.org/wiki/Partial_autocorrelation_function">Partial-Autocorrelation </a>
@@ -23,17 +23,16 @@
 					article</a> describes how.</p>
 		</div>
 
-		{% for graph in range(1,2) %}
-		<img src="{{ graphs[graph]}}">
-		{% endfor %}
+		<img src="{{ graphs["acf&pacf"]}}">
+		
 		<div class="info">
 			<p>Graphs are also very useful in assessing the goodness of fit. In general, a good model should reasonably
 				replicate the behaviour of the data used.</p>
 		</div>
 		<blockquote><b>Note:</b> The results below are for automatically fitted models. In practice, to achieve
 			reliable results, models often need further fine-tuning.</blockquote>
-		{% for graph in range(2, 6) %}
-		<img src="{{ graphs[graph]}}">
+		{% for graph in graphs["model_fit"] %}
+		<img src="{{ graph }}">
 		{% endfor %}
 
 		<h2>2. Numerical output</h2>
@@ -49,7 +48,7 @@
 			<td>SARIMAX</td>
 			<td>Exponential Smoothing</td>
 		</tr>
-		{% for index, values in results.iterrows() %}
+		{% for index, values in sample.iterrows() %}
 		<tr>
 			<td>{{ index }}</td>
 			<td>{{ values[0] }}</td>
