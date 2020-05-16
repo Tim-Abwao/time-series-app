@@ -20,7 +20,8 @@ frequencies = {
 app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["MAX_CONTENT_LENGTH"] = 15 * 1024 * 1024
-
+glossary_data = pd.read_csv('static/glossary.csv').sort_values(by="title")
+glossary_data.reset_index(drop=True, inplace=True)
 
 def allowed_file(filename):
     """
@@ -144,7 +145,7 @@ def create_sample():
 
 @app.route("/glossary")
 def glossary():
-    return render_template("glossary.html")
+    return render_template("glossary.html", definitions=glossary_data)
 
 
 if __name__ == "__main__":
