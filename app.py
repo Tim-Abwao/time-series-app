@@ -1,5 +1,8 @@
 from flask import Flask, flash, render_template, url_for, request, redirect
-from ts_functions import clear_old_files, TimeSeriesPredictions, TimeSeriesGraphs
+from ts_functions import (
+    clear_old_files,
+    TimeSeriesPredictions,
+    TimeSeriesGraphs)
 import os
 from werkzeug.utils import secure_filename
 from datetime import date
@@ -23,11 +26,13 @@ app.config["MAX_CONTENT_LENGTH"] = 15 * 1024 * 1024
 glossary_data = pd.read_csv('static/glossary.csv').sort_values(by="title")
 glossary_data.reset_index(drop=True, inplace=True)
 
+
 def allowed_file(filename):
     """
     Checks whether a file's extension is supported/allowed.
     """
-    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+    return "." in filename and filename.rsplit(".", 1)[1].lower() \
+           in ALLOWED_EXTENSIONS
 
 
 @app.route("/")
@@ -139,7 +144,8 @@ def create_sample():
         )
 
     return render_template(
-        "processing_sample.html", sample=True, frequencies=frequencies, today=today
+        "processing_sample.html", sample=True, frequencies=frequencies,
+        today=today
     )
 
 

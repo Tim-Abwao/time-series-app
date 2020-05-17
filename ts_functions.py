@@ -37,7 +37,8 @@ class TimeSeriesPredictions:
         pred2 = sm.tsa.SARIMAX(data).fit().predict(start, end)
         pred3 = sm.tsa.ExponentialSmoothing(data).fit().predict(start, end)
         # returning results as a dataframe
-        models_dict = {"AR": pred1, "SARIMAX": pred2, "Exponential Smoothing": pred3}
+        models_dict = {"AR": pred1, "SARIMAX": pred2,
+                       "Exponential Smoothing": pred3}
         return pd.DataFrame({**models_dict})
 
     def sample(self, data, size=14):
@@ -94,7 +95,8 @@ class TimeSeriesGraphs:
             plt.legend()
             plt.title(model + " Model Fit", size=15, pad=10)
             plt.xticks(rotation=90)
-            name = self.file_folder + str(datetime.now()) + "-" + model + ".png"
+            name = self.file_folder + str(datetime.now()) + "-" + model + \
+                ".png"
             names.append(name)
             plt.savefig(name, transparent=True)
         return names

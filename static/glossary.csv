@@ -1,5 +1,5 @@
 title,definition
-Trend,ccccccccccccccccccccccccccccccc
-Time Series,A time series is a series of data points indexed in time order. 
-Time Series Analysis,aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-Time Series Forecasting,bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+Trend,"The general upward(increase) or downward(decrease) progression in the data points."
+Time Series,"A time series is a series of data points indexed in time order."
+Seasonality,"This refers to variations that occur at specific regular intervals e.g. every weekend, month-end or festive period."
+Cyclic patterns,"These are rises and falls in the data that occur at flexible periods, usually extending a year and mostly due to economic factors."
