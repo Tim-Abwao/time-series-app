@@ -1,14 +1,23 @@
 {% extends 'base.html' %}
-{% block title %} Glossary of Time Series Terms {% endblock %}
+{% block title %} Glossary - Time Series Terms {% endblock %}
 {% block body %}
 
 <body>
     <div class="content">
-        <h2>Time series analysis Glossary</h2>
-        <p>Please check back in a few... Still under development</p>
+        <h2>Glossary of Time Series Terms</h2>
+    
+
+        <dl>
+        {% for index, item in definitions.iterrows() %}
+        <dt style="font-weight: bold;">{{ index + 1 }}. {{ item["title"]}}:
+        <dd style="margin-bottom: 20px;;">{{ item["definition"]}}</dd>
+        </dt>
+        {% endfor %}
+        </dl>
+    
     </div>
     <footer>
-        <a class="hvr-wobble-horizontal button" href="/">Back to Home</a>
+        <a class="hvr-bob button" href="/">Back to Home</a>
     </footer>
 
 </body>
