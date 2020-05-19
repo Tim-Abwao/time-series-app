@@ -24,7 +24,7 @@ class TimeSeriesPredictions:
 
     def fit_tsmodels(self, data, ratio=0.6) -> pd.DataFrame:
         """
-        Fits AR, SARIMAX and Holt-Winters Exponential Smoothing models on the
+        Fits AR, and Holt-Winters Exponential Smoothing models on the
         data(a pandas DataFrame). The predictions are returned as a dataframe
         with a column for each fitted model.
         """
@@ -33,17 +33,14 @@ class TimeSeriesPredictions:
         start = index[int(n * (1 - ratio))]
         end = index[-1]
         # Model fitting, and prediction
-        pred1 = sm.tsa.AutoReg(data, lags=10).fit().predict(start, end)
-        pred2 = sm.tsa.SARIMAX(data).fit().predict(start, end)
-        pred3 = sm.tsa.ExponentialSmoothing(data).fit().predict(start, end)
+        model1 = sm.tsa.AutoReg(data, lags=10).fit().predict(start, end)
+        model2 = sm.tsa.ExponentialSmoothing(data, trend="additive", seasonal="additive").fit().predict(start, end)
         # returning results as a dataframe
-        models_dict = {"AR": pred1, "SARIMAX": pred2,
-                       "Exponential Smoothing": pred3}
+        models_dict = {"AR": model1, "Exponential Smoothing": model2}
         return pd.DataFrame({**models_dict})
 
     def sample(self, data, size=14):
         return pd.concat([data, self.results], axis=1).round(2).tail(size)
-
 
 class TimeSeriesGraphs:
     def __init__(self, data, results):
@@ -51,6 +48,7 @@ class TimeSeriesGraphs:
         self.acf_pacf = self.plot_acf_pacf(data)
         self.lineplot = self.plot_line(data)
         self.modelfit = self.plot_model_fit(data, results)
+        self.seasonal_decomposition=self.plot_seanonal_decomposition(data)
 
     def plot_acf_pacf(self, data):
         """
@@ -99,4 +97,11 @@ class TimeSeriesGraphs:
                 ".png"
             names.append(name)
             plt.savefig(name, transparent=True)
-        return names
+            return names
+
+    def plot_seanonal_decomposition(self, data):
+        name=self.file_folder + str(datetime.now()) + 'seasonal-decomposition'\
+             + '.png'
+        sm.tsa.seasonal_decompose(data).plot()
+        plt.savefig(name, transparent=True)
+        return name   

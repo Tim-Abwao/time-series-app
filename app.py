@@ -88,6 +88,7 @@ def process_file(filename):
         "acf&pacf": plot.acf_pacf,
         "lineplot": plot.lineplot,
         "model_fit": plot.modelfit,
+        "seasonal_decomposition": plot.seasonal_decomposition
     }
 
     return render_template(
@@ -110,7 +111,7 @@ def create_sample():
             # creating user-defined sample
             index = pd.date_range(start, stop, freq=frequency)
             size = len(index)
-            data = pd.Series(np.random.rand(size) * 5000, index=index)
+            data = pd.Series(np.random.rand(size) * 5000, index=index, name='Sample')
             clear_old_files("png")  # removing old graphs
             predictions = TimeSeriesPredictions(data)  # fitting  models
             results = predictions.results
@@ -121,6 +122,7 @@ def create_sample():
                 "acf&pacf": plot.acf_pacf,
                 "lineplot": plot.lineplot,
                 "model_fit": plot.modelfit,
+                "seasonal_decomposition": plot.seasonal_decomposition
             }
 
             return render_template(

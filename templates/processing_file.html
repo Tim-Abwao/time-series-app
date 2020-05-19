@@ -24,6 +24,10 @@
 		</div>
 
 		<img src="{{ graphs["acf&pacf"]}}">
+		<div class="info">
+			<p>Testing for stationarity, and filtering out seasonal effects is an essential first step. Model fitting requires that the time series data be stationary.</p>
+		</div>
+		<img src="{{ graphs["seasonal_decomposition"]}}">
 		
 		<div class="info">
 			<p>Graphs are also very useful in assessing the goodness of fit. In general, a good model should reasonably
@@ -45,7 +49,6 @@
 			<td>Index</td>
 			<td>Actual Data</td>
 			<td>AR(Autoreg)</td>
-			<td>SARIMAX</td>
 			<td>Exponential Smoothing</td>
 		</tr>
 		{% for index, values in sample.iterrows() %}
@@ -53,7 +56,6 @@
 			<td>{{ index }}</td>
 			<td>{{ values[0] }}</td>
 			<td>{{ values['AR'] }}</td>
-			<td>{{ values['SARIMAX'] }}</td>
 			<td>{{ values['Exponential Smoothing'] }}</td>
 		</tr>
 		{% endfor %}
