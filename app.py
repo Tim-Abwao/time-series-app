@@ -109,7 +109,7 @@ def create_sample():
             ar_order = int(request.form["ar_order"])
             ma_order = int(request.form["ma_order"])
 
-            # creating user-defined sample
+            # creating user-defined ARMA sample
             index = pd.date_range(start, stop, freq=frequency)
             size = len(index)
             np.random.seed(123)
@@ -124,17 +124,13 @@ def create_sample():
             results = predictions.results
             sample = predictions.sample
             totals = sample.sum().round(2).to_numpy()
-            try:
-                plot = TimeSeriesGraphs(data, results)
-                graphs = {
-                    "acf&pacf": plot.acf_pacf,
-                    "lineplot": plot.lineplot,
-                    "model_fit": plot.modelfit,
-                    "seasonal_decomposition": plot.seasonal_decomposition,
-                }
-            except RuntimeError:
-                return redirect(url_for(create_sample))
-
+            plot = TimeSeriesGraphs(data, results)
+            graphs = {
+                "acf&pacf": plot.acf_pacf,
+                "lineplot": plot.lineplot,
+                "model_fit": plot.modelfit,
+                "seasonal_decomposition": plot.seasonal_decomposition,
+            }
             return render_template(
                 "processing_file.html",
                 graphs=graphs,
@@ -144,8 +140,8 @@ def create_sample():
             )
         except (IndexError, ValueError):  # due to small sample size
             input_error = "Please try again... Generated sample too small."
-        except ZeroDivisionError:  # raised when sample size=21, because of
-            # statsmodel's Autoreg function set up here with lags <=10
+        except ZeroDivisionError:  # raised when sample size=21, thus Autoreg
+            # function set up here with lag up to 10 has only 1 viable step.
             input_error = "Please increase sample size."
 
         return render_template(

@@ -15,14 +15,14 @@
 				<option value="{{ frequency }}">{{frequencies[frequency] }}</option>
 				{% endfor %}
 			</select><br>
-			AR order 
+			AR order: 
 			<select name='ar_order'>
 				{% for i in range(1,10) %}
 					
 				<option value={{ i }}>{{ i }}</option>
 				{% endfor %}
 			</select>
-			MA order
+			MA order:
 			<select name='ma_order'>
 				{% for i in range(1,10) %}
 				<option value={{ i }}>{{ i }}</option>
