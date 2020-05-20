@@ -1,13 +1,11 @@
 from flask import Flask, flash, render_template, url_for, request, redirect
-from ts_functions import (
-    clear_old_files,
-    TimeSeriesPredictions,
-    TimeSeriesGraphs)
+from ts_functions import clear_old_files, TimeSeriesPredictions, TimeSeriesGraphs
 import os
 from werkzeug.utils import secure_filename
 from datetime import date
 import pandas as pd
 import numpy as np
+from statsmodels.tsa.arima_process import arma_generate_sample
 
 
 UPLOAD_FOLDER = "static/files"
@@ -23,7 +21,7 @@ frequencies = {
 app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["MAX_CONTENT_LENGTH"] = 15 * 1024 * 1024
-glossary_data = pd.read_csv('static/glossary.csv').sort_values(by="title")
+glossary_data = pd.read_csv("static/glossary.csv").sort_values(by="title")
 glossary_data.reset_index(drop=True, inplace=True)
 
 
@@ -31,8 +29,7 @@ def allowed_file(filename):
     """
     Checks whether a file's extension is supported/allowed.
     """
-    return "." in filename and filename.rsplit(".", 1)[1].lower() \
-           in ALLOWED_EXTENSIONS
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 @app.route("/")
@@ -88,6 +85,7 @@ def process_file(filename):
         "acf&pacf": plot.acf_pacf,
         "lineplot": plot.lineplot,
         "model_fit": plot.modelfit,
+        "seasonal_decomposition": plot.seasonal_decomposition,
     }
 
     return render_template(
@@ -104,13 +102,23 @@ def create_sample():
     today = date.today().isoformat()
     if request.method == "POST":
         try:
+            # collecting sample parameters
             start = request.form["start"]
             stop = request.form["stop"]
             frequency = request.form["frequency"]
-            # creating user-defined sample
+            ar_order = int(request.form["ar_order"])
+            ma_order = int(request.form["ma_order"])
+
+            # creating user-defined ARMA sample
             index = pd.date_range(start, stop, freq=frequency)
             size = len(index)
-            data = pd.Series(np.random.rand(size) * 5000, index=index)
+            np.random.seed(123)
+            ar = np.linspace(-1, 1, ar_order)
+            ma = np.linspace(-1, 1, ma_order)
+            y = arma_generate_sample(
+                ar, ma, size, scale=100, distrvs=np.random.standard_normal
+            )
+            data = pd.Series(y, index=index, name="Sample")
             clear_old_files("png")  # removing old graphs
             predictions = TimeSeriesPredictions(data)  # fitting  models
             results = predictions.results
@@ -121,8 +129,8 @@ def create_sample():
                 "acf&pacf": plot.acf_pacf,
                 "lineplot": plot.lineplot,
                 "model_fit": plot.modelfit,
+                "seasonal_decomposition": plot.seasonal_decomposition,
             }
-
             return render_template(
                 "processing_file.html",
                 graphs=graphs,
@@ -132,8 +140,8 @@ def create_sample():
             )
         except (IndexError, ValueError):  # due to small sample size
             input_error = "Please try again... Generated sample too small."
-        except ZeroDivisionError:  # raised when sample size=21, because of
-            # statsmodel's Autoreg function set up here with lags <=10
+        except ZeroDivisionError:  # raised when sample size=21, thus Autoreg
+            # function set up here with lag up to 10 has only 1 viable step.
             input_error = "Please increase sample size."
 
         return render_template(
@@ -144,8 +152,7 @@ def create_sample():
         )
 
     return render_template(
-        "processing_sample.html", sample=True, frequencies=frequencies,
-        today=today
+        "processing_sample.html", sample=True, frequencies=frequencies, today=today
     )
 
 

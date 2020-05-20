@@ -1,5 +1,9 @@
 title,definition
 Trend,"The general upward(increase) or downward(decrease) progression in the data points."
-Time Series,"A time series is a series of data points indexed in time order."
+Time Series,"A time series is a series of data points indexed in time order. For example, daily sales totals over a reasonably lenghthy period constitute a time series."
 Seasonality,"This refers to variations that occur at specific regular intervals e.g. every weekend, month-end or festive period."
-Cyclic patterns,"These are rises and falls in the data that occur at flexible periods, usually extending a year and mostly due to economic factors."
+Cyclic patterns,"These are the rises and falls in the data that occur at flexible periods, usually extending a year and mostly due to economic factors."
+Stationarity,"A stationary time series is one which has constant mean and variance."
+Auto-Regressive(AR) model,"A model which expresses the time series as a function of its own past values. Previous values serve as the explanatory variables, and their number is the order of the model, usually denoted by p."
+Moving Average(MA) Model,"A model which specifies that a value depends on the current, and various previous values, of the random error terms. The number of error terms in an MA model, usually denoted by q, is its order."
+ARMA,"An Auto-Regressive Moving Average model combines the concepts of the AR and MA models, to better simulate a relatively stationary time series."
