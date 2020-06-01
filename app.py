@@ -2,7 +2,7 @@ from flask import Flask, flash, render_template, url_for, request, redirect
 from ts_functions import clear_old_files, TimeSeriesPredictions, TimeSeriesGraphs
 import os
 from werkzeug.utils import secure_filename
-from datetime import date
+from datetime import date, timedelta
 import pandas as pd
 import numpy as np
 from statsmodels.tsa.arima_process import arma_generate_sample
@@ -100,15 +100,20 @@ def process_file(filename):
 @app.route("/sample", methods=["GET", "POST"])
 def create_sample():
     today = date.today().isoformat()
+    month_later = (date.today() + timedelta(days=30)).isoformat()
     if request.method == "POST":
         try:
-            # collecting sample parameters
-            start = request.form["start"]
-            stop = request.form["stop"]
+            # collecting parameters from form
+            start = request.form["start_date"]
+            stop = request.form["end_date"]
             frequency = request.form["frequency"]
             ar_order = int(request.form["ar_order"])
             ma_order = int(request.form["ma_order"])
+        except KeyError:
+            start, stop = today, month_later
+            frequency, ar_order, ma_order = "D", 1, 1
 
+        try:
             # creating user-defined ARMA sample
             index = pd.date_range(start, stop, freq=frequency)
             size = len(index)
@@ -138,7 +143,7 @@ def create_sample():
                 sample=sample,
                 totals=totals,
             )
-        except (IndexError, ValueError):  # due to small sample size
+        except (ValueError):  # due to small sample size
             input_error = "Please try again... Generated sample too small."
         except ZeroDivisionError:  # raised when sample size=21, thus Autoreg
             # function set up here with lag up to 10 has only 1 viable step.
@@ -148,11 +153,16 @@ def create_sample():
             "processing_sample.html",
             frequencies=frequencies,
             today=today,
+            month_later=month_later,
             input_error=input_error,
         )
 
     return render_template(
-        "processing_sample.html", sample=True, frequencies=frequencies, today=today
+        "processing_sample.html",
+        sample=True,
+        frequencies=frequencies,
+        today=today,
+        month_later=month_later,
     )
 
 
