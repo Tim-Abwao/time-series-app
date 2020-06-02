@@ -112,7 +112,7 @@ class TimeSeriesGraphs:
 
     def plot_seanonal_decomposition(self, data):
         name = (
-            self.file_folder + str(datetime.now()) + "seasonal-decomposition" + ".png"
+            self.file_folder + str(datetime.now()) + "_seasonal-decomposition.png"
         )
         sm.tsa.seasonal_decompose(data).plot()
         plt.savefig(name, transparent=True)
