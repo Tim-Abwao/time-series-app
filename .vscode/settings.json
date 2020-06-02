@@ -4,5 +4,11 @@
     "python.linting.flake8Enabled": true,
     "python.linting.enabled": true,
     "cornflakes.linter.executablePath": "venv/bin/flake8",
-    "python.pythonPath": "venv/bin/python"
+    "python.pythonPath": "venv/bin/python",
+    "python.testing.pytestArgs": [
+        "."
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.nosetestsEnabled": false,
+    "python.testing.pytestEnabled": true
 }
