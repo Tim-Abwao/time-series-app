@@ -21,6 +21,7 @@ def test_homepage(client):
 
     result = client.get("/")
     assert b"A simple app to learn about, and apply" in result.data
+    assert result.status_code == 200
 
 
 def test_sampling_page(client):
@@ -28,6 +29,7 @@ def test_sampling_page(client):
 
     result = client.get("/sample")
     assert b"The sample is created using a random number generator" in result.data
+    assert result.status_code == 200
 
 
 def test_upload_page(client):
@@ -35,6 +37,7 @@ def test_upload_page(client):
 
     result = client.get("/upload")
     assert b"A quick word about uploads..." in result.data
+    assert result.status_code == 200
 
 
 def test_file_processing(client):
@@ -49,6 +52,7 @@ def test_file_processing(client):
     result = client.post("/processing_sample.csv", data={"filename": "sample.csv"})
     os.remove("static/files/sample.csv")
     assert b"Results for sample.csv" in result.data
+    assert result.status_code == 200
 
 
 def test_glossary_page(client):
@@ -56,6 +60,7 @@ def test_glossary_page(client):
 
     result = client.get("/glossary")
     assert b"Glossary of Time Series Terms" in result.data
+    assert result.status_code == 200
 
 
 def test_sample_creation(client):
@@ -73,6 +78,7 @@ def test_sample_creation(client):
         follow_redirects=True,
     )
     assert b"Results for Sample" in result.data
+    assert result.status_code == 200
 
 
 def test_small_sample_creation(client):
@@ -90,3 +96,4 @@ def test_small_sample_creation(client):
         follow_redirects=True,
     )
     assert b"Please try again... Generated sample too small." in result.data
+    assert result.status_code == 200
