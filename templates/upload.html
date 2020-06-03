@@ -17,7 +17,7 @@
 	<p> For example,</p>
 	<table style="margin: auto; text-align: center;">
 		<tr>
-			<th>Index(Date)</th>
+			<th>Date</th>
 			<th> ... </th>
 			<th>Data</th>
 		</tr>
@@ -47,7 +47,8 @@
 	{% endif %}
 
 	<footer>
-		<a class="hvr-bob button" href="/">Back to Home</a>
+		<a class="hvr-bob button" href="{{ url_for('index') }}">Back to Home</a>
+		<a class="hvr-bob button" href="{{ url_for('glossary') }}">Browse Glossary</a>
 	</footer>
 </body>
 
