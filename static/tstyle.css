@@ -5,6 +5,7 @@ body {
 	color: darkslategrey;
 	max-width: 1000px;
 	height: 100%;
+	font-family: Georgia;
 }
 
 .content {
@@ -66,7 +67,6 @@ footer {
 img {
 	width: 100%;
 }
-
 .info {
 	background-color: rgb(0, 0, 0, 0.1);
 	padding: 20px;

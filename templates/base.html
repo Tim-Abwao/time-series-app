@@ -7,11 +7,11 @@
 	<style type="text/css">
 		body {
 			background-color: silver;
-			background: url({{ url_for('static', filename='background_large.jpg')}});
+			background-image: url({{ url_for('static', filename='background_large.jpg')}});
 		}
 		@media only screen and (max-width: 640px) {
 			body {
-				background: url({{ url_for('static', filename='background_small.jpg')}})
+				background-image: url({{ url_for('static', filename='background_small.jpg')}});
 			}
 		}
 	</style>

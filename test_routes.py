@@ -49,7 +49,8 @@ def test_file_processing(client):
         index=pd.date_range("2020-01-01", periods=50, freq="D"),
     ).to_csv("static/files/sample.csv")
     # processing the sample as an uploaded file would've been
-    result = client.post("/processing_sample.csv", data={"filename": "sample.csv"})
+    result = client.post("/processing_sample.csv",
+                         data={"filename": "sample.csv"})
     os.remove("static/files/sample.csv")
     assert b"Results for sample.csv" in result.data
     assert result.status_code == 200

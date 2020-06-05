@@ -42,19 +42,20 @@ class TimeSeriesPredictions:
         model1 = sm.tsa.AutoReg(data, lags=10).fit().predict(start, end)
 
         try:  # Searching for appropriate ARMA order
-            arma_ic = sm.tsa.arma_order_select_ic(data, ic="bic")
+            arma_ic = sm.tsa.arma_order_select_ic(
+                data, ic="bic", trend="nc", fit_kw={"dist": 0}
+            )
             arma_order = max(arma_ic.bic_min_order, (1, 1))
-            model2 = sm.tsa.ARMA(data, arma_order).fit(dist=0).predict(start, end)
+            model2 = sm.tsa.ARMA(data, arma_order).fit(disp=0).predict(start, end)
         except ValueError:
             try:
-                model2 = sm.tsa.ARMA(data, (0, 1)).fit(dist=0).predict(start, end)
+                model2 = sm.tsa.ARMA(data, (0, 1)).fit(disp=0).predict(start, end)
             except ValueError:
                 # contingency in case all ARMA models above fail to converge
                 model2 = pd.DataFrame(
                     {"X": [np.nan] * int(n * ratio)},
                     index=pd.date_range("2020-01-01", periods=100),
                 )
-                model2.to_csv("m2.csv")
 
         model3 = (
             sm.tsa.ExponentialSmoothing(data, trend="add", seasonal="add")

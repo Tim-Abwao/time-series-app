@@ -34,8 +34,8 @@
 			<p>Graphs are also useful in assessing the goodness of fit. In general, a good model should reasonably
 				replicate the behaviour of the data used.</p>
 		</div>
-		<blockquote><b>Note:</b> The results below are for automatically fitted models. In practice, to achieve
-			reliable results, models often need several rounds of evaluation and fine-tuning.</blockquote>
+		<blockquote><b>Note:</b> The results below are for automatically fitted models, with limited optimisation. In practice, to achieve
+			reliable results; models are selected based on the findings from an exploratory analysis the data, and they often need several rounds of evaluation and fine-tuning.</blockquote>
 		{% for graph in graphs["model_fit"] %}
 		<img src="{{ graph }}">
 		{% endfor %}
