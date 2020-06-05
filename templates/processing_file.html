@@ -8,33 +8,34 @@
 		<h2>1. Graphical Output:</h2>
 		<div class="info">
 
-			<p>Graphs help visualise the trend in the data. For instance, if there has been an increase or decrease in
-				the data values over time.</p>
-			<p>Graphs also help discover seasonal and/or cyclic tendencies present in the data. These usually appear as
-				evenly-spaces peaks and/or troughs</p>
+			<p>Graphs help visualise the trend in the data; clearly revealing whether there's been
+				an increase, decrease or no change in the data values over time.</p>
+			<p>Graphs also help discover seasonal and/or cyclic tendencies present in the data. These usually manifest as
+				approximately evenly-spaces peaks or troughs.</p>
 
 		</div>
 		<img src="{{ graphs["lineplot"]}}">
 		<div class="info">
 			<p><a href="https://en.wikipedia.org/wiki/Autocorrelation">Autocorrelation</a> and <a
 					href="https://en.wikipedia.org/wiki/Partial_autocorrelation_function">Partial-Autocorrelation </a>
-				plots can provide hints on a suitable model to begin fitting. <a
+				plots can provide hints on a suitable model to start with. <a
 					href="https://en.wikipedia.org/wiki/Box%E2%80%93Jenkins_method#Autocorrelation_and_partial_autocorrelation_plots">This
 					article</a> describes how.</p>
 		</div>
 
 		<img src="{{ graphs["acf&pacf"]}}">
 		<div class="info">
-			<p>Testing for stationarity, and filtering out seasonal effects is an essential first step. Model fitting requires that the time series data be stationary.</p>
+			<p>Testing for stationarity, and filtering out seasonal & trend effects is an essential first step. Model fitting
+				usually requires that the time series data be <a href="https://cran.r-project.org/web/packages/TSTutorial/vignettes/Stationary.pdf">stationary</a>.</p>
 		</div>
 		<img src="{{ graphs["seasonal_decomposition"]}}">
-		
+
 		<div class="info">
-			<p>Graphs are also very useful in assessing the goodness of fit. In general, a good model should reasonably
+			<p>Graphs are also useful in assessing the goodness of fit. In general, a good model should reasonably
 				replicate the behaviour of the data used.</p>
 		</div>
 		<blockquote><b>Note:</b> The results below are for automatically fitted models. In practice, to achieve
-			reliable results, models often need further fine-tuning.</blockquote>
+			reliable results, models often need several rounds of evaluation and fine-tuning.</blockquote>
 		{% for graph in graphs["model_fit"] %}
 		<img src="{{ graph }}">
 		{% endfor %}
@@ -49,6 +50,7 @@
 			<td>Index</td>
 			<td>Actual Data</td>
 			<td>AR(Autoreg)</td>
+			<td>ARMA</td>
 			<td>Exponential Smoothing</td>
 		</tr>
 		{% for index, values in sample.iterrows() %}
@@ -56,6 +58,7 @@
 			<td>{{ index }}</td>
 			<td>{{ values[0] }}</td>
 			<td>{{ values['AR'] }}</td>
+			<td>{{ values['ARMA'] }}</td>
 			<td>{{ values['Exponential Smoothing'] }}</td>
 		</tr>
 		{% endfor %}

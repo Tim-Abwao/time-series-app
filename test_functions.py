@@ -1,4 +1,5 @@
-from ts_functions import TimeSeriesGraphs, TimeSeriesPredictions, clear_old_files
+from ts_functions import TimeSeriesGraphs, TimeSeriesPredictions
+from ts_functions import clear_old_files
 from glob import glob
 import pandas as pd
 import numpy as np
@@ -27,9 +28,12 @@ Graphs = TimeSeriesGraphs(data, predictions.results)
 
 def testing_ts_prediction():
     # check if the models were fitted, and predictions were made
-    assert all(predictions.results.columns == ["AR", "Exponential Smoothing"])
+    assert all(
+        predictions.results.columns == ["AR", "ARMA", "Exponential Smoothing"])
     assert len(predictions.results) == len(data) * 0.6  # default 'ratio'
-    assert all(predictions.sample.columns == ["X", "AR", "Exponential Smoothing"])
+    assert all(
+     predictions.sample.columns == ["X", "AR", "ARMA", "Exponential Smoothing"]
+    )
     assert len(predictions.sample) == 14  # default set in class definition
 
 

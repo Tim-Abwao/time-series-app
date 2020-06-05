@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from statsmodels.graphics.tsaplots import plot_pacf, plot_acf
 import statsmodels.api as sm
 import matplotlib.pyplot as plt
@@ -7,8 +8,8 @@ from glob import glob
 import os
 import matplotlib
 
+matplotlib.use("Agg")
 matplotlib.rcParams["figure.autolayout"] = True
-matplotlib.rcParams["backend"] = "Agg"
 matplotlib.rcParams["legend.frameon"] = True
 
 
@@ -29,28 +30,44 @@ class TimeSeriesPredictions:
 
     def fit_tsmodels(self, data, ratio=0.6) -> pd.DataFrame:
         """
-        Fits AR, and Holt-Winters Exponential Smoothing models on the
-        data(a pandas DataFrame). The predictions are returned as a dataframe
-        with a column for each fitted model.
+        Fits time series models on the data. Predictions are then returned as
+        a dataframe with a column for each fitted model.
         """
         # setting prediction parameters
         n, index = len(data), data.index
         start = index[int(n * (1 - ratio))]
         end = index[-1]
-        # Model fitting, and prediction
+
+        # Fitting models and making predictions
         model1 = sm.tsa.AutoReg(data, lags=10).fit().predict(start, end)
-        model2 = (
-            sm.tsa.ExponentialSmoothing(data, trend="additive", seasonal="additive")
+
+        try:  # Searching for appropriate ARMA order
+            arma_ic = sm.tsa.arma_order_select_ic(data, ic="bic")
+            arma_order = max(arma_ic.bic_min_order, (1, 1))
+            model2 = sm.tsa.ARMA(data, arma_order).fit(dist=0).predict(start, end)
+        except ValueError:
+            try:
+                model2 = sm.tsa.ARMA(data, (0, 1)).fit(dist=0).predict(start, end)
+            except ValueError:
+                # contingency in case all ARMA models above fail to converge
+                model2 = pd.DataFrame(
+                    {"X": [np.nan] * int(n * ratio)},
+                    index=pd.date_range("2020-01-01", periods=100),
+                )
+                model2.to_csv("m2.csv")
+
+        model3 = (
+            sm.tsa.ExponentialSmoothing(data, trend="add", seasonal="add")
             .fit()
             .predict(start, end)
         )
         # returning results as a dataframe
-        models_dict = {"AR": model1, "Exponential Smoothing": model2}
+        models_dict = {"AR": model1, "ARMA": model2, "Exponential Smoothing": model3}
         return pd.DataFrame({**models_dict})
 
     def sample(self, data, size=14) -> pd.DataFrame:
         """
-        Creates a sample, a dataframe with the original and modelled data.
+        Creates a sample: a dataframe with the original and modelled data.
         This will be displayed as the table in the results page.
         """
 
@@ -121,10 +138,11 @@ class TimeSeriesGraphs:
         saves them as a png file, and returns their location.
         """
         name = self.file_folder + str(datetime.now()) + "_seasonal-decomposition.png"
-        sm.tsa.seasonal_decompose(data).plot().autofmt_xdate()
+        sm.tsa.STL(data).fit().plot().autofmt_xdate()
         plt.savefig(name, transparent=True)
 
         return name
 
     def terminate(self):
+
         plt.close("all")

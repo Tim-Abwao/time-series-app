@@ -28,7 +28,7 @@ def test_sampling_page(client):
     """Testing the sample creation page"""
 
     result = client.get("/sample")
-    assert b"The sample is created using a random number generator" in result.data
+    assert b"Creating a sample" in result.data
     assert result.status_code == 200
 
 
