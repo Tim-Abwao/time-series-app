@@ -15,14 +15,21 @@
 			</ul>
 		</blockquote>
 		<form action="{{ url_for('create_sample')}}" method="post">
+
+			{% if input_error %}
+			<p style="color: orangered; width: 70%; font-size: 0.8em;">
+				{{input_error}}
+			</p>
+			{% endif %}
+
 			<label for="start_date"> Start Date: </label>
 			<input type="date" name="start_date" id="start_date" min='2020-01-01' max="{{ today }}" value="{{ today }}"
 				required><br>
-			
+
 			<label for="end_date">End date:</label>
 			<input type="date" name="end_date" id="end_date" min='{{ today }}' max="2038-01-01"
 				value="{{ month_later }}" required><br>
-			
+
 			<label for="frequency">Frequency:</label>
 			<select name="frequency" id="frequency">
 				{% for frequency in frequencies %}
@@ -42,11 +49,8 @@
 				{% for i in range(1, 6) %}
 				<option value={{ i }}>{{ i }}</option>
 				{% endfor %}
-			</select>
+			</select><br>
 
-			{% if input_error %}
-			<span style="color: orangered;">{{input_error}}</span><br>
-			{% endif %}
 			<input class="button" type="submit" value="submit">
 		</form>
 	</div>

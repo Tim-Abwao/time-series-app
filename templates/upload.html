@@ -10,7 +10,7 @@
 			<li>Please upload files in CSV format</li>
 			<li>Files should be no larger than 15MB </li>
 			<li>The data to be processed should be in the last column</li>
-			<li>The data should have at least 21 rows</li>
+			<li>The data should have at least 30 rows</li>
 			<li>The index should consist of dates, in standard fromats.</li>
 		</ul>
 	</div>
@@ -38,14 +38,15 @@
 		</tr>
 
 	</table>
-	<form method=post enctype=multipart/form-data>
+	<form method=post enctype=multipart/form-data action="{{ url_for('upload_file') }}" >
 		<input type=file name=file>
 		<input class=" button" type=submit value=Upload>
+		{% if input_error %}
+			<p style="color: orangered; width: 60%; font-size: 0.8em; text-align: center; margin: auto;">
+				{{input_error}}
+			</p>
+		{% endif %}
 	</form>
-	{% if input_error %}
-	<br><span style="color: orangered;">{{input_error}}</span><br>
-	{% endif %}
-
 	<footer>
 		<a class="hvr-bob button" href="{{ url_for('index') }}">Back to Home</a>
 		<a class="hvr-bob button" href="{{ url_for('glossary') }}">Browse Glossary</a>

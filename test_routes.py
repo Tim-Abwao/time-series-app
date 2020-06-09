@@ -96,5 +96,6 @@ def test_small_sample_creation(client):
         ),
         follow_redirects=True,
     )
-    assert b"Please try again... Generated sample too small." in result.data
+    assert b"Please try again... The generated sample has 1 value" \
+           in result.data
     assert result.status_code == 200
