@@ -4,7 +4,8 @@ from ts_functions import clear_old_files
 from werkzeug.utils import secure_filename
 from datetime import date, timedelta
 import pandas as pd
-from pandas.errors import EmptyDataError, ParserError
+from pandas.errors import EmptyDataError, ParserError as pdParserError
+from dateutil.parser import ParserError as dtParserError
 import numpy as np
 from statsmodels.tsa.arima_process import arma_generate_sample
 
@@ -50,33 +51,54 @@ def upload_file():
             file = request.files["file"]
         except KeyError:
             return redirect(request.url)
+
         # Ensuring the file exists (some browsers send an empty file part if
         # no file is selected).
         if file.filename == "":
             return redirect(request.url)
 
-        # processing filename
+        # processing the file
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             clear_old_files("csv")  # removing outdated uploads
             try:
                 data = pd.read_csv(file, index_col=0)
-                data = data.iloc[:, -1]  # selecting last column for analysis
-                data.index = pd.to_datetime(data.index)
-                if len(data) < 30:  # avoiding errors due to small samples
-                    input_error = f"Please try again... The uploaded file has\
-                                  only {len(data)} values, but the minimum is\
-                                  set at 30."
-                    return render_template("upload.html",
-                                           input_error=input_error)
-
-                # saving the file, if it is valid
-                data.to_csv("static/files/" + filename)
-                return redirect(url_for("process_file", filename=filename))
-            except ParserError:  # raised if the file isn't CSV
-                input_error = f"Please try again... The uploaded file is not in \
+            except pdParserError:  # raised if the file isn't CSV
+                input_error = "Please try again... the uploaded file is not in \
                                 standard CSV format."
                 return render_template("upload.html", input_error=input_error)
+
+            try:
+                data.index = pd.to_datetime(data.index)
+            except (dtParserError, TypeError):
+                # raised if index can't be read as dates
+                input_error = "Please try again... it seems that the values in the\
+                              1st column of the data can't be read as dates."
+                return render_template("upload.html", input_error=input_error)
+
+            if len(data) < 30:  # avoiding errors due to small samples
+                input_error = f"Please try again... The uploaded file has\
+                                only {len(data)} values, but the minimum is\
+                                set at 30."
+                return render_template("upload.html", input_error=input_error)
+
+            # Handling cases where date frequency can't be inferred, which
+            # breaks some statsmodels functions (e.g. seasonal_decompose)
+            if pd.infer_freq(data.index) is None:
+                input_error = "Please try again... a uniform date frequency (\
+                              which is needed in some of the time series \
+                              functions used) could not be determined."
+                return render_template("upload.html", input_error=input_error)
+
+            if data.shape[1] < 1:
+                input_error = "Please ensure that the data has a date column\
+                              and at least one other column."
+                return render_template("upload.html", input_error=input_error)
+
+            # saving the file, if it is valid
+            data = data.iloc[:, -1]  # selecting last column for analysis
+            data.to_csv("static/files/" + filename)
+            return redirect(url_for("process_file", filename=filename))
 
     return render_template("upload.html")
 
@@ -89,7 +111,7 @@ def process_file(filename):
         data = data.iloc[:, -1]  # selecting last column for analysis
         data.index = pd.to_datetime(data.index)
     except (EmptyDataError, FileNotFoundError):  # raised if file wasn't saved
-        input_error = f"Please try uploading the file again."
+        input_error = "Please try uploading the file again."
         return render_template("upload.html", input_error=input_error)
 
     clear_old_files("png")  # removing graph files from previous sessions
