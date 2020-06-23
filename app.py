@@ -97,6 +97,13 @@ def upload_file():
 
             # saving the file, if it is valid
             data = data.iloc[:, -1]  # selecting last column for analysis
+
+            try:
+                data = data.astype('float32')
+            except ValueError:
+                input_error = "Please try again... it seems the values to be\
+                              processed couldn't be converted to numbers."
+                return render_template("upload.html", input_error=input_error)
             data.to_csv("static/files/" + filename)
             return redirect(url_for("process_file", filename=filename))
 
