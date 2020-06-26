@@ -33,6 +33,29 @@ def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in {"csv"}
 
 
+def get_ts_results(data):
+    """
+    A convenience funtion to nicely consolidate the output/results
+    """
+    time_series_results = {}
+    # fitting the time series models
+    predictions = TimeSeriesPredictions(data)
+    time_series_results['results'] = results = predictions.results
+    time_series_results['sample'] = sample = predictions.sample
+    time_series_results['totals'] = sample.sum().round(2).to_numpy()
+    # removing old graphs
+    clear_old_files("png")
+    # plotting the current results
+    plots = TimeSeriesGraphs(data, results)
+    time_series_results['graphs'] = {
+        "acf&pacf": plots.acf_pacf,
+        "lineplot": plots.lineplot,
+        "model_fit": plots.modelfit,
+        "seasonal_decomposition": plots.seasonal_decomposition
+    }
+    return time_series_results
+
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -121,25 +144,10 @@ def process_file(filename):
         input_error = "Please try uploading the file again."
         return render_template("upload.html", input_error=input_error)
 
-    clear_old_files("png")  # removing graph files from previous sessions
-    predictions = TimeSeriesPredictions(data)  # fitting  models
-    results = predictions.results
-    sample = predictions.sample
-    totals = sample.sum().round(2).to_numpy()
-    plots = TimeSeriesGraphs(data, results)
-    graphs = {
-        "acf&pacf": plots.acf_pacf,
-        "lineplot": plots.lineplot,
-        "model_fit": plots.modelfit,
-        "seasonal_decomposition": plots.seasonal_decomposition,
-    }
-
     return render_template(
         "processing_file.html",
-        graphs=graphs,
         filename=filename,
-        sample=sample,
-        totals=totals,
+        **get_ts_results(data)
     )
 
 
@@ -185,24 +193,10 @@ def create_sample():
         )
         data = pd.Series(arma_sample, index=index, name="Sample")
 
-        clear_old_files("png")  # removing old saved graphs
-        predictions = TimeSeriesPredictions(data)  # fitting models
-        results = predictions.results
-        sample = predictions.sample
-        totals = sample.sum().round(2).to_numpy()
-        plot = TimeSeriesGraphs(data, results)
-        graphs = {
-            "acf&pacf": plot.acf_pacf,
-            "lineplot": plot.lineplot,
-            "model_fit": plot.modelfit,
-            "seasonal_decomposition": plot.seasonal_decomposition,
-        }
         return render_template(
             "processing_file.html",
-            graphs=graphs,
             filename="Sample",
-            sample=sample,
-            totals=totals,
+            **get_ts_results(data)
         )
 
         return render_template(
