@@ -6,10 +6,14 @@ import numpy as np
 
 
 def testing_file_cleaning():
-    # clear png files in default directory 'static/files'
+    """
+    Checks that the `clear_old_files` function actually clears specified files
+    """
+    # clearing any existing png files in the default directory 'static/files'
     clear_old_files("png")
+    # checking that all png files there are gone
     assert len(glob("static/files/*.png", recursive=True)) == 0
-    # creating sample png file
+    # creating a sample png file
     with open("static/files/sample.png", "w") as file:
         file.write("...")
     assert len(glob("static/files/*.png", recursive=True)) == 1
@@ -18,27 +22,35 @@ def testing_file_cleaning():
     assert len(glob("static/files/*.png", recursive=True)) == 0
 
 
-data = pd.DataFrame(
-    {"X": np.random.rand(50)}, index=pd.date_range("2020-01-01", periods=50)
-)
+data = pd.Series(np.random.rand(50),
+                 index=pd.date_range("2020-01-01", periods=50))
 clear_old_files("png")
 predictions = TimeSeriesPredictions(data)
 Graphs = TimeSeriesGraphs(data, predictions.results)
 
 
 def testing_ts_prediction():
-    # check if the models were fitted, and predictions were made
-    assert all(
-        predictions.results.columns == ["AR", "ARMA", "Exponential Smoothing"])
-    assert len(predictions.results) == len(data) * 0.6  # default 'ratio'
-    assert all(
-     predictions.sample.columns == ["X", "AR", "ARMA", "Exponential Smoothing"]
-    )
-    assert len(predictions.sample) == 14  # default set in class definition
+    """
+    Checks if the `TimeSeriesPredictions` class methods make and save the
+    required predictions.
+    """
+    assert all(predictions.results.columns ==
+               ["Actual Data", "AR", "ARMA", "Exponential Smoothing"])
+    # ensuring the results cover 60% of the data (default defined in the model
+    # fitting function)
+    assert len(predictions.results) == len(data) * 0.6
+    # checking the sample's properties
+    assert all(predictions.sample.columns ==
+               ["Actual Data", "AR", "ARMA", "Exponential Smoothing"])
+    assert len(predictions.sample) == 14  # 14 is the default sample size
 
 
 def testing_graphing_functions():
-    # checking if the graphs were plotted
+    """
+    Checks if the TimeSeriesGraphs class methods run successfully. If they do
+    graphs would be plotted, then graph names would be returned and set to
+    their respective attribues.
+    """
     assert "_acf_pacf_plots.png" in Graphs.acf_pacf
     assert "_line_plot.png" in Graphs.lineplot
     assert "-AR.png" in "".join(Graphs.modelfit)
