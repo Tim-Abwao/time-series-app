@@ -56,7 +56,7 @@
 		{% for index, values in sample.iterrows() %}
 		<tr>
 			<td>{{ index }}</td>
-			<td>{{ values[0] }}</td>
+			<td>{{ values['Actual Data'] }}</td>
 			<td>{{ values['AR'] }}</td>
 			<td>{{ values['ARMA'] }}</td>
 			<td>{{ values['Exponential Smoothing'] }}</td>
@@ -69,7 +69,7 @@
 			{% endfor %}
 		</tr>
 	</table>
-
+	<a class="hvr-bob button" href="{{ url_for('static', filename='files/results.csv') }}">Download Results</a>
 	<footer>
 		<a class="hvr-bob button" href="/">Back to Home</a>
 	</footer>

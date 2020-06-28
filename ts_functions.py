@@ -25,8 +25,8 @@ def clear_old_files(extension, filepath="static/files/"):
 
 class TimeSeriesPredictions:
     def __init__(self, data):
-        self.results = self.fit_tsmodels(data)
-        self.sample = self.sample(data)
+        self.results = self.fit_tsmodels(data).round(2)
+        self.sample = self.results.tail(14)
 
     def fit_tsmodels(self, data, ratio=0.6) -> pd.DataFrame:
         """
@@ -67,15 +67,8 @@ class TimeSeriesPredictions:
         # returning results as a dataframe
         models_dict = {"AR": model1, "ARMA": model2,
                        "Exponential Smoothing": model3}
-        return pd.DataFrame({**models_dict})
-
-    def sample(self, data, size=14) -> pd.DataFrame:
-        """
-        Creates a sample: a dataframe with the original and modelled data.
-        This will be displayed as the table in the results page.
-        """
-
-        return pd.concat([data, self.results], axis=1).round(2).tail(size)
+        original = data.loc[start:]
+        return pd.DataFrame({'Actual Data': original, **models_dict})
 
 
 class TimeSeriesGraphs:
@@ -122,7 +115,7 @@ class TimeSeriesGraphs:
         locations(names).
         """
         names = []
-        for model, values in results.iteritems():
+        for model, values in results.drop('Actual Data', axis=1).iteritems():
             plt.figure(figsize=(8, 4.5))
             plt.plot(data, label="Original", color="navy")
             plt.plot(values, label="Modelled", color="aqua")
@@ -148,6 +141,6 @@ class TimeSeriesGraphs:
         return name
 
     def terminate(self):
-        """Closes all the `matplotlib.pyplot` `Figure`s"""
+        """Closes all lingering `matplotlib.pyplot` `Figure`s"""
 
         plt.close("all")
