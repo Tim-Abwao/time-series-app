@@ -101,17 +101,18 @@ def upload_file():
                 return render_template("upload.html", input_error=input_error)
 
             if len(data) < 30:  # avoiding errors due to small samples
-                input_error = f"Please try again... The uploaded file has\
-                                only {len(data)} values, but the minimum is\
-                                set at 30."
+                # string concatination is used to minimize the tab characters
+                # (indentation) that appear in the generate html text.
+                input_error = "Please try again... The uploaded file has " +\
+                 f"only {len(data)} values, but the minimum is set at 30."
                 return render_template("upload.html", input_error=input_error)
 
             # Handling cases where date frequency can't be inferred, which
             # breaks some statsmodels functions (e.g. seasonal_decompose)
             if pd.infer_freq(data.index) is None:
-                input_error = "Please try again... a uniform date frequency (\
-                              which is needed in some of the time series \
-                              functions used) could not be determined."
+                input_error = "Please try again... a uniform date frequency" +\
+                 "(which is needed in some of the time series functions used)"\
+                 + "could not be determined."
                 return render_template("upload.html", input_error=input_error)
 
             if data.shape[1] < 1:
