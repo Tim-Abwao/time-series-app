@@ -87,22 +87,23 @@ def upload_file():
             clear_old_files("csv")  # removing outdated uploads
             try:
                 data = pd.read_csv(file, index_col=0)
-            except pdParserError:  # raised if the file isn't CSV
-                input_error = "Please try again... the uploaded file is not in \
-                                standard CSV format."
+            except (pdParserError, UnicodeDecodeError):
+                # raised if the file isn't CSV
+                input_error = "Please try again... the uploaded file is not" +\
+                    " in standard CSV format."
                 return render_template("upload.html", input_error=input_error)
 
             try:
                 data.index = pd.to_datetime(data.index)
             except (dtParserError, TypeError):
                 # raised if index can't be read as dates
-                input_error = "Please try again... it seems that the values in the\
-                              1st column of the data can't be read as dates."
+                input_error = "Please try again... it seems that the values" +\
+                    " in the 1st column could not be read as dates."
                 return render_template("upload.html", input_error=input_error)
 
             if len(data) < 30:  # avoiding errors due to small samples
-                # string concatination is used to minimize the tab characters
-                # (indentation) that appear in the generate html text.
+                # String concatenation is used to minimize the tab characters
+                # (indentation) that appear in the generated html text.
                 input_error = "Please try again... The uploaded file has " +\
                  f"only {len(data)} values, but the minimum is set at 30."
                 return render_template("upload.html", input_error=input_error)
@@ -126,8 +127,8 @@ def upload_file():
             try:
                 data = data.astype('float32')
             except ValueError:
-                input_error = "Please try again... it seems the values to be\
-                              processed couldn't be converted to numbers."
+                input_error = "Please try again... it seems the values to be"\
+                   + " processed could not be converted to numbers."
                 return render_template("upload.html", input_error=input_error)
             data.to_csv("static/files/" + filename)
             return redirect(url_for("process_file", filename=filename))
