@@ -14,8 +14,8 @@ def testing_file_cleaning():
     # checking that all png files there are gone
     assert len(glob("static/files/*.png", recursive=True)) == 0
     # creating a sample png file
-    with open("static/files/sample.png", "w") as file:
-        file.write("...")
+    with open("static/files/sample.png", "wb") as file:
+        file.write(b"...")
     assert len(glob("static/files/*.png", recursive=True)) == 1
     # removing created png file
     clear_old_files("png")
@@ -24,7 +24,6 @@ def testing_file_cleaning():
 
 data = pd.Series(np.random.rand(50),
                  index=pd.date_range("2020-01-01", periods=50))
-clear_old_files("png")
 predictions = TimeSeriesPredictions(data)
 Graphs = TimeSeriesGraphs(data, predictions.results)
 
