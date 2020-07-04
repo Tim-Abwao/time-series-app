@@ -43,7 +43,7 @@ def get_ts_results(data):
     time_series_results['results'] = results = predictions.results
     time_series_results['sample'] = sample = predictions.sample
     time_series_results['totals'] = sample.sum().round(2).to_numpy()
-    results.to_csv('static/files/results.csv')
+    results.to_csv('static/results.csv')
     # removing old graphs
     clear_old_files("png")
     # plotting the current results
