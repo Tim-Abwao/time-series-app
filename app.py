@@ -219,5 +219,15 @@ def create_sample():
     )
 
 
+@app.route("/server_timeout")
+def heroku_timeout():
+    """
+    This creates the custom error page to be displayed if the app takes more
+    than 30 seconds (Heroku's limit) to process a request.
+    See https://devcenter.heroku.com/articles/error-codes#h12-request-timeout
+    """
+    return render_template('heroku_custom_503.htm')
+
+
 if __name__ == "__main__":
     app.run()

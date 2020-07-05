@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %} Server Timeout {% endblock %}
+{% block body %}
+
+<body>
+    <div class="content">
+        <h1>Oops! The server timed out</h1>
+        <p>Well, this is embarrassing... you're seeing this page because the application
+            has been crunching numbers for more than 30 seconds (<a
+                href="https://devcenter.heroku.com/articles/error-codes#h12-request-timeout">Heroku's limit</a>).</p>
+        <p>Please, try again with a little less data.</p>
+
+        <button class="hvr-bob button" onclick="goBack()">Go Back</button>
+    </div>
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+
+{% endblock %}
