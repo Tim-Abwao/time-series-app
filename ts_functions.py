@@ -1,22 +1,22 @@
 import pandas as pd
-import numpy as np
 from statsmodels.graphics.tsaplots import plot_pacf, plot_acf
 import statsmodels.api as sm
-import matplotlib.pyplot as plt
+import matplotlib
 from datetime import datetime
 from glob import glob
 import os
-import matplotlib
+
 
 matplotlib.use("Agg")
 matplotlib.rcParams["figure.autolayout"] = True
 matplotlib.rcParams["legend.frameon"] = True
+plt = matplotlib.pyplot
 
 
 def clear_old_files(extension, filepath="static/files/"):
     """
     A utility function to remove old files of {extension} format, from the
-    {filepath} folder.
+    {filepath} directory.
     """
     old_files = glob("".join([filepath, "*.", extension]), recursive=True)
     for file in old_files:
@@ -24,51 +24,59 @@ def clear_old_files(extension, filepath="static/files/"):
 
 
 class TimeSeriesPredictions:
+    """A class of objects for fitting time series models and storing results"""
+
     def __init__(self, data):
-        self.results = self.fit_tsmodels(data).round(2)
+        self.results = self.get_predictions(data).round(2)
         self.sample = self.results.tail(14)
 
-    def fit_tsmodels(self, data, ratio=0.6) -> pd.DataFrame:
+    def prediction_scope(self, data, coverage=0.6):
         """
-        Fits time series models on the data. Predictions are then returned as
-        a dataframe with a column for each fitted model.
+        A helper function that returns the prediction start & end dates, so as
+        to predict over ({coverage} * 100%) of the data (60% by default).
         """
-        # setting prediction parameters
-        n, index = len(data), data.index
-        start = index[int(n * (1 - ratio))]
+        n_rows, index = len(data), data.index
+        start = index[int((1 - coverage) * n_rows)]
         end = index[-1]
+        return start, end
 
-        # Fitting models and making predictions
-        model1 = sm.tsa.AutoReg(data, lags=10).fit().predict(start, end)
+    def fit_ts_models(self, data):
+        """
+        Fits various time series models on the data
+        """
+        # AR model
+        ar_model = sm.tsa.AutoReg(data, lags=10).fit()
 
+        # Holt-Winters Exponential Smoothing model
+        holtwint_exp_model = (
+          sm.tsa.ExponentialSmoothing(data, trend="add", seasonal="add").fit()
+        )
+
+        # ARMA model
         try:  # Searching for an appropriate ARMA order
             arma_ic = sm.tsa.arma_order_select_ic(
                 data, ic="bic", trend="nc", fit_kw={"dist": 0}
             )
             arma_order = max(arma_ic.bic_min_order, (1, 1))
-            model2 = sm.tsa.ARMA(data, arma_order
-                                 ).fit(disp=0).predict(start, end)
-        except ValueError:
-            try:  # Explicitly attempt to fit an ARMA (1,1) model
-                model2 = sm.tsa.ARMA(data, (1, 1)
-                                     ).fit(disp=0).predict(start, end)
-            except ValueError:
-                # Contingency in case all ARMA models above fail to converge
-                model2 = pd.DataFrame(
-                    {"X": [np.nan] * int(n * ratio)},
-                    index=pd.date_range("2020-01-01", periods=100),
-                )
+            arma_model = sm.tsa.ARMA(data, arma_order).fit(disp=0)
+        except ValueError:  # raised if above arma model fails to converge
+            # Explicitly attempt to fit an ARMA (1,1) model
+            arma_model = sm.tsa.ARMA(data, (1, 1)).fit(disp=0)
 
-        model3 = (
-            sm.tsa.ExponentialSmoothing(data, trend="add", seasonal="add")
-            .fit().predict(start, end)
-        )
+        ts_models = {"AR": ar_model, "ARMA": arma_model,
+                     "Exponential Smoothing": holtwint_exp_model}
+        return ts_models
 
-        # returning results as a dataframe
-        models_dict = {"AR": model1, "ARMA": model2,
-                       "Exponential Smoothing": model3}
-        original = data.loc[start:]
-        return pd.DataFrame({'Actual Data': original, **models_dict})
+    def get_predictions(self, data) -> pd.DataFrame:
+        """Obtains prediction results for the fitted time series models"""
+        predictions = {}
+        models = self.fit_ts_models(data)
+
+        for name, model in models.items():
+            predicted_values = model.predict(*self.prediction_scope(data))
+            predictions[name] = predicted_values
+
+        return pd.DataFrame({'Actual Data': data, **predictions}).dropna()
 
 
 class TimeSeriesGraphs:
@@ -83,38 +91,38 @@ class TimeSeriesGraphs:
     def plot_acf_pacf(self, data):
         """
         Produces the ACF & PACF graphs, saving them as a png file, and
-        returning their location(name).
+        returning their location.
         """
         fig = plt.figure(figsize=(8, 6))
         ax1, ax2 = fig.add_subplot(211), fig.add_subplot(212)
         plot_acf(data.values, ax=ax1, color="navy")
         plot_pacf(data.values, ax=ax2, color="navy")
-        name = self.file_folder + str(datetime.now()) + "_acf_pacf_plots.png"
-        plt.savefig(name, transparent=True)
+        loc = self.file_folder + str(datetime.now()) + "_acf_pacf_plots.png"
+        plt.savefig(loc, transparent=True)
 
-        return name
+        return loc
 
     def plot_line(self, data):
         """
         Plots the data, saves the graph as a png file, and returns its
-        location(name).
+        location.
         """
         plt.figure(figsize=(8, 4.5))
         plt.plot(data, color="navy")
         plt.xticks(rotation=30)
         plt.title("A line-plot of the data", size=15, pad=10)
-        name = self.file_folder + str(datetime.now()) + "_line_plot.png"
-        plt.savefig(name, transparent=True)
+        loc = self.file_folder + str(datetime.now()) + "_line_plot.png"
+        plt.savefig(loc, transparent=True)
 
-        return name
+        return loc
 
     def plot_model_fit(self, data, results):
         """
         Plots the original and predicted values for each time series model
-        fitted, saves the graphs as png files, and returns a list of file
-        locations(names).
+        fitted, saves the graphs as png files, and returns a list of their
+        locations.
         """
-        names = []
+        loc = []
         for model, values in results.drop('Actual Data', axis=1).iteritems():
             plt.figure(figsize=(8, 4.5))
             plt.plot(data, label="Original", color="navy")
@@ -123,22 +131,23 @@ class TimeSeriesGraphs:
             plt.xticks(rotation=30)
             name = "".join(
                 [self.file_folder, str(datetime.now()), "-", model, ".png"])
-            names.append(name)
+            loc.append(name)
             plt.savefig(name, transparent=True)
 
-        return names
+        return loc
 
     def plot_seanonal_decomposition(self, data):
         """
         Performs basic seasonal decomposition, plots the various components,
-        saves them as a png file, and returns their location.
+        saves the graphs as a png file, and returns their location.
         """
-        name = "".join(
+        loc = "".join(
             [self.file_folder, str(datetime.now()), "_seasonal-decomp.png"])
+        # Seasonal decomposition with LOESS
         sm.tsa.STL(data).fit().plot().autofmt_xdate()
-        plt.savefig(name, transparent=True)
+        plt.savefig(loc, transparent=True)
 
-        return name
+        return loc
 
     def terminate(self):
         """Closes all lingering `matplotlib.pyplot` `Figure`s"""
