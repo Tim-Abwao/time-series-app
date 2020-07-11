@@ -101,11 +101,11 @@ def upload_file():
                     " in the 1st column could not be read as dates."
                 return render_template("upload.html", input_error=input_error)
 
-            if len(data) < 30:  # avoiding errors due to small samples
+            if (n := len(data)) < 30:  # avoiding errors due to small samples
                 # String concatenation is used to minimize the tab characters
                 # (indentation) that appear in the generated html text.
                 input_error = "Please try again... The uploaded file has " +\
-                 f"only {len(data)} values, but the minimum is set at 30."
+                 f"only {n} values, but the minimum is set at 30."
                 return render_template("upload.html", input_error=input_error)
 
             # Handling cases where date frequency can't be inferred, which
@@ -223,7 +223,7 @@ def create_sample():
 def heroku_timeout():
     """
     This creates the custom error page to be displayed if the app takes more
-    than 30 seconds (Heroku's limit) to process a request.
+    than 30 seconds (the limit at Heroku platform) to process a request.
     See https://devcenter.heroku.com/articles/error-codes#h12-request-timeout
     """
     return render_template('heroku_custom_503.htm')
