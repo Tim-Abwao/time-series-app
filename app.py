@@ -1,6 +1,5 @@
 from flask import Flask, render_template, url_for, request, redirect
-from ts_functions import TimeSeriesPredictions, TimeSeriesGraphs
-from ts_functions import clear_old_files
+from ts_functions import TimeSeriesResults, clear_old_files
 from werkzeug.utils import secure_filename
 from datetime import date, timedelta
 import pandas as pd
@@ -39,20 +38,16 @@ def get_ts_results(data):
     """
     time_series_results = {}
     # fitting the time series models
-    predictions = TimeSeriesPredictions(data)
-    time_series_results['results'] = results = predictions.results
-    time_series_results['sample'] = sample = predictions.sample
+    results_instance = TimeSeriesResults(data)
+    time_series_results['results'] = results = results_instance.results
+    time_series_results['sample'] = sample = results_instance.sample
     time_series_results['totals'] = sample.sum().round(2).to_numpy()
     results.to_csv('static/results.csv')
-    # removing old graphs
-    clear_old_files("png")
-    # plotting the current results
-    plots = TimeSeriesGraphs(data, results)
     time_series_results['graphs'] = {
-        "acf&pacf": plots.acf_pacf,
-        "lineplot": plots.lineplot,
-        "model_fit": plots.modelfit,
-        "seasonal_decomposition": plots.seasonal_decomposition
+        "acf&pacf": results_instance.acf_pacf,
+        "lineplot": results_instance.lineplot,
+        "model_fit": results_instance.modelfit,
+        "seasonal_decomposition": results_instance.seasonal_decomposition
     }
     return time_series_results
 

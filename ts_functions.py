@@ -24,11 +24,7 @@ def clear_old_files(extension, filepath="static/files/"):
 
 
 class TimeSeriesPredictions:
-    """A class of objects for fitting time series models and storing results"""
-
-    def __init__(self, data):
-        self.results = self.get_predictions(data).round(2)
-        self.sample = self.results.tail(14)
+    """A class of methods for fitting time series models"""
 
     def prediction_scope(self, data, coverage=0.6):
         """
@@ -41,9 +37,8 @@ class TimeSeriesPredictions:
         return start, end
 
     def fit_ts_models(self, data):
-        """
-        Fits various time series models on the data
-        """
+        """This fits various time series models on the data."""
+
         # AR model
         ar_model = sm.tsa.AutoReg(data, lags=10).fit()
 
@@ -68,7 +63,8 @@ class TimeSeriesPredictions:
         return ts_models
 
     def get_predictions(self, data) -> pd.DataFrame:
-        """Obtains prediction results for the fitted time series models"""
+        """Obtains forecast results for the fitted time series models."""
+
         predictions = {}
         models = self.fit_ts_models(data)
 
@@ -79,12 +75,18 @@ class TimeSeriesPredictions:
         return pd.DataFrame({'Actual Data': data, **predictions}).dropna()
 
 
-class TimeSeriesGraphs:
-    def __init__(self, data, results):
+class TimeSeriesResults(TimeSeriesPredictions):
+    """
+    The class of methods to compute and store time series forecasting results
+    """
+
+    def __init__(self, data):
+        self.results = super().get_predictions(data).round(2)
+        self.sample = self.results.tail(14)
         self.file_folder = "static/files/"
         self.acf_pacf = self.plot_acf_pacf(data)
         self.lineplot = self.plot_line(data)
-        self.modelfit = self.plot_model_fit(data, results)
+        self.modelfit = self.plot_model_fit(data, self.results)
         self.seasonal_decomposition = self.plot_seanonal_decomposition(data)
         self.terminate()
 
@@ -139,7 +141,7 @@ class TimeSeriesGraphs:
     def plot_seanonal_decomposition(self, data):
         """
         Performs basic seasonal decomposition, plots the various components,
-        saves the graphs as a png file, and returns their location.
+        saves the graphs as a png file, and returns its location.
         """
         loc = "".join(
             [self.file_folder, str(datetime.now()), "_seasonal-decomp.png"])
