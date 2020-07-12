@@ -38,6 +38,7 @@ def get_ts_results(data):
     """
     time_series_results = {}
     # fitting the time series models
+    clear_old_files('png')
     results_instance = TimeSeriesResults(data)
     time_series_results['results'] = results = results_instance.results
     time_series_results['sample'] = sample = results_instance.sample

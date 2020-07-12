@@ -1,4 +1,4 @@
-from ts_functions import TimeSeriesGraphs, TimeSeriesPredictions
+from ts_functions import TimeSeriesResults
 from ts_functions import clear_old_files
 from glob import glob
 import pandas as pd
@@ -7,7 +7,7 @@ import numpy as np
 
 def testing_file_cleaning():
     """
-    Checks that the `clear_old_files` function actually clears specified files
+    Checks that the `clear_old_files` function actually clears specified files.
     """
     # clearing any existing png files in the default directory 'static/files'
     clear_old_files("png")
@@ -24,8 +24,7 @@ def testing_file_cleaning():
 
 data = pd.Series(np.random.rand(50),
                  index=pd.date_range("2020-01-01", periods=50))
-predictions = TimeSeriesPredictions(data)
-Graphs = TimeSeriesGraphs(data, predictions.results)
+sample_results = TimeSeriesResults(data)
 
 
 def testing_ts_prediction():
@@ -33,15 +32,15 @@ def testing_ts_prediction():
     Checks if the `TimeSeriesPredictions` class methods make and save the
     required predictions.
     """
-    assert all(predictions.results.columns ==
+    assert all(sample_results.results.columns ==
                ["Actual Data", "AR", "ARMA", "Exponential Smoothing"])
     # ensuring the results cover 60% of the data (default defined in the model
     # fitting function)
-    assert len(predictions.results) == len(data) * 0.6
+    assert len(sample_results.results) == len(data) * 0.6
     # checking the sample's properties
-    assert all(predictions.sample.columns ==
+    assert all(sample_results.sample.columns ==
                ["Actual Data", "AR", "ARMA", "Exponential Smoothing"])
-    assert len(predictions.sample) == 14  # 14 is the default sample size
+    assert len(sample_results.sample) == 14  # 14 is the default sample size
 
 
 def testing_graphing_functions():
@@ -50,7 +49,7 @@ def testing_graphing_functions():
     graphs would be plotted, then graph names would be returned and set to
     their respective attribues.
     """
-    assert "_acf_pacf_plots.png" in Graphs.acf_pacf
-    assert "_line_plot.png" in Graphs.lineplot
-    assert "-AR.png" in "".join(Graphs.modelfit)
-    assert "_seasonal-decomp.png" in Graphs.seasonal_decomposition
+    assert "_acf_pacf_plots.png" in sample_results.acf_pacf
+    assert "_line_plot.png" in sample_results.lineplot
+    assert "-AR.png" in "".join(sample_results.modelfit)
+    assert "_seasonal-decomp.png" in sample_results.seasonal_decomposition
