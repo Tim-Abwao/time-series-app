@@ -15,15 +15,6 @@ app.config["MAX_CONTENT_LENGTH"] = 15 * 1024 * 1024
 glossary_data = pd.read_csv("static/glossary.csv").sort_values(by="title")
 glossary_data.reset_index(drop=True, inplace=True)
 
-frequencies = {
-    "D": "Days",
-    "B": "Business days",
-    "w": "Weeks",
-    "M": "Months",
-    "Q": "Quarters",
-    "Y": "Years",
-}
-
 
 def allowed_file(filename):
     """
@@ -152,8 +143,18 @@ def process_file(filename):
 
 @app.route("/sample", methods=["GET", "POST"])
 def create_sample():
-    today = date.today().isoformat()
-    month_later = (date.today() + timedelta(days=30)).isoformat()
+
+    sample_params = {'start': date.today().isoformat(),
+                     'end': (date.today() + timedelta(days=30)).isoformat(),
+                     'frequencies': {"D": "Days",
+                                     "B": "Business days",
+                                     "w": "Weeks",
+                                     "M": "Months",
+                                     "Q": "Quarters",
+                                     "Y": "Years",
+                                     }
+                     }
+
     if request.method == "POST":
         try:
             # collecting parameters from form
@@ -163,7 +164,7 @@ def create_sample():
             ar_order = int(request.form["ar_order"])
             ma_order = int(request.form["ma_order"])
         except KeyError:
-            start, stop = today, month_later
+            start, stop = sample_params['start'], sample_params['end']
             frequency, ar_order, ma_order = "D", 1, 1
 
         index = pd.date_range(start, stop, freq=frequency)
@@ -173,13 +174,11 @@ def create_sample():
         if size < 30:
             input_error = f"""
             Please try again... The generated sample has {size} value(s)
-            ({frequencies[frequency]}) between {start} and {stop}, but
-            the minimum sample size is set at 30."""
+            ({sample_params['frequencies'][frequency]}) between {start} and
+            {stop}, but the minimum sample size is set at 30."""
             return render_template(
                 "processing_sample.html",
-                frequencies=frequencies,
-                today=today,
-                month_later=month_later,
+                sample_params=sample_params,
                 input_error=input_error,
             )
 
@@ -200,18 +199,13 @@ def create_sample():
 
         return render_template(
             "processing_sample.html",
-            frequencies=frequencies,
-            today=today,
-            month_later=month_later,
+            sample_params=sample_params,
             input_error=input_error,
         )
 
     return render_template(
         "processing_sample.html",
-        sample=True,
-        frequencies=frequencies,
-        today=today,
-        month_later=month_later,
+        sample_params=sample_params
     )
 
 

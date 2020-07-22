@@ -23,17 +23,17 @@
 			{% endif %}
 
 			<label for="start_date"> Start Date: </label>
-			<input type="date" name="start_date" id="start_date" min='2020-01-01' max="{{ today }}" value="{{ today }}"
-				required><br>
+			<input type="date" name="start_date" id="start_date" min='2020-01-01' max="{{ sample_params['start'] }}"
+				value="{{ sample_params['start'] }}" required><br>
 
 			<label for="end_date">End date:</label>
-			<input type="date" name="end_date" id="end_date" min='{{ today }}' max="2038-01-01"
-				value="{{ month_later }}" required><br>
+			<input type="date" name="end_date" id="end_date" min='{{ sample_params['end'] }}' max="2038-01-01"
+				value="{{ sample_params['end'] }}" required><br>
 
 			<label for="frequency">Frequency:</label>
 			<select name="frequency" id="frequency">
-				{% for frequency in frequencies %}
-				<option value="{{ frequency }}">{{frequencies[frequency] }}</option>
+				{% for frequency in sample_params['frequencies'] %}
+				<option value="{{ frequency }}">{{ sample_params['frequencies'][frequency] }}</option>
 				{% endfor %}
 			</select><br>
 
