@@ -1,5 +1,5 @@
 from flask import Flask, render_template, url_for, request, redirect
-from ts_functions import TimeSeriesResults, clear_old_files
+from fit_time_series import TimeSeriesResults, clear_files
 from werkzeug.utils import secure_filename
 from datetime import date, timedelta
 import pandas as pd
@@ -38,7 +38,7 @@ def get_ts_results(data):
     """
     time_series_results = {}
     # fitting the time series models
-    clear_old_files('png')
+    clear_files('png')
     results_instance = TimeSeriesResults(data)
     time_series_results['results'] = results = results_instance.results
     time_series_results['sample'] = sample = results_instance.sample
@@ -80,7 +80,7 @@ def upload_file():
         # processing the file
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            clear_old_files("csv")  # removing outdated uploads
+            clear_files("csv")  # removing outdated uploads
             try:
                 data = pd.read_csv(file, index_col=0)
             except (pdParserError, UnicodeDecodeError):
