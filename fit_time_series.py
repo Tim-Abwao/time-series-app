@@ -9,6 +9,7 @@ import os
 # matplotlib configurations
 matplotlib.use("Agg")
 matplotlib.rcParams["figure.autolayout"] = True
+matplotlib.rcParams["figure.figsize"] = (8, 4.5)
 matplotlib.rcParams["legend.frameon"] = True
 plt = matplotlib.pyplot
 
@@ -109,7 +110,7 @@ class TimeSeriesResults(TimeSeriesPredictions):
         Plots the data, saves the graph as a png file, and returns its
         location.
         """
-        plt.figure(figsize=(8, 4.5))
+        plt.figure()
         plt.plot(data, color="navy")
         plt.xticks(rotation=30)
         plt.title("A line-plot of the data", size=15, pad=10)
@@ -124,19 +125,23 @@ class TimeSeriesResults(TimeSeriesPredictions):
         fitted, saves the graphs as png files, and returns a list of their
         locations.
         """
-        loc = []
+        fig = plt.figure(figsize=(8, 18))
+        i = 1
         for model, values in results.drop('Actual Data', axis=1).iteritems():
-            plt.figure(figsize=(8, 4.5))
+            fig.add_subplot(3, 1, i)
             plt.plot(data, label="Original", color="navy")
             plt.plot(values, label="Modelled", color="aqua")
-            plt.title(model + " Model Fit", size=15, pad=10)
+            plt.title(model + " Model Fit", size=15, pad=15)
             plt.xticks(rotation=30)
-            name = "".join(
-                [self.file_folder, str(datetime.now()), "-", model, ".png"])
-            loc.append(name)
-            plt.savefig(name, transparent=True)
+            plt.legend()
+            i += 1
 
-        return loc
+        name = "".join(
+            [self.file_folder, str(datetime.now()), "-model-fit.png"])
+
+        plt.savefig(name, transparent=True)
+
+        return name
 
     def _plot_seanonal_decomposition(self, data):
         """
