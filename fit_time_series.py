@@ -100,30 +100,30 @@ class TimeSeriesResults(TimeSeriesPredictions):
         ax1, ax2 = fig.add_subplot(211), fig.add_subplot(212)
         plot_acf(data.values, ax=ax1, color="navy")
         plot_pacf(data.values, ax=ax2, color="navy")
-        loc = self.file_folder + str(datetime.now()) + "_acf_pacf_plots.png"
-        plt.savefig(loc, transparent=True)
+        name = self._file_namer("acf_pacf_plots.png")
+        plt.savefig(name, transparent=True)
 
-        return loc
+        return name
 
     def _plot_line(self, data):
         """
         Plots the data, saves the graph as a png file, and returns its
-        location.
+        location(name).
         """
         plt.figure()
         plt.plot(data, color="navy")
         plt.xticks(rotation=30)
         plt.title("A line-plot of the data", size=15, pad=10)
-        loc = self.file_folder + str(datetime.now()) + "_line_plot.png"
-        plt.savefig(loc, transparent=True)
+        name = self._file_namer("line_plot.png")
+        plt.savefig(name, transparent=True)
 
-        return loc
+        return name
 
     def _plot_model_fit(self, data, results):
         """
         Plots the original and predicted values for each time series model
-        fitted, saves the graphs as png files, and returns a list of their
-        locations.
+        fitted, saves the graphs as a png file, and returns its locations
+        (name).
         """
         fig = plt.figure(figsize=(8, 18))
         i = 1
@@ -136,9 +136,7 @@ class TimeSeriesResults(TimeSeriesPredictions):
             plt.legend()
             i += 1
 
-        name = "".join(
-            [self.file_folder, str(datetime.now()), "-model-fit.png"])
-
+        name = self._file_namer("model-fit.png")
         plt.savefig(name, transparent=True)
 
         return name
@@ -146,15 +144,19 @@ class TimeSeriesResults(TimeSeriesPredictions):
     def _plot_seanonal_decomposition(self, data):
         """
         Performs basic seasonal decomposition, plots the various components,
-        saves the graphs as a png file, and returns its location.
+        saves the graphs as a png file, and returns its location(name).
         """
-        loc = "".join(
-            [self.file_folder, str(datetime.now()), "_seasonal-decomp.png"])
         # Seasonal decomposition with LOESS
         sm.tsa.STL(data).fit().plot().autofmt_xdate()
-        plt.savefig(loc, transparent=True)
+        name = self._file_namer("seasonal-decomp.png")
+        plt.savefig(name, transparent=True)
 
-        return loc
+        return name
+
+    def _file_namer(self, name):
+        """Names files such that they get saved in `self.file_folder`"""
+        return "".join(
+            [self.file_folder, str(datetime.now()), "_", name])
 
     def _terminate(self):
         """Closes all lingering `matplotlib.pyplot` `Figure`s"""

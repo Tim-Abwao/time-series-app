@@ -59,5 +59,5 @@ def testing_graphing_functions():
     """
     assert "_acf_pacf_plots.png" in sample_results.acf_pacf
     assert "_line_plot.png" in sample_results.lineplot
-    assert "-AR.png" in "".join(sample_results.modelfit)
+    assert "_model-fit.png" in "".join(sample_results.modelfit)
     assert "_seasonal-decomp.png" in sample_results.seasonal_decomposition
