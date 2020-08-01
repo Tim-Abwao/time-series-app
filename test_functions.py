@@ -40,14 +40,14 @@ def testing_ts_prediction():
     Checks if the `TimeSeriesPredictions` class methods `fit_ts_models` and
     `get_predictions` make and save the required predictions.
     """
-    assert all(sample_results.results.columns ==
-               ["Actual Data", "AR", "ARMA", "Exponential Smoothing"])
+    assert list(sample_results.results.columns) == \
+           ["Actual Data", "AR", "ARMA", "Exponential Smoothing"]
     # ensuring the results cover 60% of the data (default defined in the model
     # fitting function)
     assert len(sample_results.results) == len(data) * 0.6
     # checking the sample's properties
-    assert all(sample_results.sample.columns ==
-               ["Actual Data", "AR", "ARMA", "Exponential Smoothing"])
+    assert list(sample_results.sample.columns) == \
+           ["Actual Data", "AR", "ARMA", "Exponential Smoothing"]
     assert len(sample_results.sample) == 14  # 14 is the default sample size
 
 
