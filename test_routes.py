@@ -5,8 +5,12 @@ import pandas as pd
 import numpy as np
 import os
 
-_start_date = date.today().isoformat()
-_end_date = (date.today() + timedelta(days=30)).isoformat()
+sample_params = {
+    'start_date': date.today().isoformat(),
+    'end_date': (date.today() + timedelta(days=30)).isoformat(),
+    'frequency': "D",
+    'ar_order': 1,
+    'ma_order': 1}
 
 
 @pytest.fixture
@@ -67,17 +71,7 @@ def test_glossary_page(client):
 def test_sample_creation(client):
     """Testing the sample creation page"""
 
-    result = client.post(
-        "/sample",
-        data=dict(
-            start_date=_start_date,
-            end_date=_end_date,
-            frequency="D",
-            ar_order=1,
-            ma_order=1,
-        ),
-        follow_redirects=True,
-    )
+    result = client.post("/sample", data=sample_params, follow_redirects=True)
     assert b"Results for Sample" in result.data
     assert result.status_code == 200
 
@@ -85,17 +79,18 @@ def test_sample_creation(client):
 def test_small_sample_creation(client):
     """Testing if small samples are handled"""
 
-    result = client.post(
-        "/sample",
-        data=dict(
-            start_date=_start_date,
-            end_date=_end_date,
-            frequency="M",
-            ar_order=1,
-            ma_order=1,
-        ),
-        follow_redirects=True,
-    )
+    # there's only 1 month in 30 days, resulting in a very small sample
+    sample_params['frequency'] = 'M'
+    result = client.post("/sample", data=sample_params, follow_redirects=True)
     assert b"Please try again... The generated sample has 1 value" \
            in result.data
+    assert result.status_code == 200
+    sample_params['frequency'] = 'D'  # restoring the initial frequency
+
+
+def test_custom_error_page(client):
+    """Testing the Heroku-timeout-error custom page"""
+
+    result = client.get("/server_timeout")
+    assert b"Oops! The server timed out" in result.data
     assert result.status_code == 200

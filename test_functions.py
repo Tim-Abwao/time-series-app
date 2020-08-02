@@ -26,18 +26,9 @@ data = pd.Series(np.random.rand(50),
 sample_results = TimeSeriesResults(data)
 
 
-def test_prediction_scope():
-    """
-    Checks that the prediction scope is 60% (default), 30 values here since
-    len(data)=50 i.e. date index 20 to date index 50
-    """
-    assert sample_results._prediction_scope(data) == \
-        (data.index[20], data.index[-1])
-
-
 def testing_ts_prediction():
     """
-    Checks if the `TimeSeriesPredictions` class methods `fit_ts_models` and
+    Checks if the `TimeSeriesPredictions` class methods `fit_ts_models` &
     `get_predictions` make and save the required predictions.
     """
     assert list(sample_results.results.columns) == \

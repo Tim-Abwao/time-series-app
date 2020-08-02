@@ -12,11 +12,11 @@ def client():
         yield client
 
 
-okay_sample = pd.Series(np.random.randint(0, 100, 50),
+good_sample = pd.Series(np.random.randint(0, 100, 50),
                         index=pd.date_range('2020-01-01', periods=50))
-text_like_sample = pd.Series(list('abc') * 15)
-small_sample = okay_sample.iloc[:20]
-sample_without_date = okay_sample.reindex(f'ID_{i}' for i in range(50))
+non_numeric_sample = pd.Series(list('abc') * 15)
+small_sample = good_sample.iloc[:20]
+non_dated_sample = good_sample.reindex(f'ID_{i}' for i in range(50))
 
 
 def file_buffer(data):
@@ -31,7 +31,7 @@ def test_file_extension(client):
     """
     result = client.post(
         "/upload", content_type='multipart/form-data',
-        data={'file': (file_buffer(okay_sample), 'file.some_extension')},
+        data={'file': (file_buffer(good_sample), 'file.some_extension')},
         follow_redirects=True)
     assert b"A quick word about uploads..." in result.data
     assert result.status_code == 200
@@ -41,18 +41,17 @@ def test_valid_upload(client):
     """Testing if valid upload files are handled"""
     result = client.post(
         "/upload", content_type='multipart/form-data',
-        data={'file': (file_buffer(okay_sample), 'nyef.csv')},
+        data={'file': (file_buffer(good_sample), 'data.csv')},
         follow_redirects=True)
     assert b"Graphical Output" in result.data
     assert result.status_code == 200
 
 
 def test_small_size_uploads(client):
-    """Testing if uploads with few values are handled"""
+    """Testing if uploads with less values than required are handled"""
     result = client.post(
         "/upload", content_type='multipart/form-data',
-        data={'file': (file_buffer(small_sample), 'nyef.csv')},
-        follow_redirects=True)
+        data={'file': (file_buffer(small_sample), 'data.csv')})
     assert b"Please try again... The uploaded file has only 20 values"\
         in result.data
     assert result.status_code == 200
@@ -64,9 +63,8 @@ def test_non_numeric_uploads(client):
     handled.
     """
     result = client.post(
-        "/upload",
-        content_type='multipart/form-data',
-        data={'file': (file_buffer(text_like_sample), 'text_sample.csv')},
+        "/upload", content_type='multipart/form-data',
+        data={'file': (file_buffer(non_numeric_sample), 'non_numeric.csv')},
         follow_redirects=True)
     assert b"the values to be processed could not be converted to numbers." \
         in result.data
@@ -95,7 +93,7 @@ def test_uploads_without_dates(client):
     """
     result = client.post(
             "/upload", content_type='multipart/form-data',
-            data={'file': (file_buffer(sample_without_date), 'no_dates.csv')},
+            data={'file': (file_buffer(non_dated_sample), 'no_dates.csv')},
             follow_redirects=True)
     assert b"the values in the 1st column could not be read as dates." \
         in result.data
