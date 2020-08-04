@@ -18,9 +18,8 @@ def clear_files(extension, filepath="static/files/"):
     """
     Deletes files of {extension} format, from the {filepath} directory.
     """
-    files = glob("".join([filepath, "*.", extension]), recursive=True)
-    for file in files:
-        os.remove(file)
+    [os.remove(file) for file in glob("".join([filepath, "*.", extension]),
+                                      recursive=True)]
 
 
 class TimeSeriesPredictions:
@@ -37,43 +36,30 @@ class TimeSeriesPredictions:
         return start, end
 
     def _fit_ts_models(self, data):
-        """This fits various time series models on the data."""
-
-        # AR model
-        ar_model = sm.tsa.AutoReg(data, lags=10).fit()
-
-        # Holt-Winters Exponential Smoothing model
-        holtwint_exp_model = (
-          sm.tsa.ExponentialSmoothing(data, trend="add", seasonal="add")
-          .fit()
-        )
-
-        # ARMA model
-        try:  # Searching for an appropriate ARMA order
+        """
+        Fits various time series models on the data, and returns their
+        predictions as a dataframe.
+        """
+        scope = self._prediction_scope(data)
+        ts_predictions = {
+            "Exponential Smoothing": sm.tsa.ExponentialSmoothing(
+                data, trend="add", seasonal="add").fit().predict(*scope),
+            "AR": sm.tsa.AutoReg(data, lags=10).fit().predict(*scope)
+            }
+        # Searching for an appropriate ARMA order
+        try:
             arma_ic = sm.tsa.arma_order_select_ic(
                 data, ic="bic", trend="nc", fit_kw={"dist": 0}
             )
             arma_order = max(arma_ic.bic_min_order, (1, 1))
-            arma_model = sm.tsa.ARMA(data, arma_order).fit(disp=0)
-        except ValueError:  # raised if above arma model dfails to converge
+            ts_predictions['ARMA'] = sm.tsa.ARMA(data, arma_order).fit(disp=0)\
+                                       .predict(*scope)
+        except ValueError:  # raised if above arma model fails to converge
             # Explicitly attempt to fit an ARMA (1,1) model
-            arma_model = sm.tsa.ARMA(data, (1, 1)).fit(disp=0)
+            ts_predictions['ARMA'] = sm.tsa.ARMA(data, (1, 1)).fit(disp=0)\
+                                       .predict(*scope)
 
-        ts_models = {"AR": ar_model, "ARMA": arma_model,
-                     "Exponential Smoothing": holtwint_exp_model}
-        return ts_models
-
-    def _get_predictions(self, data) -> pd.DataFrame:
-        """Obtains forecast results for the fitted time series models."""
-
-        predictions = {}
-        models = self._fit_ts_models(data)
-
-        for name, model in models.items():
-            predicted_values = model.predict(*self._prediction_scope(data))
-            predictions[name] = predicted_values
-
-        return pd.DataFrame({'Actual Data': data, **predictions}).dropna()
+        return pd.DataFrame({'Actual Data': data, **ts_predictions}).dropna()
 
 
 class TimeSeriesResults(TimeSeriesPredictions):
@@ -82,7 +68,7 @@ class TimeSeriesResults(TimeSeriesPredictions):
     """
 
     def __init__(self, data):
-        self.results = super()._get_predictions(data).round(2)
+        self.results = super()._fit_ts_models(data).round(2)
         self.sample = self.results.tail(14)
         self.file_folder = "static/files/"
         self.acf_pacf = self._plot_acf_pacf(data)
@@ -96,8 +82,7 @@ class TimeSeriesResults(TimeSeriesPredictions):
         Produces the ACF & PACF graphs, saving them as a png file, and
         returning their location.
         """
-        fig = plt.figure(figsize=(8, 6))
-        ax1, ax2 = fig.add_subplot(211), fig.add_subplot(212)
+        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6))
         plot_acf(data.values, ax=ax1, color="navy")
         plot_pacf(data.values, ax=ax2, color="navy")
         name = self._file_namer("acf_pacf_plots.png")
@@ -155,8 +140,7 @@ class TimeSeriesResults(TimeSeriesPredictions):
 
     def _file_namer(self, name):
         """Names files such that they get saved in `self.file_folder`"""
-        return "".join(
-            [self.file_folder, str(datetime.now()), "_", name])
+        return f"{self.file_folder}{str(datetime.now())}_{name}"
 
     def _terminate(self):
         """Closes all lingering `matplotlib.pyplot` `Figure`s"""

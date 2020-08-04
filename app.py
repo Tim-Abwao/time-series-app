@@ -27,21 +27,21 @@ def get_ts_results(data):
     """
     A convenience funtion to nicely consolidate the output/results
     """
-    time_series_results = {}
-    # fitting the time series models
+    ts_results = {}
     clear_files('png')
+    # fitting the time series models
     results_instance = TimeSeriesResults(data)
-    time_series_results['results'] = results = results_instance.results
-    time_series_results['sample'] = sample = results_instance.sample
-    time_series_results['totals'] = sample.sum().round(2).to_numpy()
-    results.to_csv('static/results.csv')
-    time_series_results['graphs'] = {
+    ts_results['results'] = results = results_instance.results
+    ts_results['sample'] = sample = results_instance.sample
+    ts_results['totals'] = sample.sum().round(2).to_numpy()
+    ts_results['graphs'] = {
         "acf&pacf": results_instance.acf_pacf,
         "lineplot": results_instance.lineplot,
         "model_fit": results_instance.modelfit,
         "seasonal_decomposition": results_instance.seasonal_decomposition
     }
-    return time_series_results
+    results.to_csv('static/results.csv')
+    return ts_results
 
 
 @app.route("/")

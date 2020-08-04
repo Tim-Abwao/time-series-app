@@ -23,6 +23,7 @@ def testing_file_cleaning():
 
 data = pd.Series(np.random.rand(50),
                  index=pd.date_range("2020-01-01", periods=50))
+clear_files('png')
 sample_results = TimeSeriesResults(data)
 
 
@@ -32,13 +33,13 @@ def testing_ts_prediction():
     `get_predictions` make and save the required predictions.
     """
     assert list(sample_results.results.columns) == \
-           ["Actual Data", "AR", "ARMA", "Exponential Smoothing"]
+           ["Actual Data", "Exponential Smoothing", "AR", "ARMA"]
     # ensuring the results cover 60% of the data (default defined in the model
     # fitting function)
     assert len(sample_results.results) == len(data) * 0.6
     # checking the sample's properties
     assert list(sample_results.sample.columns) == \
-           ["Actual Data", "AR", "ARMA", "Exponential Smoothing"]
+           ["Actual Data", "Exponential Smoothing", "AR", "ARMA"]
     assert len(sample_results.sample) == 14  # 14 is the default sample size
 
 
