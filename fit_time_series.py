@@ -9,7 +9,6 @@ import os
 # matplotlib configurations
 matplotlib.use("Agg")
 matplotlib.rcParams["figure.autolayout"] = True
-matplotlib.rcParams["figure.figsize"] = (8, 4.5)
 matplotlib.rcParams["legend.frameon"] = True
 plt = matplotlib.pyplot
 
@@ -85,62 +84,51 @@ class TimeSeriesResults(TimeSeriesPredictions):
         fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6))
         plot_acf(data.values, ax=ax1, color="navy")
         plot_pacf(data.values, ax=ax2, color="navy")
-        name = self._file_namer("acf_pacf_plots.png")
-        plt.savefig(name, transparent=True)
-
-        return name
+        return self._save_graph("acf_pacf_plots.png")
 
     def _plot_line(self, data):
         """
         Plots the data, saves the graph as a png file, and returns its
-        location(name).
+        location.
         """
-        plt.figure()
+        plt.figure(figsize=(8, 4))
         plt.plot(data, color="navy")
         plt.xticks(rotation=30)
         plt.title("A line-plot of the data", size=15, pad=10)
-        name = self._file_namer("line_plot.png")
-        plt.savefig(name, transparent=True)
-
-        return name
+        return self._save_graph("line_plot.png")
 
     def _plot_model_fit(self, data, results):
         """
         Plots the original and predicted values for each time series model
-        fitted, saves the graphs as a png file, and returns its locations
-        (name).
+        fitted, saves the graphs as a png file, and returns its location.
         """
-        fig = plt.figure(figsize=(8, 18))
-        i = 1
+        fig = plt.figure(figsize=(8, 16))
+        idx = 1
         for model, values in results.drop('Actual Data', axis=1).iteritems():
-            fig.add_subplot(3, 1, i)
+            fig.add_subplot(3, 1, idx)
             plt.plot(data, label="Original", color="navy")
             plt.plot(values, label="Modelled", color="aqua")
             plt.title(model + " Model Fit", size=15, pad=15)
             plt.xticks(rotation=30)
             plt.legend()
-            i += 1
+            idx += 1
 
-        name = self._file_namer("model-fit.png")
-        plt.savefig(name, transparent=True)
-
-        return name
+        return self._save_graph("model-fit.png")
 
     def _plot_seanonal_decomposition(self, data):
         """
         Performs basic seasonal decomposition, plots the various components,
-        saves the graphs as a png file, and returns its location(name).
+        saves the graphs as a png file, and returns its location.
         """
         # Seasonal decomposition with LOESS
         sm.tsa.STL(data).fit().plot().autofmt_xdate()
-        name = self._file_namer("seasonal-decomp.png")
-        plt.savefig(name, transparent=True)
+        return self._save_graph("seasonal-decomp.png")
 
-        return name
-
-    def _file_namer(self, name):
-        """Names files such that they get saved in `self.file_folder`"""
-        return f"{self.file_folder}{str(datetime.now())}_{name}"
+    def _save_graph(self, name):
+        """Names and saves graphs in `self.file_folder`"""
+        filepath = f"{self.file_folder}{str(datetime.now())}_{name}"
+        plt.savefig(filepath, transparent=True)
+        return filepath
 
     def _terminate(self):
         """Closes all lingering `matplotlib.pyplot` `Figure`s"""
