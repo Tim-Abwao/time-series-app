@@ -18,106 +18,109 @@ glossary_data.reset_index(drop=True, inplace=True)
 
 def allowed_file(filename):
     """
-    Checks whether a file's extension is supported/allowed.
+    Check whether upload-file's extension is allowed.
     """
     return "." in filename and filename.rsplit(".", 1)[1].lower() in {"csv"}
 
 
 def get_ts_results(data):
     """
-    A convenience funtion to nicely consolidate the output/results
+    Parse results as a dict to pass to display in the html templates.
     """
-    ts_results = {}
-    clear_files('png')
-    # fitting the time series models
-    results_instance = TimeSeriesResults(data)
-    ts_results['results'] = results = results_instance.results
-    ts_results['sample'] = sample = results_instance.sample
-    ts_results['totals'] = sample.sum().round(2).to_numpy()
-    ts_results['graphs'] = {
-        "acf&pacf": results_instance.acf_pacf,
-        "lineplot": results_instance.lineplot,
-        "model_fit": results_instance.modelfit,
-        "seasonal_decomposition": results_instance.seasonal_decomposition
+    clear_files('svg')
+
+    result = TimeSeriesResults(data)
+    ts_results = {
+        'results': result.predictions,
+        'sample': result.predictions.tail(14),
+        'graphs': {
+            "acf&pacf": result.acf_pacf,
+            "lineplot": result.lineplot,
+            "model_fit": result.modelfit,
+            "seasonal_decomposition": result.seasonal_decomposition
+        }
     }
-    results.to_csv('static/results.csv')
+    ts_results['totals'] = ts_results['sample'].sum().to_numpy(),
+    ts_results['results'].to_csv('static/results.csv')
     return ts_results
 
 
 @app.route("/")
 def index():
+    """Home page."""
     return render_template("index.html")
 
 
 @app.route("/glossary")
 def glossary():
+    """Glossary page."""
     return render_template("glossary.html", definitions=glossary_data)
 
 
 @app.route("/upload", methods=["GET", "POST"])
 def upload_file():
+    """Process and save uploaded file."""
     if request.method == "POST":
-        # selecting the file part
         try:
             file = request.files["file"]
         except KeyError:
             return redirect(request.url)
 
-        # Ensuring the file exists (some browsers send an empty file part if
-        # no file is selected).
-        if file.filename == "":
+        if file.filename == "":  # if file not suplied to input form
             return redirect(request.url)
 
-        # processing the file
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            clear_files("csv")  # removing outdated uploads
+            clear_files("csv")  # remove all previous .csv uploads
+
+            # Parse file as a pandas dataframe
             try:
                 data = pd.read_csv(file, index_col=0)
-            except (pdParserError, UnicodeDecodeError):
-                # raised if the file isn't CSV
-                input_error = "Please try again... the uploaded file is not" +\
-                    " in standard CSV format."
+                if (n := len(data)) < 30:
+                    input_error = f"""Please try again... The uploaded file has
+                        only {n} values, but the minimum is set at 30."""
+                    return render_template("upload.html",
+                                           input_error=input_error)
+                if data.shape[1] < 1:
+                    input_error = """Please ensure that the data has a date
+                        column and at least one other column with numeric
+                        values."""
+                    return render_template("upload.html",
+                                           input_error=input_error)
+                data = data.iloc[:, -1]  # select last column for analysis
+
+                try:
+                    data = data.astype(float)
+                except ValueError:
+                    input_error = """Please try again... it seems the values
+                        to be processed could not be converted to numbers."""
+                    return render_template("upload.html",
+                                           input_error=input_error)
+                # Convert the index to datetime data type
+                try:
+                    data.index = pd.to_datetime(data.index)
+                except dtParserError:
+                    input_error = """Please try again... it seems that the
+                        values in the 1st column could not be read as dates."""
+                    return render_template("upload.html",
+                                           input_error=input_error)
+
+                # If date frequency can't be inferred, some statsmodels
+                # functions (e.g. seasonal_decompose) tend to break.
+                if pd.infer_freq(data.index) is None:
+                    input_error = """Please try again... a uniform date
+                        frequency which is needed in some of the time series
+                        functions used) could not be determined."""
+                    return render_template("upload.html",
+                                           input_error=input_error)
+
+                data.to_csv("static/files/" + filename)
+
+            except pdParserError:
+                input_error = """Please try again... the uploaded file could
+                    not be parsed as a CSV file."""
                 return render_template("upload.html", input_error=input_error)
 
-            try:
-                data.index = pd.to_datetime(data.index)
-            except (dtParserError, TypeError):
-                # raised if index can't be read as dates
-                input_error = "Please try again... it seems that the values" +\
-                    " in the 1st column could not be read as dates."
-                return render_template("upload.html", input_error=input_error)
-
-            if (n := len(data)) < 30:  # avoiding errors due to small samples
-                # String concatenation is used to minimize the tab characters
-                # (indentation) that appear in the generated html text.
-                input_error = "Please try again... The uploaded file has " +\
-                 f"only {n} values, but the minimum is set at 30."
-                return render_template("upload.html", input_error=input_error)
-
-            # Handling cases where date frequency can't be inferred, which
-            # breaks some statsmodels functions (e.g. seasonal_decompose)
-            if pd.infer_freq(data.index) is None:
-                input_error = "Please try again... a uniform date frequency" +\
-                 "(which is needed in some of the time series functions used)"\
-                 + "could not be determined."
-                return render_template("upload.html", input_error=input_error)
-
-            if data.shape[1] < 1:
-                input_error = "Please ensure that the data has a date column\
-                              and at least one other column."
-                return render_template("upload.html", input_error=input_error)
-
-            # saving the file, if it is valid
-            data = data.iloc[:, -1]  # selecting last column for analysis
-
-            try:
-                data = data.astype('float32')
-            except ValueError:
-                input_error = "Please try again... it seems the values to be"\
-                   + " processed could not be converted to numbers."
-                return render_template("upload.html", input_error=input_error)
-            data.to_csv("static/files/" + filename)
             return redirect(url_for("process_file", filename=filename))
 
     return render_template("upload.html")
@@ -125,25 +128,22 @@ def upload_file():
 
 @app.route("/processing_<filename>", methods=["GET", "POST"])
 def process_file(filename):
-    # importing data from uploaded file
+    """
+    Analyse uploaded data, and transmit results to html template.
+    """
     try:
         data = pd.read_csv("static/files/" + filename, index_col=0)
-        data = data.iloc[:, -1]  # selecting last column for analysis
         data.index = pd.to_datetime(data.index)
-    except (EmptyDataError, FileNotFoundError):  # raised if file wasn't saved
-        input_error = "Please try uploading the file again."
+    except (EmptyDataError, FileNotFoundError):
+        input_error = "Please try uploading the file once again."
         return render_template("upload.html", input_error=input_error)
-
-    return render_template(
-        "processing_file.html",
-        filename=filename,
-        **get_ts_results(data)
-    )
+    return render_template("processing_file.html", filename=filename,
+                           **get_ts_results(data))
 
 
 @app.route("/sample", methods=["GET", "POST"])
 def create_sample():
-
+    """Create and process sample time series data."""
     sample_params = {'start': date.today().isoformat(),
                      'end': (date.today() + timedelta(days=30)).isoformat(),
                      'frequencies': {"D": "Days",
@@ -157,7 +157,6 @@ def create_sample():
 
     if request.method == "POST":
         try:
-            # collecting parameters from form
             start = request.form["start_date"]
             stop = request.form["end_date"]
             frequency = request.form["frequency"]
@@ -168,52 +167,35 @@ def create_sample():
             frequency, ar_order, ma_order = "D", 1, 1
 
         index = pd.date_range(start, stop, freq=frequency)
-        size = len(index)
+        if n := len(index) < 30:
+            input_error = f"""Please try again... The generated sample has
+                {n} value(s) ({sample_params['frequencies'][frequency]})
+                between {start} and {stop}, but the minimum sample size is set
+                at 30."""
+            return render_template("processing_sample.html",
+                                   sample_params=sample_params,
+                                   input_error=input_error)
 
-        # Limit sample size to >= 30
-        if size < 30:
-            input_error = f"""
-            Please try again... The generated sample has {size} value(s)
-            ({sample_params['frequencies'][frequency]}) between {start} and
-            {stop}, but the minimum sample size is set at 30."""
-            return render_template(
-                "processing_sample.html",
-                sample_params=sample_params,
-                input_error=input_error,
-            )
-
-        # creating user-defined ARMA sample
         np.random.seed(123)
         ar = np.linspace(-0.9, 0.9, ar_order)
         ma = np.linspace(-1, 1, ma_order)
         arma_sample = arma_generate_sample(
-            ar, ma, size, scale=100, distrvs=np.random.standard_normal
+            ar, ma, len(index), scale=100, distrvs=np.random.standard_normal
         )
         data = pd.Series(arma_sample, index=index, name="Sample")
 
-        return render_template(
-            "processing_file.html",
-            filename="Sample",
-            **get_ts_results(data)
-        )
+        return render_template("processing_file.html", filename="Sample",
+                               **get_ts_results(data))
 
-        return render_template(
-            "processing_sample.html",
-            sample_params=sample_params,
-            input_error=input_error,
-        )
-
-    return render_template(
-        "processing_sample.html",
-        sample_params=sample_params
-    )
+    return render_template("processing_sample.html",
+                           sample_params=sample_params)
 
 
 @app.route("/server_timeout")
 def heroku_timeout():
     """
-    This creates the custom error page to be displayed if the app takes more
-    than 30 seconds (the limit at Heroku platform) to process a request.
+    Create the custom error page to be displayed if the app takes more
+    than 30 seconds to process a request.
     See https://devcenter.heroku.com/articles/error-codes#h12-request-timeout
     """
     return render_template('heroku_custom_503.htm')

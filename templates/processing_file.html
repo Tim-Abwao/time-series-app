@@ -51,25 +51,25 @@
 	</div>
 	<table>
 		<tr>
-			<td>Index</td>
-			<td>Actual Data</td>
-			<td>AR(Autoreg)</td>
-			<td>ARMA</td>
-			<td>Exponential Smoothing</td>
+			<th>Index</th>
+			<th>Actual Data</th>
+			<th>AR(Autoreg)</th>
+			<th>ARMA</th>
+			<th>Exponential Smoothing</th>
 		</tr>
 		{% for index, values in sample.iterrows() %}
 		<tr>
 			<td>{{ index }}</td>
-			<td>{{ values['Actual Data'] }}</td>
-			<td>{{ values['AR'] }}</td>
-			<td>{{ values['ARMA'] }}</td>
-			<td>{{ values['Exponential Smoothing'] }}</td>
+			<td>{{ values['Actual Data']|round(4) }}</td>
+			<td>{{ values['AR']|round(4) }}</td>
+			<td>{{ values['ARMA']|round(4) }}</td>
+			<td>{{ values['Exponential Smoothing']|round(4) }}</td>
 		</tr>
 		{% endfor %}
 		<tr>
 			<td><b>Totals</b></td>
-			{% for total in totals %}
-			<td><b>{{ total }}</b></td>
+			{% for total in totals[0] %}
+			<td><b>{{ total|round(4) }}</b></td>
 			{% endfor %}
 		</tr>
 	</table>
