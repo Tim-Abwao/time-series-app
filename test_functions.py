@@ -6,50 +6,36 @@ import numpy as np
 
 def testing_file_cleaning():
     """
-    Checks that the `clear_files` function actually clears specified files.
+    Check that the `clear_files` function actually clears specified files.
     """
-    # clearing any existing png files in the default directory 'static/files'
-    clear_files("png")
-    # checking that all png files there are gone
-    assert len(glob("static/files/*.png", recursive=True)) == 0
-    # creating a sample png file
+    clear_files("png", filepath='static/files')
     with open("static/files/sample.png", "wb") as file:
         file.write(b"...")
     assert len(glob("static/files/*.png", recursive=True)) == 1
-    # removing created png file
     clear_files("png")
     assert len(glob("static/files/*.png", recursive=True)) == 0
 
 
 data = pd.Series(np.random.rand(50),
                  index=pd.date_range("2020-01-01", periods=50))
-clear_files('png')
+clear_files('svg')
 sample_results = TimeSeriesResults(data)
 
 
 def testing_ts_prediction():
-    """
-    Checks if the `TimeSeriesPredictions` class methods `fit_ts_models` &
-    `get_predictions` make and save the required predictions.
-    """
-    assert list(sample_results.results.columns) == \
+    """Check if the predictions have required properties."""
+    # Each fitted model has a column
+    assert list(sample_results.predictions.columns) == \
            ["Actual Data", "Exponential Smoothing", "AR", "ARMA"]
-    # ensuring the results cover 60% of the data (default defined in the model
-    # fitting function)
-    assert len(sample_results.results) == len(data) * 0.6
-    # checking the sample's properties
-    assert list(sample_results.sample.columns) == \
-           ["Actual Data", "Exponential Smoothing", "AR", "ARMA"]
-    assert len(sample_results.sample) == 14  # 14 is the default sample size
+    # Predictions should cover 60% of the data
+    assert len(sample_results.predictions) == len(data) * 0.6
 
 
 def testing_graphing_functions():
     """
-    Checks if the `TimeSeriesResults` class methods run successfully. If they
-    do graphs would be plotted, then graph names would be returned and set to
-    their respective attribues.
+    Check if graphs were plotted and set to their respective attributes.
     """
-    assert "_acf_pacf_plots.png" in sample_results.acf_pacf
-    assert "_line_plot.png" in sample_results.lineplot
-    assert "_model-fit.png" in "".join(sample_results.modelfit)
-    assert "_seasonal-decomp.png" in sample_results.seasonal_decomposition
+    assert "_acf_pacf_plots.svg" in sample_results.acf_pacf
+    assert "_line_plot.svg" in sample_results.lineplot
+    assert "_model-fit.svg" in "".join(sample_results.modelfit)
+    assert "_seasonal-decomp.svg" in sample_results.seasonal_decomposition

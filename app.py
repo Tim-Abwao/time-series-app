@@ -116,9 +116,9 @@ def upload_file():
 
                 data.to_csv("static/files/" + filename)
 
-            except pdParserError:
-                input_error = """Please try again... the uploaded file could
-                    not be parsed as a CSV file."""
+            except (pdParserError, UnicodeDecodeError):
+                input_error = """Please try again... the uploaded file
+                    could not be parsed as a CSV file."""
                 return render_template("upload.html", input_error=input_error)
 
             return redirect(url_for("process_file", filename=filename))
@@ -132,7 +132,8 @@ def process_file(filename):
     Analyse uploaded data, and transmit results to html template.
     """
     try:
-        data = pd.read_csv("static/files/" + filename, index_col=0)
+        data = pd.read_csv("static/files/" + filename, index_col=0,
+                           squeeze=True)
         data.index = pd.to_datetime(data.index)
     except (EmptyDataError, FileNotFoundError):
         input_error = "Please try uploading the file once again."

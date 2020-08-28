@@ -26,75 +26,71 @@ def file_buffer(data):
 
 def test_file_extension(client):
     """
-    Testing that posting files without the .csv extension will result in a
-    redirect to the upload page.
+    Check if posting files without the .csv extension causes a redirect to the
+    upload page.
     """
-    result = client.post(
-        "/upload", content_type='multipart/form-data',
-        data={'file': (file_buffer(good_sample), 'file.some_extension')},
-        follow_redirects=True)
+    result = client.post("/upload", content_type='multipart/form-data',
+                         data={'file': (file_buffer(good_sample),
+                                        'file.some_extension')},
+                         follow_redirects=True)
     assert b"A quick word about uploads..." in result.data
     assert result.status_code == 200
 
 
 def test_valid_upload(client):
-    """Testing if valid upload files are handled"""
-    result = client.post(
-        "/upload", content_type='multipart/form-data',
-        data={'file': (file_buffer(good_sample), 'data.csv')},
-        follow_redirects=True)
+    """Check if valid upload files are processed."""
+    result = client.post("/upload", content_type='multipart/form-data',
+                         data={'file': (file_buffer(good_sample),
+                                        'data.csv')},
+                         follow_redirects=True)
     assert b"Graphical Output" in result.data
     assert result.status_code == 200
 
 
 def test_small_size_uploads(client):
-    """Testing if uploads with less values than required are handled"""
-    result = client.post(
-        "/upload", content_type='multipart/form-data',
-        data={'file': (file_buffer(small_sample), 'data.csv')})
-    assert b"Please try again... The uploaded file has only 20 values"\
-        in result.data
+    """Check if uploads with less values than required are handled."""
+    result = client.post("/upload", content_type='multipart/form-data',
+                         data={'file': (file_buffer(small_sample),
+                                        'data.csv')},
+                         follow_redirects=True)
+    assert b"but the minimum is set at 30" in result.data
     assert result.status_code == 200
 
 
 def test_non_numeric_uploads(client):
     """
-    Testing if uploads with data that can't be converted to `float` type are
+    Check if uploads with data that can't be converted to `float` type are
     handled.
     """
-    result = client.post(
-        "/upload", content_type='multipart/form-data',
-        data={'file': (file_buffer(non_numeric_sample), 'non_numeric.csv')},
-        follow_redirects=True)
-    assert b"the values to be processed could not be converted to numbers." \
-        in result.data
+    result = client.post("/upload", content_type='multipart/form-data',
+                         data={'file': (file_buffer(non_numeric_sample),
+                                        'non_numeric.csv')},
+                         follow_redirects=True)
+    assert b"could not be converted to numbers." in result.data
     assert result.status_code == 200
 
 
 def test_false_csv_uploads(client):
     """
-    Testing if uploads of a non-csv format but with the .csv file extension
+    Check if uploads of a non-csv format but with the .csv file extension
     are handled.
     """
     with open('static/ts.png', 'rb') as non_csv_file:
-        result = client.post(
-            "/upload", content_type='multipart/form-data',
-            data={'file': (non_csv_file, 'png_named_as.csv')},
-            follow_redirects=True)
-        assert b"the uploaded file is not in standard CSV format." \
-            in result.data
+        result = client.post("/upload", content_type='multipart/form-data',
+                             data={'file': (non_csv_file, 'png_named_as.csv')},
+                             follow_redirects=True)
+        assert b"could not be parsed as a CSV file" in result.data
         assert result.status_code == 200
 
 
 def test_uploads_without_dates(client):
     """
-    Testing if uploads for which the first column can't be parsed as dates
+    Check if uploads for which the first column can't be parsed as dates
     are handled.
     """
-    result = client.post(
-            "/upload", content_type='multipart/form-data',
-            data={'file': (file_buffer(non_dated_sample), 'no_dates.csv')},
-            follow_redirects=True)
-    assert b"the values in the 1st column could not be read as dates." \
-        in result.data
+    result = client.post("/upload", content_type='multipart/form-data',
+                         data={'file': (file_buffer(non_dated_sample),
+                                        'no_dates.csv')},
+                         follow_redirects=True)
+    assert b"could not be read as dates." in result.data
     assert result.status_code == 200
