@@ -41,41 +41,44 @@
 			practice, to achieve reliable results; models are selected based on the findings from a thorough exploratory
 			analysis of the data, and they often need several rounds of evaluation and fine-tuning.</blockquote>
 
-			<img src="{{ graphs['model_fit'] }}">
+		<img src="{{ graphs['model_fit'] }}">
 
 
 		<h2>2. Numerical output</h2>
 		<div class="info">
 			<p>A 14-period sample of the results, just to see how the numbers vary.</p>
 		</div>
+		<div style="overflow-x: auto;">
+			<table>
+				<tr>
+					<th>Index</th>
+					<th>Actual Data</th>
+					<th>AR(Autoreg)</th>
+					<th>ARMA</th>
+					<th>Exponential Smoothing</th>
+				</tr>
+				{% for index, values in sample.iterrows() %}
+				<tr>
+					<td>{{ index }}</td>
+					<td>{{ values['Actual Data']|round(4) }}</td>
+					<td>{{ values['AR']|round(4) }}</td>
+					<td>{{ values['ARMA']|round(4) }}</td>
+					<td>{{ values['Exponential Smoothing']|round(4) }}</td>
+				</tr>
+				{% endfor %}
+				<tr>
+					<td><b>Totals</b></td>
+					{% for total in totals[0] %}
+					<td><b>{{ total|round(4) }}</b></td>
+					{% endfor %}
+				</tr>
+			</table>
+		</div>
 	</div>
-	<table>
-		<tr>
-			<th>Index</th>
-			<th>Actual Data</th>
-			<th>AR(Autoreg)</th>
-			<th>ARMA</th>
-			<th>Exponential Smoothing</th>
-		</tr>
-		{% for index, values in sample.iterrows() %}
-		<tr>
-			<td>{{ index }}</td>
-			<td>{{ values['Actual Data']|round(4) }}</td>
-			<td>{{ values['AR']|round(4) }}</td>
-			<td>{{ values['ARMA']|round(4) }}</td>
-			<td>{{ values['Exponential Smoothing']|round(4) }}</td>
-		</tr>
-		{% endfor %}
-		<tr>
-			<td><b>Totals</b></td>
-			{% for total in totals[0] %}
-			<td><b>{{ total|round(4) }}</b></td>
-			{% endfor %}
-		</tr>
-	</table>
+
 	<a class="hvr-bob button" href="{{ url_for('static', filename='results.csv') }}">Download Results</a>
 	<footer>
-		<a class="hvr-bob button" href="/">Back to Home</a>
+		<a class="hvr-bob button" href="{{ url_for('index') }}">Back to Home</a>
 	</footer>
 </body>
 
