@@ -1,12 +1,11 @@
-from flask import Flask, render_template, url_for, request, redirect
-from fit_time_series import TimeSeriesResults, clear_files
-from werkzeug.utils import secure_filename
 from datetime import date, timedelta
-import pandas as pd
-from pandas.errors import EmptyDataError, ParserError as pdParserError
 from dateutil.parser import ParserError as dtParserError
-import numpy as np
-from statsmodels.tsa.arima_process import arma_generate_sample
+from flask import Flask, redirect, render_template, request, url_for
+from pandas.errors import EmptyDataError
+from pandas.errors import ParserError as pdParserError
+from werkzeug.utils import secure_filename
+from fit_time_series import TimeSeriesResults, clear_files, create_arma_sample
+import pandas as pd
 
 
 app = Flask(__name__)
@@ -76,7 +75,8 @@ def upload_file():
             # Parse file as a pandas dataframe
             try:
                 data = pd.read_csv(file, index_col=0)
-                if (n := len(data)) < 30:
+                n = len(data)
+                if n < 30:
                     input_error = f"""Please try again... The uploaded file has
                         only {n} values, but the minimum is set at 30."""
                     return render_template("upload.html",
@@ -168,7 +168,8 @@ def create_sample():
             frequency, ar_order, ma_order = "D", 1, 1
 
         index = pd.date_range(start, stop, freq=frequency)
-        if n := len(index) < 30:
+        n = len(index)
+        if n < 30:
             input_error = f"""Please try again... The generated sample has
                 {n} value(s) ({sample_params['frequencies'][frequency]})
                 between {start} and {stop}, but the minimum sample size is set
@@ -177,12 +178,7 @@ def create_sample():
                                    sample_params=sample_params,
                                    input_error=input_error)
 
-        np.random.seed(123)
-        ar = np.linspace(-0.9, 0.9, ar_order)
-        ma = np.linspace(-1, 1, ma_order)
-        arma_sample = arma_generate_sample(
-            ar, ma, len(index), scale=100, distrvs=np.random.standard_normal
-        )
+        arma_sample = create_arma_sample(ar_order, ma_order, size=n)
         data = pd.Series(arma_sample, index=index, name="Sample")
 
         return render_template("processing_file.html", filename="Sample",

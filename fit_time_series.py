@@ -1,9 +1,11 @@
 import pandas as pd
 from statsmodels.graphics.tsaplots import plot_pacf, plot_acf
+from statsmodels.tsa.arima_process import arma_generate_sample
 import statsmodels.api as sm
 import matplotlib
 from datetime import datetime
 from glob import glob
+import numpy as np
 import os
 
 # matplotlib configurations
@@ -19,6 +21,17 @@ def clear_files(extension, filepath="static/files/"):
     """
     files = glob("".join([filepath, "*.", extension]), recursive=True)
     [os.remove(file) for file in files]
+
+
+def create_arma_sample(ar_order, ma_order, size):
+    """Get an ARMA sample of order (ar_order, ma_order) and given size."""
+    np.random.seed(123)
+    ar = np.linspace(-0.9, 0.9, ar_order)
+    ma = np.linspace(-1, 1, ma_order)
+    arma_sample = arma_generate_sample(
+        ar, ma, size, scale=100, distrvs=np.random.standard_normal
+    )
+    return arma_sample
 
 
 class TimeSeriesPredictions:
