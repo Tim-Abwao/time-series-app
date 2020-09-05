@@ -3,24 +3,15 @@ from statsmodels.graphics.tsaplots import plot_pacf, plot_acf
 from statsmodels.tsa.arima_process import arma_generate_sample
 import statsmodels.api as sm
 import matplotlib
-from datetime import datetime
-from glob import glob
 import numpy as np
-import os
+from io import StringIO
+
 
 # matplotlib configurations
 matplotlib.use("Agg")
 matplotlib.rcParams["figure.autolayout"] = True
 matplotlib.rcParams["legend.frameon"] = True
 plt = matplotlib.pyplot
-
-
-def clear_files(extension, filepath="static/files/"):
-    """
-    Delete files of specified format from the supplied directory.
-    """
-    files = glob("".join([filepath, "*.", extension]), recursive=True)
-    [os.remove(file) for file in files]
 
 
 def create_arma_sample(ar_order, ma_order, size):
@@ -99,6 +90,7 @@ class TimeSeriesResults(TimeSeriesPredictions):
         self._plot_model_fit()
         self._plot_seanonal_decomposition()
         self._terminate()
+        self._get_results()
 
     def _plot_acf_pacf(self):
         """
@@ -145,11 +137,28 @@ class TimeSeriesResults(TimeSeriesPredictions):
 
     def _save_graph(self, name):
         """Give time-stamped names to matplotlib graphs, and save them."""
-        filepath = f"{self.save_dir}{str(datetime.now())}_{name}"
-        plt.savefig(filepath, transparent=True)
-        return filepath
+        file = StringIO()
+        plt.savefig(file, transparent=True, format='svg')
+        return file
 
     def _terminate(self):
         """Closes all lingering `matplotlib.pyplot` figures."""
 
         plt.close("all")
+
+    def _get_results(self):
+        """
+        Parse results as a dict to pass to display in the html templates.
+        """
+        ts_results = {
+            'results': self.predictions,
+            'sample': self.predictions.tail(14),
+            'graphs': {
+                "acf&pacf": self.acf_pacf,
+                "lineplot": self.lineplot,
+                "model_fit": self.modelfit,
+                "seasonal_decomposition": self.seasonal_decomposition
+            }
+        }
+        ts_results['totals'] = ts_results['sample'].sum().to_numpy(),
+        self.results = ts_results

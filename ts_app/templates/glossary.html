@@ -8,8 +8,8 @@
     
 
         <dl>
-        {% for index, item in definitions.iterrows() %}
-        <dt style="font-weight: bold;">{{ index + 1 }}. {{ item["title"]}}:
+        {% for item_name, item in definitions.iterrows() %}
+        <dt style="font-weight: bold;">{{ item_name }}:
         <dd style="margin-bottom: 20px;;">{{ item["definition"]}}</dd>
         </dt>
         {% endfor %}

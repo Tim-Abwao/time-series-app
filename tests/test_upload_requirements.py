@@ -1,5 +1,5 @@
 import pytest
-from app import app
+from ts_app.app import app
 import pandas as pd
 import numpy as np
 from io import BytesIO

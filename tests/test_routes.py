@@ -1,5 +1,5 @@
 import pytest
-from app import app
+from ts_app.app import app
 from datetime import date, timedelta
 import pandas as pd
 import numpy as np

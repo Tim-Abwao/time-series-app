@@ -1,4 +1,4 @@
-from fit_time_series import TimeSeriesResults, clear_files
+from ts_app.fit_time_series import TimeSeriesResults, clear_files
 from glob import glob
 import pandas as pd
 import numpy as np
