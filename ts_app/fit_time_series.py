@@ -3,6 +3,7 @@ from statsmodels.graphics.tsaplots import plot_pacf, plot_acf
 from statsmodels.tsa.arima_process import arma_generate_sample
 import statsmodels.api as sm
 import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
 from io import StringIO
 
@@ -11,7 +12,6 @@ from io import StringIO
 matplotlib.use("Agg")
 matplotlib.rcParams["figure.autolayout"] = True
 matplotlib.rcParams["legend.frameon"] = True
-plt = matplotlib.pyplot
 
 
 def create_arma_sample(ar_order, ma_order, size):
@@ -97,7 +97,7 @@ class TimeSeriesResults(TimeSeriesPredictions):
         """
         fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6))
         plot_acf(self.data.values, ax=ax1, color="navy")
-        plot_pacf(self.data.values, ax=ax2, color="navy")
+        plot_pacf(self.data.values, lags=12, ax=ax2, color="navy")
         self.acf_pacf = self._save_graph()
 
     def _plot_line(self):
