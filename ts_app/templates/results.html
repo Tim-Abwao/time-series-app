@@ -75,8 +75,10 @@
 			</table>
 		</div>
 	</div>
-
-	<!--a class="hvr-bob button" href="{{ url_for('static', filename='results.csv') }}">Download Results</a-->
+	<form id='csv_results' action="{{ url_for('csv_results') }}" method="POST">
+		<input type="hidden" name="csv" value="{{ results.to_csv() }}">
+		<button type="submit" class="hvr-bob button"> Download Results </button>
+	</form>
 	<footer>
 		<a class="hvr-bob button" href="{{ url_for('index') }}">Back to Home</a>
 	</footer>

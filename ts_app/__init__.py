@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, request, url_for
+from flask import Flask, redirect, render_template, request, url_for, Response
 from ts_app.fit_time_series import TimeSeriesResults as TS
 from ts_app.file_upload import process_upload
 from ts_app.ts_sample import sample_parameters, process_sample
@@ -6,7 +6,7 @@ import pandas as pd
 
 
 app = Flask("ts_app")
-app.config["MAX_CONTENT_LENGTH"] = 15 * 1024 * 1024
+app.config["MAX_CONTENT_LENGTH"] = 7 * 1024 * 1024  # 7MB limit
 
 glossary_data = pd.read_csv("data/glossary.csv", index_col=0).sort_index()
 
@@ -35,9 +35,8 @@ def upload_file():
             else:
                 return render_template('upload.html', input_error=error)
         ts_results = TS(data).results
-        return render_template("processing_file.html", filename=file_name,
+        return render_template("results.html", filename=file_name,
                                **ts_results)
-
     return render_template("upload.html")
 
 
@@ -51,9 +50,8 @@ def create_sample():
             return render_template('processing_sample.html', input_error=error,
                                    sample_params=sample_parameters)
         ts_results = TS(data).results
-        return render_template("processing_file.html", filename="Sample",
+        return render_template("results.html", filename="Sample",
                                **ts_results)
-
     return render_template("processing_sample.html",
                            sample_params=sample_parameters)
 
@@ -68,5 +66,8 @@ def heroku_timeout():
     return render_template('heroku_custom_503.htm')
 
 
-if __name__ == "__main__":
-    app.run()
+@app.route('/results.csv', methods=['POST'])
+def csv_results():
+    """Make results available for download as a CSV file"""
+    data = request.form['csv']
+    return Response(data, mimetype='text/csv')
