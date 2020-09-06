@@ -1,5 +1,5 @@
 import pytest
-from ts_app.app import app
+import ts_app as app
 import pandas as pd
 import numpy as np
 from io import BytesIO
@@ -7,8 +7,8 @@ from io import BytesIO
 
 @pytest.fixture
 def client():
-    app.config["TESTING"] = True
-    with app.test_client() as client:
+    app.app.config["TESTING"] = True
+    with app.app.test_client() as client:
         yield client
 
 
@@ -33,7 +33,7 @@ def test_file_extension(client):
                          data={'file': (file_buffer(good_sample),
                                         'file.some_extension')},
                          follow_redirects=True)
-    assert b"A quick word about uploads..." in result.data
+    assert b"No data to process" in result.data
     assert result.status_code == 200
 
 
@@ -68,19 +68,6 @@ def test_non_numeric_uploads(client):
                          follow_redirects=True)
     assert b"could not be converted to numbers." in result.data
     assert result.status_code == 200
-
-
-def test_false_csv_uploads(client):
-    """
-    Check if uploads of a non-csv format but with the .csv file extension
-    are handled.
-    """
-    with open('static/ts.png', 'rb') as non_csv_file:
-        result = client.post("/upload", content_type='multipart/form-data',
-                             data={'file': (non_csv_file, 'png_named_as.csv')},
-                             follow_redirects=True)
-        assert b"could not be parsed as a CSV file" in result.data
-        assert result.status_code == 200
 
 
 def test_uploads_without_dates(client):

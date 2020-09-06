@@ -26,7 +26,6 @@ def process_upload(request):
 
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        # clear_files("csv")  # remove all previous .csv uploads
 
         # Parse file as a pandas dataframe
         try:
@@ -52,19 +51,21 @@ def process_upload(request):
             # Convert the index to datetime data type
             try:
                 data.index = pd.to_datetime(data.index)
+
+                # If date frequency can't be inferred, some statsmodels
+                # functions (e.g. seasonal_decompose) tend to break.
+                if pd.infer_freq(data.index) is None:
+                    error = """Please try again... a uniform date
+                    frequency which is needed in some of the time series
+                    functions used) could not be determined."""
             except dtParserError:
                 error = """Please try again... it seems that the
                     values in the 1st column could not be read as dates."""
-
-            # If date frequency can't be inferred, some statsmodels
-            # functions (e.g. seasonal_decompose) tend to break.
-            if pd.infer_freq(data.index) is None:
-                error = """Please try again... a uniform date
-                    frequency which is needed in some of the time series
-                    functions used) could not be determined."""
 
         except (pdParserError, UnicodeDecodeError):
             error = """Please try again... the uploaded file
                 could not be parsed as a CSV file."""
 
+    if error is None and data is None:
+        error = "No data to process"
     return error, filename, data

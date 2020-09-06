@@ -84,7 +84,6 @@ class TimeSeriesResults(TimeSeriesPredictions):
 
     def __init__(self, data):
         super().__init__(data)
-        self.save_dir = "static/files/"
         self._plot_acf_pacf()
         self._plot_line()
         self._plot_model_fit()
@@ -99,7 +98,7 @@ class TimeSeriesResults(TimeSeriesPredictions):
         fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6))
         plot_acf(self.data.values, ax=ax1, color="navy")
         plot_pacf(self.data.values, ax=ax2, color="navy")
-        self.acf_pacf = self._save_graph("acf_pacf_plots.svg")
+        self.acf_pacf = self._save_graph()
 
     def _plot_line(self):
         """
@@ -109,7 +108,7 @@ class TimeSeriesResults(TimeSeriesPredictions):
         plt.plot(self.data, color="navy")
         plt.xticks(rotation=30)
         plt.title("A line-plot of the data", size=15, pad=10)
-        self.lineplot = self._save_graph("line_plot.svg")
+        self.lineplot = self._save_graph()
 
     def _plot_model_fit(self):
         """
@@ -125,7 +124,7 @@ class TimeSeriesResults(TimeSeriesPredictions):
             axs[idx].set_xticklabels(model_values[1].index, rotation=60)
 
         plt.legend()
-        self.modelfit = self._save_graph("model-fit.svg")
+        self.modelfit = self._save_graph()
 
     def _plot_seanonal_decomposition(self):
         """
@@ -133,9 +132,9 @@ class TimeSeriesResults(TimeSeriesPredictions):
         and save the graphs as an svg file.
         """
         sm.tsa.STL(self.data).fit().plot().autofmt_xdate()
-        self.seasonal_decomposition = self._save_graph("seasonal-decomp.svg")
+        self.seasonal_decomposition = self._save_graph()
 
-    def _save_graph(self, name):
+    def _save_graph(self):
         """Give time-stamped names to matplotlib graphs, and save them."""
         file = StringIO()
         plt.savefig(file, transparent=True, format='svg')
