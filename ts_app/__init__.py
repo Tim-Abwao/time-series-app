@@ -34,7 +34,9 @@ def upload_file():
                 return redirect(url_for('upload_file'))
             else:
                 return render_template('upload.html', input_error=error)
+
         ts_results = TS(data).results
+        ts_results['results'].to_csv('ts_app/static/results.csv')
         return render_template("results.html", filename=file_name,
                                **ts_results)
     return render_template("upload.html")
@@ -49,9 +51,12 @@ def create_sample():
         if error:
             return render_template('processing_sample.html', input_error=error,
                                    sample_params=sample_parameters)
+
         ts_results = TS(data).results
+        ts_results['results'].to_csv('ts_app/static/results.csv')
         return render_template("results.html", filename="Sample",
                                **ts_results)
+
     return render_template("processing_sample.html",
                            sample_params=sample_parameters)
 
