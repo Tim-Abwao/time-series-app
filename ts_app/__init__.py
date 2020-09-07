@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, request, url_for, Response
+from flask import Flask, redirect, render_template, request, url_for
 from ts_app.fit_time_series import TimeSeriesResults as TS
 from ts_app.file_upload import process_upload
 from ts_app.ts_sample import sample_parameters, process_sample
@@ -69,10 +69,3 @@ def heroku_timeout():
     See https://devcenter.heroku.com/articles/error-codes#h12-request-timeout
     """
     return render_template('heroku_custom_503.htm')
-
-
-@app.route('/results.csv', methods=['POST'])
-def csv_results():
-    """Make results available for download as a CSV file"""
-    data = request.form['csv']
-    return Response(data, mimetype='text/csv')
