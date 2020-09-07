@@ -79,7 +79,7 @@ class TimeSeriesPredictions:
 
 class TimeSeriesResults(TimeSeriesPredictions):
     """
-    Plot graphs to asses time series predictions.
+    Fit time series models, make predictions, and plot graphs to asses results.
     """
 
     def __init__(self, data):
@@ -147,7 +147,7 @@ class TimeSeriesResults(TimeSeriesPredictions):
 
     def _get_results(self):
         """
-        Parse results as a dict to pass to display in the html templates.
+        Parse results as a dict to pass to the html templates.
         """
         ts_results = {
             'results': self.predictions,

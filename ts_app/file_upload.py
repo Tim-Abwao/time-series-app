@@ -13,6 +13,7 @@ def allowed_file(filename):
 
 
 def process_upload(request):
+    """Get the data from the file uploaded in the given request."""
     error = None
     data = None
     filename = ''

@@ -16,6 +16,9 @@ sample_parameters = {'start': date.today().isoformat(),
 
 
 def process_sample(request):
+    """
+    Get sample data using parameters from the form in the given request.
+    """
     error = None
     data = None
     try:
