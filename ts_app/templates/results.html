@@ -14,7 +14,7 @@
 					manifest as peaks or troughs.</li>
 			</ul>
 		</div>
-		{{ graphs['lineplot'].getvalue()[155:]|safe }}
+		<div class="graph">{{ graphs['lineplot'].getvalue()[155:]|safe }}</div>
 		<div class="info">
 			<p><a href="https://en.wikipedia.org/wiki/Autocorrelation">Autocorrelation</a> and <a
 					href="https://en.wikipedia.org/wiki/Partial_autocorrelation_function">Partial-Autocorrelation </a>
@@ -23,7 +23,7 @@
 					article</a> describes how.</p>
 		</div>
 
-		{{ graphs['acf&pacf'].getvalue()[155:]|safe }}
+		<div class="graph">{{ graphs['acf&pacf'].getvalue()[155:]|safe }}</div>
 		<div class="info">
 			<p>Testing for stationarity, and filtering out seasonal & trend effects is an essential first step. Model
 				fitting usually requires that the time series data be <a
@@ -31,7 +31,7 @@
 				or involves transformations to make the data stationary.
 			</p>
 		</div>
-		{{ graphs['seasonal_decomposition'].getvalue()[155:]|safe }}
+		<div class="graph">{{ graphs['seasonal_decomposition'].getvalue()[155:]|safe }}</div>
 
 		<div class="info">
 			<p>Graphs are also useful in <b>assessing the goodness of fit</b>. In general, a good model should
@@ -41,7 +41,7 @@
 			practice, to achieve reliable results; models are selected based on the findings from a thorough exploratory
 			analysis of the data, and they often need several rounds of evaluation and fine-tuning.</blockquote>
 
-		{{ graphs['model_fit'].getvalue()[155:]|safe }}
+		<div class="graph">{{ graphs['model_fit'].getvalue()[155:]|safe }}</div>
 
 
 		<h2>2. Numerical output</h2>

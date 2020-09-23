@@ -121,7 +121,9 @@ class TimeSeriesResults(TimeSeriesPredictions):
             axs[idx].plot(self.data, label="Original", color="navy")
             axs[idx].plot(model_values[1], label="Modelled", color="aqua")
             axs[idx].set_title(model_values[0] + " Model Fit", size=15, pad=15)
-            axs[idx].set_xticklabels(model_values[1].index, rotation=60)
+            axs[idx].set_xticklabels(
+                model_values[1].index.strftime("%Y-%m-%d"), rotation=60
+            )
 
         plt.legend()
         self.modelfit = self._save_graph()
