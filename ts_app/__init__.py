@@ -1,7 +1,7 @@
 from flask import Flask, redirect, render_template, request, url_for
 from ts_app.fit_time_series import TimeSeriesResults as TS
 from ts_app.file_upload import process_upload
-from ts_app.ts_sample import sample_parameters, process_sample
+from ts_app.ts_sample import default_sample_params, process_sample_request
 import pandas as pd
 
 
@@ -46,11 +46,11 @@ def upload_file():
 def create_sample():
     """Create and process sample time series data."""
     if request.method == "POST":
-        error, data = process_sample(request)
+        error, data = process_sample_request(request)
 
         if error:
             return render_template('processing_sample.html', input_error=error,
-                                   sample_params=sample_parameters)
+                                   sample_params=default_sample_params)
 
         ts_results = TS(data).results
         ts_results['results'].to_csv('ts_app/static/results.csv')
@@ -58,7 +58,7 @@ def create_sample():
                                **ts_results)
 
     return render_template("processing_sample.html",
-                           sample_params=sample_parameters)
+                           sample_params=default_sample_params)
 
 
 @app.route("/server_timeout")

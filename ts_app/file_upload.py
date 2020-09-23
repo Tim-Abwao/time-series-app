@@ -1,7 +1,5 @@
-
 from werkzeug.utils import secure_filename
 import pandas as pd
-from pandas.errors import ParserError as pdParserError
 from dateutil.parser import ParserError as dtParserError
 
 
@@ -36,12 +34,12 @@ def process_upload(request):
                 error = f"""Please try again... The uploaded file has
                     only {n} values, but the minimum is set at 30."""
 
-            if data.shape[1] < 1:
+            try:
+                data = data.iloc[:, -1]  # select last column for analysis
+            except IndexError:
                 error = """Please ensure that the data has a date
                     column and at least one other column with numeric
                     values."""
-
-            data = data.iloc[:, -1]  # select last column for analysis
 
             try:
                 data = data.astype(float)
@@ -59,11 +57,11 @@ def process_upload(request):
                     error = """Please try again... a uniform date
                     frequency which is needed in some of the time series
                     functions used) could not be determined."""
-            except dtParserError:
+            except (dtParserError, TypeError):
                 error = """Please try again... it seems that the
                     values in the 1st column could not be read as dates."""
 
-        except (pdParserError, UnicodeDecodeError):
+        except (pd.errors.ParserError, UnicodeDecodeError):
             error = """Please try again... the uploaded file
                 could not be parsed as a CSV file."""
 

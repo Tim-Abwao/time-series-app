@@ -1,28 +1,13 @@
-import pandas as pd
-from statsmodels.graphics.tsaplots import plot_pacf, plot_acf
-from statsmodels.tsa.arima_process import arma_generate_sample
-import statsmodels.api as sm
+from io import StringIO
 import matplotlib
 import matplotlib.pyplot as plt
-import numpy as np
-from io import StringIO
-
+import pandas as pd
+import statsmodels.api as sm
 
 # matplotlib configurations
 matplotlib.use("Agg")
 matplotlib.rcParams["figure.autolayout"] = True
 matplotlib.rcParams["legend.frameon"] = True
-
-
-def create_arma_sample(ar_order, ma_order, size):
-    """Get an ARMA sample of order (ar_order, ma_order) and given size."""
-    np.random.seed(123)
-    ar = np.linspace(-0.9, 0.9, ar_order)
-    ma = np.linspace(-1, 1, ma_order)
-    arma_sample = arma_generate_sample(
-        ar, ma, size, scale=100, distrvs=np.random.standard_normal
-    )
-    return arma_sample
 
 
 class TimeSeriesPredictions:
@@ -96,8 +81,9 @@ class TimeSeriesResults(TimeSeriesPredictions):
         Plot ACF & PACF graphs of the data, and save them as an svg file.
         """
         fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6))
-        plot_acf(self.data.values, ax=ax1, color="navy")
-        plot_pacf(self.data.values, lags=12, ax=ax2, color="navy")
+        sm.graphics.tsa.plot_acf(self.data.values, ax=ax1, color="navy")
+        sm.graphics.tsa.plot_pacf(self.data.values, lags=12, ax=ax2,
+                                  color="navy")
         self.acf_pacf = self._save_graph()
 
     def _plot_line(self):
