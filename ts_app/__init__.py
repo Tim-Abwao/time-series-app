@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, request, url_for
+from flask import Flask, render_template, request
 from ts_app.fit_time_series import TimeSeriesResults as TS
 from ts_app.file_upload import process_upload
 from ts_app.ts_sample import default_sample_params, process_sample_request
@@ -30,10 +30,7 @@ def upload_file():
         error, file_name, data = process_upload(request)
 
         if error:
-            if error == "file absent":
-                return redirect(url_for('upload_file'))
-            else:
-                return render_template('upload.html', input_error=error)
+            return render_template('upload.html', input_error=error)
 
         ts_results = TS(data).results
         ts_results['results'].to_csv('ts_app/static/results.csv')
@@ -53,7 +50,8 @@ def create_sample():
                                    sample_params=default_sample_params)
 
         ts_results = TS(data).results
-        ts_results['results'].to_csv('ts_app/static/results.csv')
+        results_df = ts_results.pop('results')
+        results_df.to_csv('ts_app/static/results.csv')
         return render_template("results.html", filename="Sample",
                                **ts_results)
 

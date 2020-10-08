@@ -33,7 +33,7 @@ def test_file_extension(client):
                          data={'file': (file_buffer(good_sample),
                                         'file.some_extension')},
                          follow_redirects=True)
-    assert b"No data to process" in result.data
+    assert b"Please try again... no file has been received" in result.data
     assert result.status_code == 200
 
 
