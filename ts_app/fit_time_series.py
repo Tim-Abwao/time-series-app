@@ -4,8 +4,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import statsmodels.api as sm
 
+
 # matplotlib configurations
-matplotlib.use("Agg")
+matplotlib.use("svg")
 matplotlib.rcParams["figure.autolayout"] = True
 matplotlib.rcParams["legend.frameon"] = True
 
@@ -35,28 +36,23 @@ class TimeSeriesPredictions:
         """
         scope = self.prediction_range
         ts_predictions = {
-            "Exponential Smoothing": (sm.tsa.ExponentialSmoothing(
-                                        self.data, trend="add", seasonal="add"
-                                        ).fit()
-                                         .predict(*scope)),
+            "Exponential Smoothing": (sm.tsa.ExponentialSmoothing(self.data)
+                                        .fit()
+                                        .predict(*scope)),
             "AR": (sm.tsa.AutoReg(self.data, lags=10)
                      .fit()
                      .predict(*scope))
             }
+
         # Searching for appropriate ARMA order
-        try:
-            arma_ic = sm.tsa.arma_order_select_ic(self.data, ic="bic",
-                                                  trend="nc",
-                                                  fit_kw={"dist": 0})
-            # Set ARMA order order >= (1, 1)
-            arma_order = max(arma_ic.bic_min_order, (1, 1))
-            ts_predictions['ARMA'] = (sm.tsa.ARMA(self.data, arma_order)
-                                        .fit(disp=0)
-                                        .predict(*scope))
-        except ValueError:  # raised if above arma model fails to converge
-            ts_predictions['ARMA'] = (sm.tsa.ARMA(self.data, (1, 1))
-                                        .fit(disp=0)
-                                        .predict(*scope))
+        p, q = sm.tsa.arma_order_select_ic(
+                      self.data, ic="bic", max_ar=4, max_ma=4,
+                    ).bic_min_order
+        arma_order = (list(range(1, p+1)), 0, list(range(1, q+1)))
+        ts_predictions['ARMA'] = (sm.tsa.arima.ARIMA(
+                                        self.data, order=arma_order)
+                                    .fit()
+                                    .predict(*scope))
 
         self.predictions = pd.DataFrame({'Actual Data': self.data,
                                          **ts_predictions}).dropna()
@@ -104,12 +100,11 @@ class TimeSeriesResults(TimeSeriesPredictions):
         fig, axs = plt.subplots(3, 1, figsize=(8, 16))
         predictions = self.predictions.drop('Actual Data', axis=1)
         for idx, model_values in enumerate(predictions.iteritems()):
+            plt.xticks(rotation=60)
             axs[idx].plot(self.data, label="Original", color="navy")
             axs[idx].plot(model_values[1], label="Modelled", color="aqua")
             axs[idx].set_title(model_values[0] + " Model Fit", size=15, pad=15)
-            axs[idx].set_xticklabels(
-                model_values[1].index.strftime("%Y-%m-%d"), rotation=60
-            )
+            axs[idx].tick_params(axis='x', rotation=60)
 
         plt.legend()
         self.modelfit = self._save_graph()
