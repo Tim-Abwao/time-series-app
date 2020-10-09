@@ -1,12 +1,12 @@
 from io import StringIO
 import matplotlib
-import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
 import pandas as pd
 import statsmodels.api as sm
 
 
 # matplotlib configurations
-matplotlib.use("svg")
+matplotlib.use('svg')
 matplotlib.rcParams["figure.autolayout"] = True
 matplotlib.rcParams["legend.frameon"] = True
 
@@ -76,57 +76,60 @@ class TimeSeriesResults(TimeSeriesPredictions):
         """
         Plot ACF & PACF graphs of the data, and save them as an svg file.
         """
-        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6))
+        fig = Figure(figsize=(8, 6))
+        ax1, ax2 = fig.subplots(2, 1)
         sm.graphics.tsa.plot_acf(self.data.values, ax=ax1, color="navy")
         sm.graphics.tsa.plot_pacf(self.data.values, lags=12, ax=ax2,
                                   color="navy")
-        self.acf_pacf = self._save_graph()
+        self.acf_pacf = self._save_graph(fig)
 
     def _plot_line(self):
         """
         Plot the data, and save the graph as an svg file.
         """
-        plt.figure(figsize=(8, 4))
-        plt.plot(self.data, color="navy")
-        plt.xticks(rotation=30)
-        plt.title("A line-plot of the data", size=15, pad=10)
-        self.lineplot = self._save_graph()
+        fig = Figure(figsize=(8, 4))
+        ax = fig.subplots()
+        ax.plot(self.data, color="navy")
+        ax.tick_params(axis='x', rotation=30)
+        ax.set_title("A line-plot of the data", size=15, pad=10)
+        self.lineplot = self._save_graph(fig)
 
     def _plot_model_fit(self):
         """
         Plot the original and predicted values for each time series model
         fitted, and save the graph as an svg file.
         """
-        fig, axs = plt.subplots(3, 1, figsize=(8, 16))
+        fig = Figure(figsize=(8, 16))
+        axs = fig.subplots(3, 1)
         predictions = self.predictions.drop('Actual Data', axis=1)
         for idx, model_values in enumerate(predictions.iteritems()):
-            plt.xticks(rotation=60)
             axs[idx].plot(self.data, label="Original", color="navy")
             axs[idx].plot(model_values[1], label="Modelled", color="aqua")
             axs[idx].set_title(model_values[0] + " Model Fit", size=15, pad=15)
             axs[idx].tick_params(axis='x', rotation=60)
 
-        plt.legend()
-        self.modelfit = self._save_graph()
+        self.modelfit = self._save_graph(fig)
 
     def _plot_seanonal_decomposition(self):
         """
         Perform seasonal decomposition with LOESS, plot the various components,
         and save the graphs as an svg file.
         """
-        sm.tsa.STL(self.data).fit().plot().autofmt_xdate()
-        self.seasonal_decomposition = self._save_graph()
+        fig = sm.tsa.STL(self.data).fit().plot()
+        fig.autofmt_xdate()
+        self.seasonal_decomposition = self._save_graph(fig)
 
-    def _save_graph(self):
+    @staticmethod
+    def _save_graph(fig):
         """Give time-stamped names to matplotlib graphs, and save them."""
         file = StringIO()
-        plt.savefig(file, transparent=True, format='svg')
+        fig.savefig(file, transparent=True, format='svg')
         return file
 
     def _terminate(self):
         """Closes all lingering `matplotlib.pyplot` figures."""
 
-        plt.close("all")
+        # fig.close("all")
 
     def _get_results(self):
         """

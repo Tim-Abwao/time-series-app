@@ -18,7 +18,7 @@ default_sample_params = {
 
 def create_arma_sample(ar_order, ma_order, size):
     """Get an ARMA sample of order (ar_order, ma_order) and given size."""
-    np.random.seed(123)
+    np.random.seed(1234)
     ar = np.linspace(1, -0.9, ar_order+1)
     ma = np.linspace(1, 0.9, ma_order+1)
     return tsa.ArmaProcess(ar, ma).generate_sample(size)
