@@ -4,76 +4,52 @@
 
 <body>
 	<div class="content">
-		<h1>Results for {{ filename }}</h1>
-		<h2>1. Graphical Output:</h2>
+		<h1>Summary for {{ filename }}</h1>
+		<h2>1. Brief Exploratory Analysis</h2>
 		<div class="info">
-			<ul>
-				<li>Graphs help <b>visualise the trend</b> in the data; clearly revealing whether there's been
-					an increase, decrease or no change in the data values over time.</li>
-				<li>Graphs also help <b>discover seasonal and/or cyclic patterns</b> present in the data. These usually
-					manifest as peaks or troughs.</li>
-			</ul>
+			<p>Graphs help <b>visualise the trend</b> in the data. They clearly reveal whether there's been
+				an increase, decrease or no change in the data values over time.</p>
 		</div>
 		<div class="graph">{{ graphs['lineplot'].getvalue()[155:]|safe }}</div>
-		<div class="info">
-			<p><a href="https://en.wikipedia.org/wiki/Autocorrelation">Autocorrelation</a> and <a
-					href="https://en.wikipedia.org/wiki/Partial_autocorrelation_function">Partial-Autocorrelation </a>
-				plots can provide hints on a suitable model to start with. <a
-					href="https://en.wikipedia.org/wiki/Box%E2%80%93Jenkins_method#Autocorrelation_and_partial_autocorrelation_plots">This
-					article</a> describes how.</p>
-		</div>
 
-		<div class="graph">{{ graphs['acf&pacf'].getvalue()[155:]|safe }}</div>
 		<div class="info">
+			<p>Graphs also help <b>discover seasonal</b> and <b>cyclic patterns</b> present in the data. These usually
+				manifest as occasional peaks or troughs.</p>
 			<p>Testing for stationarity, and filtering out seasonal & trend effects is an essential first step. Model
 				fitting usually requires that the time series data be <a
 					href="https://cran.r-project.org/web/packages/TSTutorial/vignettes/Stationary.pdf">stationary</a>,
-				or involves transformations to make the data stationary.
+				and may even contain transformations to make the data stationary.
 			</p>
 		</div>
 		<div class="graph">{{ graphs['seasonal_decomposition'].getvalue()[155:]|safe }}</div>
 
 		<div class="info">
+			<p><a href="https://en.wikipedia.org/wiki/Autocorrelation">Autocorrelation</a> and <a
+					href="https://en.wikipedia.org/wiki/Partial_autocorrelation_function">Partial-Autocorrelation</a>
+				plots can provide hints on a potentially suitable model to start with. <a
+					href="https://en.wikipedia.org/wiki/Box%E2%80%93Jenkins_method#Autocorrelation_and_partial_autocorrelation_plots">This
+					article</a> describes how.</p>
+		</div>
+		<div class="graph">{{ graphs['acf&pacf'].getvalue()[155:]|safe }}</div>
+
+		<div class="info">
 			<p>Graphs are also useful in <b>assessing the goodness of fit</b>. In general, a good model should
 				reasonably replicate the behaviour of the data used.</p>
 		</div>
-		<blockquote><b>Note:</b> The results below are for automatically fitted models, with limited optimisation. In
-			practice, to achieve reliable results; models are selected based on the findings from a thorough exploratory
-			analysis of the data, and they often need several rounds of evaluation and fine-tuning.</blockquote>
 
-		<div class="graph">{{ graphs['model_fit'].getvalue()[155:]|safe }}</div>
+		<h2>2. ARMA Model Results</h2>
 
-
-		<h2>2. Numerical output</h2>
-		<div class="info">
-			<p>A 14-period sample of the results, just to see how the numbers vary.</p>
+		<blockquote><b>Note:</b> The results below are for an arbitrarily fitted model. In
+			practice, to achieve reliable results, models are selected based on the findings from a thorough exploratory
+			analysis of the data. And they often need several rounds of evaluation and fine-tuning.</blockquote>
+		<div class="graph">
+			{{ graphs['modelfit'].getvalue()[155:]|safe }}
 		</div>
-		<div style="overflow-x: auto;">
-			<table>
-				<tr>
-					<th>Index</th>
-					<th>Actual Data</th>
-					<th>AR(Autoreg)</th>
-					<th>ARMA</th>
-					<th>Exponential Smoothing</th>
-				</tr>
-				{% for index, values in sample.iterrows() %}
-				<tr>
-					<td>{{ index }}</td>
-					<td>{{ values['Actual Data']|round(4) }}</td>
-					<td>{{ values['AR']|round(4) }}</td>
-					<td>{{ values['ARMA']|round(4) }}</td>
-					<td>{{ values['Exponential Smoothing']|round(4) }}</td>
-				</tr>
-				{% endfor %}
-				<tr>
-					<td><b>Totals</b></td>
-					{% for total in totals[0] %}
-					<td><b>{{ total|round(4) }}</b></td>
-					{% endfor %}
-				</tr>
-			</table>
-		</div>
+		<h3 style="margin: 5% 25%;">Model Summary</h3>
+		<div class="graph">{{ model_summary | safe }} </div>
+		
+
+
 	</div>
 	<a class="hvr-bob button" href="{{ url_for('static', filename='results.csv')}}"> Download Results </a>
 	<footer>

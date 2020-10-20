@@ -19,7 +19,7 @@ class TimeSeriesPredictions:
     def __init__(self, data):
         self.data = data
         self._prediction_scope()
-        self._fit_ts_models()
+        self._fit_arma_models()
 
     def _prediction_scope(self, coverage=0.6):
         """
@@ -30,32 +30,23 @@ class TimeSeriesPredictions:
         end = self.data.index[-1]
         self.prediction_range = start, end
 
-    def _fit_ts_models(self):
+    def _fit_arma_models(self, max_ar=5, max_ma=5):
         """
         Fit time series models on the data, and get predictions as a dataframe.
         """
-        scope = self.prediction_range
-        ts_predictions = {
-            "Exponential Smoothing": (sm.tsa.ExponentialSmoothing(self.data)
-                                        .fit()
-                                        .predict(*scope)),
-            "AR": (sm.tsa.AutoReg(self.data, lags=10)
-                     .fit()
-                     .predict(*scope))
-            }
+        arma_order = (list(range(1, max_ar)), 0, list(range(1, max_ma)))
+        frequency = pd.infer_freq(self.data.index)
 
-        # Searching for appropriate ARMA order
-        p, q = sm.tsa.arma_order_select_ic(
-                      self.data, ic="bic", max_ar=4, max_ma=4,
-                    ).bic_min_order
-        arma_order = (list(range(1, p+1)), 0, list(range(1, q+1)))
-        ts_predictions['ARMA'] = (sm.tsa.arima.ARIMA(
-                                        self.data, order=arma_order)
-                                    .fit()
-                                    .predict(*scope))
+        arma_model = sm.tsa.arima.ARIMA(
+            self.data, order=arma_order, freq=frequency
+        ).fit()
+        ts_predictions = arma_model.predict(14)
 
-        self.predictions = pd.DataFrame({'Actual Data': self.data,
-                                         **ts_predictions}).dropna()
+        self.model_summary = arma_model.summary().as_html()
+        self.model_order = (arma_model.model_orders['ar'],
+                            arma_model.model_orders['ma'])
+        self.predictions = pd.DataFrame(
+            {'Actual Data': self.data, "Predictions": ts_predictions}).dropna()
 
 
 class TimeSeriesResults(TimeSeriesPredictions):
@@ -69,7 +60,6 @@ class TimeSeriesResults(TimeSeriesPredictions):
         self._plot_line()
         self._plot_model_fit()
         self._plot_seanonal_decomposition()
-        self._terminate()
         self._get_results()
 
     def _plot_acf_pacf(self):
@@ -96,17 +86,19 @@ class TimeSeriesResults(TimeSeriesPredictions):
 
     def _plot_model_fit(self):
         """
-        Plot the original and predicted values for each time series model
-        fitted, and save the graph as an svg file.
+        Plot the original and predicted values, and save the graph as an svg
+        file.
         """
-        fig = Figure(figsize=(8, 16))
-        axs = fig.subplots(3, 1)
-        predictions = self.predictions.drop('Actual Data', axis=1)
-        for idx, model_values in enumerate(predictions.iteritems()):
-            axs[idx].plot(self.data, label="Original", color="navy")
-            axs[idx].plot(model_values[1], label="Modelled", color="aqua")
-            axs[idx].set_title(model_values[0] + " Model Fit", size=15, pad=15)
-            axs[idx].tick_params(axis='x', rotation=60)
+        fig = Figure(figsize=(8, 4.5))
+        ax = fig.subplots(1, 1)
+        ax.plot(self.data, label="Original", color="navy")
+        ax.plot(self.predictions['Predictions'], label="Modelled",
+                color="aqua")
+        ax.tick_params(axis='x', rotation=30)
+        ax.set_title(f"An ARMA{self.model_order} model")
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        fig.legend()
 
         self.modelfit = self._save_graph(fig)
 
@@ -126,11 +118,6 @@ class TimeSeriesResults(TimeSeriesPredictions):
         fig.savefig(file, transparent=True, format='svg')
         return file
 
-    def _terminate(self):
-        """Closes all lingering `matplotlib.pyplot` figures."""
-
-        # fig.close("all")
-
     def _get_results(self):
         """
         Parse results as a dict to pass to the html templates.
@@ -138,11 +125,12 @@ class TimeSeriesResults(TimeSeriesPredictions):
         ts_results = {
             'results': self.predictions,
             'sample': self.predictions.tail(14),
+            'model_summary': self.model_summary,
             'graphs': {
                 "acf&pacf": self.acf_pacf,
                 "lineplot": self.lineplot,
-                "model_fit": self.modelfit,
-                "seasonal_decomposition": self.seasonal_decomposition
+                "modelfit": self.modelfit,
+                "seasonal_decomposition": self.seasonal_decomposition,
             }
         }
         ts_results['totals'] = ts_results['sample'].sum().to_numpy(),
