@@ -40,7 +40,7 @@ class TimeSeriesPredictions:
         arma_model = sm.tsa.arima.ARIMA(
             self.data, order=arma_order, freq=frequency
         ).fit()
-        ts_predictions = arma_model.predict(14)
+        ts_predictions = arma_model.predict(*self.prediction_range)
 
         self.model_summary = arma_model.summary().as_html()
         self.model_order = (arma_model.model_orders['ar'],

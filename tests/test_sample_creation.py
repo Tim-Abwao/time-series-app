@@ -21,7 +21,7 @@ sample_params = {
 def test_sample_creation(client):
     """Check sample creation page."""
     result = client.post("/sample", data=sample_params, follow_redirects=True)
-    assert b"Results for Sample" in result.data
+    assert b"Summary for Sample" in result.data
     assert result.status_code == 200
 
 

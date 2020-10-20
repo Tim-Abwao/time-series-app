@@ -35,10 +35,3 @@ def test_sample_page(client):
     result = client.get("/sample")
     assert b"Creating a sample" in result.data
     assert result.status_code == 200
-
-
-def test_custom_error_page(client):
-    """Check the Heroku-timeout-error custom page."""
-    result = client.get("/server_timeout")
-    assert b"Oops! The server timed out" in result.data
-    assert result.status_code == 200

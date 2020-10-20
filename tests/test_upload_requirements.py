@@ -43,7 +43,7 @@ def test_valid_upload(client):
                          data={'file': (file_buffer(good_sample),
                                         'data.csv')},
                          follow_redirects=True)
-    assert b"Graphical Output" in result.data
+    assert b"Brief Exploratory Analysis" in result.data
     assert result.status_code == 200
 
 

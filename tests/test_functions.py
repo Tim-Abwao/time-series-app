@@ -12,7 +12,7 @@ def testing_ts_prediction():
     """Check if the predictions have required properties."""
     # Each fitted model has a column
     assert list(sample_results.predictions.columns) == \
-           ["Actual Data", "Exponential Smoothing", "AR", "ARMA"]
+           ["Actual Data", "Predictions"]
     # Predictions should cover 60% of the data
     assert len(sample_results.predictions) == len(data) * 0.6
 
