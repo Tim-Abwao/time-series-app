@@ -11,8 +11,7 @@ default_sample_params = {
                     "B": "Business days",
                     "w": "Weeks",
                     "M": "Months",
-                    "Q": "Quarters",
-                    "Y": "Years"}
+                    "Q": "Quarters"}
 }
 
 
