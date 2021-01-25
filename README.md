@@ -30,6 +30,14 @@ To give it a try, [click here...][2]
 
 3. Starting the app:
 
+    You can use the convenient `run.sh` script:
+
+    ```bash
+    bash run.sh
+    ```
+
+    Or manually enter the commands:
+
     ```bash
     export FLASK_APP=ts_app
     export FLASK_ENV=development
