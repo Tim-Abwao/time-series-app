@@ -21,6 +21,7 @@
 				and may even contain transformations to make the data stationary.
 			</p>
 		</div>
+		{# The first 155 characters contain DOCTYPE and some unnecessary HTML, omitted by [155:] #}
 		<div class="graph">{{ graphs['seasonal_decomposition'].getvalue()[155:]|safe }}</div>
 
 		<div class="info">

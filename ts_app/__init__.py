@@ -33,7 +33,8 @@ def upload_file():
             return render_template('upload.html', input_error=error)
 
         ts_results = TS(data).results
-        ts_results['results'].to_csv('ts_app/static/results.csv')
+        results_df = ts_results.pop('results')
+        results_df.to_csv('ts_app/static/results.csv')
         return render_template("results.html", filename=file_name,
                                **ts_results)
     return render_template("upload.html")

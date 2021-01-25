@@ -66,7 +66,7 @@ def test_non_numeric_uploads(client):
                          data={'file': (file_buffer(non_numeric_sample),
                                         'non_numeric.csv')},
                          follow_redirects=True)
-    assert b"could not be converted to numbers." in result.data
+    assert b"could not be read as numbers." in result.data
     assert result.status_code == 200
 
 

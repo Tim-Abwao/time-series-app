@@ -16,7 +16,17 @@ default_sample_params = {
 
 
 def create_arma_sample(ar_order, ma_order, size):
-    """Get an ARMA sample of order (ar_order, ma_order) and given size."""
+    """Get an ARMA sample of order (ar_order, ma_order) and given size.
+
+    Parameters:
+    ----------
+    ar_order, ma_order, size: int
+        Values for the desired AR order, MA order and sample size.
+
+    Returns:
+    -------
+    An ARMA sample as a numpy array.
+    """
     np.random.seed(1234)
     ar = np.linspace(1, -0.9, ar_order+1)
     ma = np.linspace(1, 0.9, ma_order+1)
@@ -26,6 +36,15 @@ def create_arma_sample(ar_order, ma_order, size):
 def process_sample_request(request):
     """
     Get sample data using parameters from the form in the given request.
+
+    Parameters:
+    ----------
+    request: flask.Request
+        A Flask request object with data from the sample-creation-form.
+
+    Returns:
+    -------
+    A tuple, (error, data).
     """
     start = request.form["start_date"]
     stop = request.form["end_date"]
