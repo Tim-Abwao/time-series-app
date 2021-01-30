@@ -2,22 +2,32 @@
 <html>
 
 <head>
-	<title>{% block title %}{% endblock %}</title>
+	<title>{% block title %} Title {% endblock %}</title>
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='tstyle.css')}}">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style>
 		body {
 			background-image: url("{{ url_for('static', filename='background_large.jpg')}}");
+			margin: 5% 15%;
 		}
 
 		@media only screen and (max-width: 640px) {
 			body {
 				background-image: url("{{ url_for('static', filename='background_small.jpg') }}");
+				margin: 10%;
 			}
-		}
-		.graph {
-			overflow-x: auto;
 		}
 	</style>
 </head>
-{% block body %} Body content {% endblock %}
+
+<body>
+	{% block body %} Body content {% endblock %}
+	{% block footer %}
+	<footer>
+		<a class="hvr-bob button" href="{{ url_for('index') }}">Back to Home</a>
+		<a class="hvr-bob button" href="{{ url_for('glossary') }}">Browse Glossary</a>
+	</footer>
+	{% endblock %}
+</body>
+
+</html>

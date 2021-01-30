@@ -1,60 +1,52 @@
 {% extends 'base.html' %}
 {% block title %} Uploading Files {% endblock %}
+
 {% block body %}
+<h1>Uploading files</h1>
+<div>
+	<h3>A quick word about uploads...</h3>
+	<ul>
+		<li>Please upload files in CSV format</li>
+		<li>Files should be no larger than 7MB </li>
+		<li>The data should have at least 30 rows</li>
+		<li>The first column (index) should consist of dates, in standard formats</li>
+		<li>If there are more than 2 columns, the data to be processed should be in the last one</li>
 
-<body style="margin: auto; text-align: center;">
-	<h1>Uploading files</h1>
-	<div class="content" style="text-align: left;">
-		<h3>A quick word about uploads...</h3>
-		<ul>
-			<li>Please upload files in CSV format</li>
-			<li>Files should be no larger than 7MB </li>
-			<li>The data should have at least 30 rows</li>
-			<li>The first column (index) should consist of dates, in standard formats</li>
-			<li>If there are more than 2 columns, the data to be processed should be in the last one</li>
-			
-		</ul>
-	</div>
-	<p> For example,</p>
-	<table style="margin: auto; text-align: center;">
-		<tr>
-			<th>Date</th>
-			<th> ... </th>
-			<th>Data</th>
-		</tr>
-		<tr>
-			<td>2020-01-01</td>
-			<td> ... </td>
-			<td>140.25</td>
-		</tr>
-		<tr>
-			<td>2020-01-02</td>
-			<td> ... </td>
-			<td>187.50</td>
-		</tr>
-		<tr>
-			<td> ... </td>
-			<td> ... </td>
-			<td> ... </td>
-		</tr>
-	</table>
+	</ul>
+</div>
+<p> For example,</p>
+<table>
+	<tr>
+		<th>Date</th>
+		<th> ... </th>
+		<th>Data</th>
+	</tr>
+	<tr>
+		<td>2020-01-01</td>
+		<td> ... </td>
+		<td>140.25</td>
+	</tr>
+	<tr>
+		<td>2020-01-02</td>
+		<td> ... </td>
+		<td>187.50</td>
+	</tr>
+	<tr>
+		<td> ... </td>
+		<td> ... </td>
+		<td> ... </td>
+	</tr>
+</table>
 
-	<form method="post" enctype="multipart/form-data" action="{{ url_for('upload_file') }}">
-		<br>
-		{% if input_error %}
-		<p style="color: orangered; width: 60%; font-size: 0.8em; text-align: center; margin: auto;">
-			{{input_error}}
-		</p>
-		{% endif %}
-		<input type="file" name="file" accept=".csv">
-		<input class="button" type="submit" value="Upload">
+<form method="post" enctype="multipart/form-data" action="{{ url_for('upload_file') }}">
+	<br>
+	{% if input_error %}
+	<p class='input-error'>
+		{{input_error}}
+	</p>
+	{% endif %}
+	<input type="file" name="file" accept=".csv">
+	<input class="hbutton" type="submit" value="Upload">
 
-	</form>
-	<footer>
-		<a class="hvr-bob button" href="{{ url_for('index') }}">Back to Home</a>
-		<a class="hvr-bob button" href="{{ url_for('glossary') }}">Browse Glossary</a>
-	</footer>
-</body>
-
-</html>
+</form>
 {% endblock %}

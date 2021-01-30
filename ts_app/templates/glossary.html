@@ -1,21 +1,18 @@
 {% extends 'base.html' %}
 {% block title %} Glossary - Time Series Terms {% endblock %}
 {% block body %}
-
-<body>
-    <div class="content">
-        <h2>Glossary of Time Series Terms</h2>
-        <dl>
-            {% for item_name, item in definitions.iterrows() %}
-            <dt style="font-weight: bold;">{{ item_name }}:</dt>
-            <dd style="margin-bottom: 20px;;">{{ item["definition"]}}</dd>
-            {% endfor %}
-        </dl>
-    </div>
-
-    <footer>
-        <a class="hvr-bob button" href="{{ url_for('index')}}">Back to Home</a>
-    </footer>
-</body>
-
+<div class="content">
+    <h2>Glossary of Time Series Terms</h2>
+    <dl>
+        {% for item_name, item in definitions.iterrows() %}
+        <dt style="font-weight: bold;">{{ item_name }}:</dt>
+        <dd style="margin-bottom: 20px;;">{{ item["definition"]}}</dd>
+        {% endfor %}
+    </dl>
+</div>
+{% endblock %}
+{% block footer%}
+<footer>
+    <a class="hvr-bob button" href="{{ url_for('index')}}">Back to Home</a>
+</footer>
 {% endblock %}
