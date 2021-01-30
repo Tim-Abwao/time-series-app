@@ -1,6 +1,13 @@
-body {
-	background-color: rgba(192, 192, 192, 0.3);
-	font: oblique 1.25em Georgia;
+.dashboard {
+    font: oblique 1.2em Georgia, serif;
+	display: grid;
+	grid-template-columns: 1fr 3fr;
+    grid-template-rows: 1fr;
+    gap: 2%;
+}
+
+.side-bar p{
+    margin-bottom: 2px;
 }
 
 a {
@@ -11,6 +18,26 @@ a {
 a:hover {
 	text-decoration: none;
 	color: darkcyan;
+}
+
+h1 {
+    margin: 0% 5%;
+    font-style: oblique;
+}
+
+@media screen and (max-width:800px) {
+    .dashboard {
+        display: block;
+        margin: 5%;
+    }
+    .side-bar {
+        max-width: 70%;
+        margin: 5%;
+    }
+    .ts-app {
+        overflow-x: auto;
+        width: 700px;
+    }
 }
 
 .button {
@@ -26,71 +53,6 @@ a:hover {
 .button:hover {
 	background-color: #404040;
 	box-shadow: 5px 10px 10px black;
-}
-
-table {
-	max-width: 90%;
-	margin: 5%;
-	text-align: center;
-}
-
-th, td {
-	padding: 7px 14px;
-}
-
-tr:nth-child(even) {
-	background-color: rgb(119, 136, 153, 0.3);
-}
-
-input, select {
-	padding: 8px;
-	box-shadow: 4px 8px 10px grey;
-	margin: 15px;
-	width: 220px;
-	background-color: snow;
-}
-
-footer {
-	margin: 10% auto;
-}
-
-figure {
-	font-size: 80%;
-	margin: auto;
-	text-align: center;
-	
-}
-
-img {
-	width: 100%;
-}
-
-.info {
-	background-color: rgb(0, 0, 0, 0.1);
-	padding: 20px;
-	text-align: left;
-	border-radius: 5px;
-}
-
-.input-error {
-	color: orangered;
-	width: 60%;
-	font-size: 0.8em;
-	text-align: center;
-	margin: auto;
-}
-.graph {
-	overflow-x: auto;
-}
-
-@media screen and (min-width:1024px) {
-	body {
-		margin: 0% 18%;
-	}
-
-	img {
-		width: 80%;
-	}
 }
 
 /* Hover Bob */

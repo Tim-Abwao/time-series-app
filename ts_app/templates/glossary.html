@@ -4,9 +4,9 @@
 <div class="content">
     <h2>Glossary of Time Series Terms</h2>
     <dl>
-        {% for item_name, item in definitions.iterrows() %}
-        <dt style="font-weight: bold;">{{ item_name }}:</dt>
-        <dd style="margin-bottom: 20px;;">{{ item["definition"]}}</dd>
+        {% for item in definitions %}
+        <dt style="font-weight: bold;">{{ item['title'] }}:</dt>
+        <dd style="margin-bottom: 20px;;">{{ item['definition']}}</dd>
         {% endfor %}
     </dl>
 </div>
