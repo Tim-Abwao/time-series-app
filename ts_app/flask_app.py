@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect
 from ts_app.file_upload import process_upload
-from ts_app.dash_app import server
+from ts_app.index import server
 import json
 
 
@@ -34,7 +34,7 @@ def upload_file():
             return render_template('upload.html', input_error=error)
 
         data.rename(file_name).to_pickle('sample.pkl')  # persist data
-        return redirect('/dashboard')
+        return redirect('/dashboard/upload')
 
     return render_template("upload.html")
 
@@ -42,7 +42,7 @@ def upload_file():
 @server.route("/dashboard")
 def sample_dashboard():
     """Create and process sample time series data."""
-    return redirect("/dashboard")
+    return redirect("/dashboard/sample")
 
 
 @server.route("/server_timeout")
