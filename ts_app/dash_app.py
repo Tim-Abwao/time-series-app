@@ -2,8 +2,7 @@ from dash import Dash
 import dash_html_components as html
 import dash_core_components as dcc
 from dash.dependencies import Input, Output
-from ts_app.ts_sample import create_arma_sample
-from ts_app.fit_time_series import fit_arima_model
+from ts_app.ts_functions import fit_arima_model, create_arma_sample
 import plotly.graph_objs as go
 import pandas as pd
 import time
@@ -12,16 +11,20 @@ import time
 app = Dash(__name__, url_base_pathname='/dashboard/')
 server = app.server
 
-
-with open('ts_app/templates/dash_template.html') as text:
-    app.index_string = text.read()
+# Fetch page template
+with open('ts_app/templates/dash_template.html') as template:
+    app.index_string = template.read()
 
 
 app.layout = html.Div([
+    # Main title
     html.H1('Time Series Modelling'),
+
+    # Container for the dashboard - a 2 column grid
     html.Div(className='dashboard', children=[
+        # Side-bar with the parameter-selection menus
         html.Div(className='side-bar', children=[
-            # Sample parameters
+            # Sample parameter selectors
             html.Div(id='sample-params', children=[
                 html.H3('Sample parameters'),
                 # AR order dropdown
@@ -39,7 +42,7 @@ app.layout = html.Div([
                     options=[{'label': f'{i}', 'value': i}
                              for i in range(1, 5)])
             ]),
-            # Model parameters
+            # Model parameter selectors
             html.Div(id='model-params', children=[
                 html.H3('Model parameters'),
                 # AR order dropdown
@@ -65,30 +68,13 @@ app.layout = html.Div([
                              for i in range(1, 5)])
 
             ])
-        ],
+        ]),  # End of the side-bar
 
-        ),
-
+        # Graph container
         html.Div(className='graph', children=[
             html.Div(dcc.Graph(id='ts-graph')),
-            html.Div(id='details')
-        ])
-    ])
-])
-
-
-@app.callback(
-    Output('details', 'children'),
-    [Input('sample-ar', 'value'),
-     Input('sample-ma', 'value')]
-)
-def get_sample(ar_order, ma_order):
-    sample = create_arma_sample(ar_order, ma_order, size=100)
-
-    # Persist sample
-    sample.rename('sample').to_pickle('sample.pkl')
-
-    details = """
+            html.Div(id='details', children=[
+                dcc.Markdown("""
 Graphs help **visualise the trend** in the data. They clearly reveal whether
 there's been an increase, decrease or no change in the data values over time.
 
@@ -111,9 +97,32 @@ Stationary.pdf
 [2]: https://en.wikipedia.org/wiki/Autocorrelation
 [3]: https://en.wikipedia.org/wiki/Partial_autocorrelation_function
 [4]: https://en.wikipedia.org/wiki/Box%E2%80%93Jenkins_method#Autocorrelation\
-_and_partial_autocorrelation_plots
-"""
-    return dcc.Markdown(details)
+_and_partial_autocorrelation_plots""")
+            ])
+        ])
+    ])  # End of graph area
+
+])  # End of app layout definition
+
+
+@app.callback(
+    Output('details', 'title'),
+    [Input('sample-ar', 'value'),
+     Input('sample-ma', 'value')]
+)
+def get_sample(ar_order, ma_order):
+    """Create an ARMA sample with the given parameters.
+
+    Parameters:
+    ----------
+    ar_order, ma_order: int
+        AR order and MA order respectively.
+    """
+    sample = create_arma_sample(ar_order, ma_order, size=250)
+
+    # Persist sample
+    sample.rename('sample').to_pickle('sample.pkl')
+    return 'Summary'
 
 
 @app.callback(
@@ -125,11 +134,18 @@ _and_partial_autocorrelation_plots
      Input('sample-ma', 'value')]
 )
 def refit_arima_model(ar_order, ma_order, diff_order, sample_ar, sample_ma):
+    """Fit an ARIMA model each time a model parameter is modified.
+
+    Parameter:
+    ---------
+    ar_order, ma_order, diff_order, sample_ar, sample_ma: int
+        The AR order, MA order, Differencing order for the ARIMA model; and
+        the AR order and MA order for the sample."""
     time.sleep(1)
     sample = pd.read_pickle('sample.pkl')
-    predictions, forecast, _ = fit_arima_model(
-        sample, ar_order, ma_order, diff_order)
-
+    predictions, forecast = fit_arima_model(
+        sample, ar_order, ma_order, diff_order
+    )
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=sample.index, y=sample,
                              mode='lines', name='actual data'))

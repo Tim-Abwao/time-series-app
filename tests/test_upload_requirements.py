@@ -1,5 +1,5 @@
 import pytest
-import ts_app as app
+from ts_app import server
 import pandas as pd
 import numpy as np
 from io import BytesIO
@@ -7,8 +7,8 @@ from io import BytesIO
 
 @pytest.fixture
 def client():
-    app.app.config["TESTING"] = True
-    with app.app.test_client() as client:
+    server.config["TESTING"] = True
+    with server.test_client() as client:
         yield client
 
 
@@ -43,7 +43,7 @@ def test_valid_upload(client):
                          data={'file': (file_buffer(good_sample),
                                         'data.csv')},
                          follow_redirects=True)
-    assert b"Brief Exploratory Analysis" in result.data
+    assert b"Loading..." in result.data
     assert result.status_code == 200
 
 

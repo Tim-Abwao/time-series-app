@@ -1,11 +1,11 @@
 import pytest
-import ts_app as app
+from ts_app import server
 
 
 @pytest.fixture
 def client():
-    app.app.config["TESTING"] = True
-    with app.app.test_client() as client:
+    server.config["TESTING"] = True
+    with server.test_client() as client:
         yield client
 
 
@@ -27,11 +27,4 @@ def test_upload_page(client):
     """Check file upload page."""
     result = client.get("/upload")
     assert b"A quick word about uploads..." in result.data
-    assert result.status_code == 200
-
-
-def test_sample_page(client):
-    """Check sample creation page."""
-    result = client.get("/sample")
-    assert b"Creating a sample" in result.data
     assert result.status_code == 200
