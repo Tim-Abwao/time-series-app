@@ -94,29 +94,29 @@ def get_sample(ar_order, ma_order):
 
     # Persist sample
     sample.rename('sample').to_pickle('sample.pkl')
-    return 'Summary'
+    return 'details'
 
 
 @app.callback(
     Output('sample-graph', 'figure'),
     [Input('model-ar', 'value'),
-     Input('model-ma', 'value'),
      Input('model-diff', 'value'),
+     Input('model-ma', 'value'),
      Input('sample-ar', 'value'),
      Input('sample-ma', 'value')]
 )
-def refit_arima_model(ar_order, ma_order, diff_order, sample_ar, sample_ma):
+def refit_arima_model(ar_order, diff_order, ma_order, sample_ar, sample_ma):
     """Fit an ARIMA model each time a model parameter is modified.
 
     Parameter:
     ---------
-    ar_order, ma_order, diff_order, sample_ar, sample_ma: int
-        The AR order, MA order, Differencing order for the ARIMA model; and
+    ar_order, diff_order, ma_order, sample_ar, sample_ma: int
+        The AR order, Differencing order & MA order for the ARIMA model; and
         the AR order and MA order for the sample."""
     time.sleep(1)
     sample = pd.read_pickle('sample.pkl')
     predictions, forecast = fit_arima_model(
-        sample, ar_order, ma_order, diff_order
+        sample, ar_order, diff_order, ma_order
     )
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=sample.index, y=sample,

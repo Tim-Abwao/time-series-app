@@ -1,7 +1,7 @@
-from statsmodels.api import tsa
 from datetime import date
-import pandas as pd
+from statsmodels.api import tsa
 import numpy as np
+import pandas as pd
 
 
 def create_arma_sample(ar_order=1, ma_order=1, size=100):
@@ -16,14 +16,14 @@ def create_arma_sample(ar_order=1, ma_order=1, size=100):
     -------
     An ARMA sample as a pandas Series.
     """
-    ar = np.linspace(1, -0.9, ar_order+1)  # ar coefficients
-    ma = np.linspace(1, 0.9, ma_order+1)  # ma coefficients
+    ar = np.linspace(1, -0.9, ar_order+1)  # arbitrary ar coefficients
+    ma = np.linspace(1, 0.9, ma_order+1)  # arbitrary ma coefficients
     sample = tsa.ArmaProcess(ar, ma).generate_sample(size)
     index = pd.date_range(start=date.today(), periods=size, freq='D')
     return pd.Series(sample, index=index)
 
 
-def fit_arima_model(data, ar_order=1, ma_order=1, diff=0):
+def fit_arima_model(data, ar_order=1, diff=0, ma_order=1):
     """
     Fit an ARIMA model on the data and get predictions.
 
@@ -34,6 +34,11 @@ def fit_arima_model(data, ar_order=1, ma_order=1, diff=0):
     ar_order, ma_order, diff: int
         Values for the AR order, MA order and level of Differencing
         respectively.
+
+    Returns:
+    -------
+    A tuple of in-sample predictions covering the latter 30% of the data, and
+    a 14-period out-of-sample forecast; both as pandas Series.
     """
     arima_model = tsa.arima.ARIMA(
         data, order=(ar_order, diff, ma_order), freq='D'

@@ -1,6 +1,6 @@
-from werkzeug.utils import secure_filename
 import pandas as pd
 from dateutil.parser import ParserError as dtParserError
+from werkzeug.utils import secure_filename
 
 
 def allowed_file(filename):
@@ -8,6 +8,22 @@ def allowed_file(filename):
     Check whether the uploaded file's extension is allowed.
     """
     return "." in filename and filename.rsplit(".", 1)[1].lower() in {"csv"}
+
+
+def valid_csv(file):
+    """Check if the file can be parsed as a pandas Series.
+
+    Parameters:
+    ----------
+    file: file object
+    """
+    try:
+        pd.read_csv(file, index_col=0, nrows=5)
+        file.seek(0)  # Go back to file beginning
+        return True
+    except (pd.errors.ParserError, pd.errors.EmptyDataError,
+            UnicodeDecodeError):
+        return False
 
 
 def process_upload(request):
@@ -20,62 +36,51 @@ def process_upload(request):
 
     Returns:
     -------
-    A tuple, (error, filename, data).
+    The error, if present, or None if the upload is successful.
     """
     try:
         file = request.files["file"]  # get file in request data
-        error = None
     except KeyError:
-        file = ""
+        return "Please try again... no file has been received."
 
-    if file and allowed_file(file.filename):
-        # if a file is present, and it has the '.csv' extension
-        filename = secure_filename(file.filename)
+    if allowed_file(file.filename):
+        file_name = secure_filename(file.filename)
     else:
-        filename = ""
-        error = "Please try again... no file has been received."
-        data = []
-        return error, filename, data
+        return "Please try again... no CSV file detected."
 
-    # Parse valid upload as a pandas DataFrame
-    try:
+    if valid_csv(file):
         data = pd.read_csv(file, index_col=0)
+    else:
+        return """Please try again... the uploaded file could not be parsed
+                  as CSV."""
 
-        if (n := len(data)) < 30:
-            error = f"""Please try again... The uploaded file has only {n}
-                     values, but the minimum is set at 30."""
-            return error, filename, data
+    if (n := len(data)) < 30:
+        return f"""Please try again... The uploaded file has only {n} values,
+                   but the minimum is set at 30."""
 
-        try:
-            data = data.iloc[:, -1]  # select last column for analysis
-        except IndexError:
-            error = """Please ensure that the data has a date column and at
-                       least one other column with numeric values."""
+    try:
+        data = data.iloc[:, -1]  # select the last column for analysis
+    except IndexError:
+        return """Please ensure that the data has a date index and at least
+                  one other column with numeric values."""
 
-        try:
-            data = data.astype('float32')
-        except ValueError:
-            error = """Please try again... it seems the values to be processed
-                       could not be read as numbers."""
+    try:
+        data = data.astype('float32')
+    except ValueError:
+        return """Please try again... it seems the values to be processed
+                  could not be read as numbers."""
 
-        # Convert the index to a datetime index
-        try:
-            data.index = pd.to_datetime(data.index)
+    try:
+        data.index = pd.to_datetime(data.index)
+        # If date frequency can't be inferred, or is not consistent, some
+        # statsmodels functions tend to break.
+        if pd.infer_freq(data.index) is None:
+            return """Please try again... a uniform date frequency (which is
+                      needed in some of the time series functions used) could
+                      not be determined."""
+    except (dtParserError, ValueError):
+        return """Please try again... it seems that the values in the 1st
+                  column could not be read as dates."""
 
-            # If date frequency can't be inferred, some statsmodels
-            # functions (e.g. seasonal_decompose) tend to break.
-            if pd.infer_freq(data.index) is None:
-                error = """Please try again... a uniform date frequency (which
-                           is needed in some of the time series functions used)
-                           could not be determined."""
-        except (dtParserError, TypeError):
-            error = """Please try again... it seems that the values in the 1st
-                       column could not be read as dates."""
-
-    except (pd.errors.ParserError, UnicodeDecodeError):
-        # If the csv file can't be parsed as a pandas dataframe
-        error = """Please try again... the uploaded file could not be parsed
-                   as CSV."""
-        data = None
-
-    return error, filename, data
+    # Persist data if all check pass
+    data.rename(file_name).to_pickle('sample.pkl')

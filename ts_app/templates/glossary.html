@@ -5,7 +5,7 @@
     <h2>Glossary of Time Series Terms</h2>
     <dl>
         {% for item in definitions %}
-        <dt style="font-weight: bold;">{{ item['title'] }}:</dt>
+        <dt id="{{ item['title'] }}" style="font-weight: bold;">{{ item['title'] }}:</dt>
         <dd style="margin-bottom: 20px;;">{{ item['definition']}}</dd>
         {% endfor %}
     </dl>

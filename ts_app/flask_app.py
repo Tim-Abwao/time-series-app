@@ -1,7 +1,7 @@
-from flask import render_template, request, redirect
+import json
+from flask import redirect, render_template, request
 from ts_app.file_upload import process_upload
 from ts_app.index import server
-import json
 
 
 server.config["MAX_CONTENT_LENGTH"] = 7 * 1024 * 1024  # 7MB limit
@@ -28,12 +28,11 @@ def glossary():
 def upload_file():
     """Process and analyse uploaded file."""
     if request.method == "POST":
-        error, file_name, data = process_upload(request)
+        error = process_upload(request)
 
         if error:
             return render_template('upload.html', input_error=error)
 
-        data.rename(file_name).to_pickle('sample.pkl')  # persist data
         return redirect('/dashboard/upload')
 
     return render_template("upload.html")

@@ -1,11 +1,11 @@
-import dash_html_components as html
 import dash_core_components as dcc
-from dash.dependencies import Input, Output
-from ts_app.ts_functions import fit_arima_model
-import plotly.graph_objs as go
+import dash_html_components as html
 import pandas as pd
+import plotly.graph_objs as go
 import time
+from dash.dependencies import Input, Output
 from ts_app.dash_app import app
+from ts_app.ts_functions import fit_arima_model
 
 
 with open('ts_app/dashboards/details.md') as file:
@@ -62,20 +62,20 @@ layout = html.Div([
 @app.callback(
     Output('upload-graph', 'figure'),
     [Input('model-ar', 'value'),
-     Input('model-ma', 'value'),
-     Input('model-diff', 'value')]
+     Input('model-diff', 'value'),
+     Input('model-ma', 'value')]
 )
-def refit_arima_model(ar_order, ma_order, diff_order):
+def refit_arima_model(ar_order, diff_order, ma_order):
     """Fit an ARIMA model each time a model parameter is modified.
 
     Parameter:
     ---------
     ar_order, ma_order, diff_order: int
-        The AR order, MA order, Differencing order for the ARIMA model."""
+        The AR order, Differencing order & MA order for the ARIMA model."""
     time.sleep(1)
     sample = pd.read_pickle('sample.pkl')
     predictions, forecast = fit_arima_model(
-        sample, ar_order, ma_order, diff_order
+        sample, ar_order, diff_order, ma_order
     )
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=sample.index, y=sample,
