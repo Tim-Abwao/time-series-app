@@ -4,4 +4,4 @@ if [ -d venv ]
     then source venv/bin/activate
 fi
 
-gunicorn ts_app:server
+gunicorn -w 3 ts_app:server
