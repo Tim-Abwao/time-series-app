@@ -28,3 +28,17 @@ def test_upload_page(client):
     result = client.get("/upload")
     assert b"A quick word about uploads..." in result.data
     assert result.status_code == 200
+
+
+def test_sample_dashboard(client):
+    """Check sample dashboard page."""
+    result = client.get("/dashboard/")
+    assert b"Loading..." in result.data
+    assert result.status_code == 200
+
+
+def test_upload_dashboard(client):
+    """Check uploaded-file dashboard page."""
+    result = client.get("/dashboard/upload")
+    assert b"Loading..." in result.data
+    assert result.status_code == 200

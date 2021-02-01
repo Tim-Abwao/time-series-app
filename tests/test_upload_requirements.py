@@ -1,8 +1,8 @@
-import pytest
-from ts_app import server
-import pandas as pd
 import numpy as np
+import pandas as pd
+import pytest
 from io import BytesIO
+from ts_app import server
 
 
 @pytest.fixture
@@ -33,7 +33,7 @@ def test_file_extension(client):
                          data={'file': (file_buffer(good_sample),
                                         'file.some_extension')},
                          follow_redirects=True)
-    assert b"Please try again... no file has been received" in result.data
+    assert b"Please try again... no CSV file detected" in result.data
     assert result.status_code == 200
 
 
@@ -59,8 +59,8 @@ def test_small_size_uploads(client):
 
 def test_non_numeric_uploads(client):
     """
-    Check if uploads with data that can't be converted to `float` type are
-    handled.
+    Check if uploads with data that can't be converted to numeric `float` type
+    are handled.
     """
     result = client.post("/upload", content_type='multipart/form-data',
                          data={'file': (file_buffer(non_numeric_sample),

@@ -1,5 +1,5 @@
-from ts_app.ts_functions import create_arma_sample, fit_arima_model
 import pandas as pd
+from ts_app.ts_functions import create_arma_sample, fit_arima_model
 
 
 def test_sample_creation():
@@ -10,7 +10,7 @@ def test_sample_creation():
     assert default_sample.index.dtype == 'datetime64[ns]'
 
 
-def testing_ts_prediction():
+def test_ts_prediction():
     """Check if the predictions have required properties."""
     data = create_arma_sample()
     predictions, forecast = fit_arima_model(data)
