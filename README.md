@@ -4,7 +4,7 @@ A simple web app to learn a little about *[Time Series][1] analysis* and *foreca
 
 You can create a sample, or upload a file, and interactively fit a time series model on it. To give it a try, [click here...][2]
 
-![screencast of the app](data/dashboard.gif)
+![screencast of the app](dashboard.gif)
 
 ## Running locally
 
@@ -36,6 +36,13 @@ You can create a sample, or upload a file, and interactively fit a time series m
     bash run.sh
     ```
 
+    Or even [Docker][9]:
+
+    ```bash
+    docker build --tag ts_app .
+    docker run --name ts -p 8000:8000 --rm  ts_app
+    ```
+
 Afterwards, browse to [localhost:8000](http://127.0.0.1:8000) to interact with the web app.
 
 [1]: https://en.wikipedia.org/wiki/Time_series
@@ -46,3 +53,4 @@ Afterwards, browse to [localhost:8000](http://127.0.0.1:8000) to interact with t
 [6]: https://pandas.pydata.org
 [7]: https://numpy.org
 [8]: https://dash.plotly.com/
+[9]: https://www.docker.com/

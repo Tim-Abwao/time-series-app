@@ -6,7 +6,7 @@ from ts_app.index import server
 
 server.config["MAX_CONTENT_LENGTH"] = 7 * 1024 * 1024  # 7MB limit
 
-with open("data/glossary.json") as file:
+with open("ts_app/static/glossary.json") as file:
     glossary_data = json.load(file)
 
 glossary_data = sorted(glossary_data, key=lambda x: x['title'])
