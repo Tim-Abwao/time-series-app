@@ -1,3 +1,6 @@
 venv
 __pycache__
 *.pkl
+*.egg*
+dist/
+build/

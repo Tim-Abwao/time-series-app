@@ -3,11 +3,9 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 from ts_app.dash_app import app
 from ts_app.dashboards import sample_dashboard, upload_dashboard
+from ts_app.dashboards.dash_objects import template
 
-
-# Fetch page template
-with open('ts_app/templates/dash_template.html') as template:
-    app.index_string = template.read()
+app.index_string = template
 
 server = app.server
 

@@ -1,4 +1,10 @@
 venv
+__pycache__
 .git*
+*.gif
 *.pkl
 .pytest_cache
+*.pkl
+*.egg*
+dist/
+build/

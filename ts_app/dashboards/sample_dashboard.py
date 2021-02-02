@@ -6,10 +6,8 @@ import plotly.graph_objs as go
 import pandas as pd
 import time
 from ts_app.dash_app import app
+from ts_app.dashboards.dash_objects import ts_details
 
-
-with open('ts_app/dashboards/details.md') as file:
-    details = file.read()
 
 layout = html.Div([
     # Main title
@@ -69,7 +67,7 @@ layout = html.Div([
         html.Div(className='graph', children=[
             html.Div(dcc.Graph(id='sample-graph')),
             html.Div(id='details', children=[
-                dcc.Markdown(details)
+                dcc.Markdown(ts_details)
             ])
         ])
     ])  # End of graph area

@@ -4,22 +4,32 @@ A simple web app to learn a little about *[Time Series][1] analysis* and *foreca
 
 You can create a sample, or upload a file, and interactively fit a time series model on it. To give it a try, [click here...][2]
 
-![screencast of the app](dashboard.gif)
+![screencast of the app](https://raw.githubusercontent.com/Tim-Abwao/time-series-app/master/dashboard.gif)
 
-## Running locally
+## Installation
 
-### Prerequisites
+The easiest way to install the app is from [PyPI][3] using:
 
-- [Python][3] 3.8 and above. Packages used include [statsmodels][4], [flask][5], [dash][8], [pandas][6] and [NumPy][7].
+```bash
+pip install ts_app
+```
 
-1. Fetching necessary files:
+You can then use the command `ts_app` to start it, and `CTRL` + `C` to stop it.
+
+## Manual set up
+
+### 1. Using a virtual environment
+
+You'll need [Python][4] 3.8 and above. Packages used include [statsmodels][5], [flask][6], [dash][7], [pandas][8] and [NumPy][9].
+
+1. Fetch the necessary files:
 
     ```bash
     git clone https://github.com/Tim-Abwao/time-series-app.git
     cd time-series-app
     ```
 
-2. Setting up a virtual environment:
+2. Create the virtual environment:
 
     ```bash
     python3 -m venv venv
@@ -28,31 +38,53 @@ You can create a sample, or upload a file, and interactively fit a time series m
     pip install -r requirements.txt
     ```
 
-3. Starting the app:
+3. Start the app:
 
-    - You can use the convenient `run.sh` script:
+    You can use the convenient `run.sh` script:
 
-        ```bash
-        bash run.sh
-        ```
+    ```bash
+    bash run.sh
+    ```
 
-        then browse to [localhost:8000](http://127.0.0.1:8000) to interact with the web app.
+    then browse to [localhost:8000](http://127.0.0.1:8000) to interact with the web app.
 
-    - You can also use [Docker][9]:
+    Afterwards, use `CTRL` + `C` to stop it.
 
-        ```bash
-        docker build --tag ts_app .
-        docker run --name ts -d -p 8000:8000 --rm  ts_app
-        ```
+### 2. Using Docker
 
-        in which case the app will be running at <http://0.0.0.0:8000>.
+You'll need [Docker][10].
+
+1. Fetch the necessary files, just as above:
+
+    ```bash
+    git clone https://github.com/Tim-Abwao/time-series-app.git
+    cd time-series-app
+    ```
+
+2. Build an image for the app and run it in a container,
+
+    ```bash
+    docker build --tag ts_app .
+    docker run --name ts -d -p 8000:8000 --rm  ts_app
+    ```
+
+    in which case the app will be running at <http://0.0.0.0:8000>.
+
+    Afterwards, use
+
+    ```bash
+    docker stop ts
+    ```
+
+    to terminate it.
 
 [1]: https://en.wikipedia.org/wiki/Time_series
 [2]: https://time-series-app.herokuapp.com
-[3]: https://www.python.org "The Python programming language"
-[4]: https://www.statsmodels.org/stable/index.html
-[5]: https://flask.palletsprojects.com/en/1.1.x/
-[6]: https://pandas.pydata.org
-[7]: https://numpy.org
-[8]: https://dash.plotly.com/
-[9]: https://www.docker.com/
+[3]: https://pypi.org/
+[4]: https://www.python.org "The Python programming language"
+[5]: https://www.statsmodels.org/stable/index.html
+[6]: https://flask.palletsprojects.com/en/1.1.x/
+[7]: https://dash.plotly.com/
+[8]: https://pandas.pydata.org
+[9]: https://numpy.org
+[10]: https://www.docker.com/
