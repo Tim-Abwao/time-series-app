@@ -1,5 +1,7 @@
 # Time Series App
 
+[![PyPI version](https://badge.fury.io/py/ts-app.svg)](https://badge.fury.io/py/ts-app)
+
 A simple web app to learn a little about *[Time Series][1] analysis* and *forecasting*.
 
 You can create a sample, or upload a file, and interactively fit a time series model on it. To give it a try, [click here...][2]

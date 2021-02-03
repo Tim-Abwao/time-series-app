@@ -1,1 +1,1 @@
-web: gunicorn -w 3 ts_app:server
+web: waitress-serve --port=$PORT ts_app:server

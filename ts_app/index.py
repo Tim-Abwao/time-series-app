@@ -2,17 +2,21 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 from ts_app.dash_app import app
-from ts_app.dashboards import sample_dashboard, upload_dashboard
-from ts_app.dashboards.dash_objects import template
+from ts_app.dashboards import sample_dashboard, model_dashboard
+from ts_app.dashboards.dashboard_resources import template
+
 
 app.index_string = template
 
 server = app.server
 
-app.layout = html.Div([
-    dcc.Location(id='url', refresh=False),
-    html.Div(id='page-content')
-])
+
+def serve_layout():
+    return html.Div([dcc.Location(id='url', refresh=False),
+                     html.Div(id='page-content')])
+
+
+app.layout = serve_layout
 
 
 @app.callback(Output('page-content', 'children'),
@@ -25,7 +29,7 @@ def display_page(path_name):
     path_name: str
     """
     if path_name == '/dashboard/upload':
-        return upload_dashboard.layout
+        return model_dashboard.layout
     else:
         return sample_dashboard.layout
 

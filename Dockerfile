@@ -7,4 +7,5 @@ RUN pip install --upgrade pip && \
     --default-timeout=120  
 COPY ts_app ./ts_app
 EXPOSE 8000
-CMD gunicorn -w 3 -b 0.0.0.0:8000 ts_app:server 
+CMD waitress-serve --listen=0.0.0.0:8000 ts_app:server
+ 

@@ -1,4 +1,3 @@
-import json
 from flask import redirect, render_template, request
 from ts_app.file_upload import process_upload
 from ts_app.index import server
@@ -40,13 +39,3 @@ def upload_file():
 def sample_dashboard():
     """Create and process sample time series data."""
     return redirect("/dashboard/sample")
-
-
-@server.route("/server_timeout")
-def heroku_timeout():
-    """
-    Create the custom error page to be displayed if the app takes more
-    than 30 seconds to process a request.
-    See https://devcenter.heroku.com/articles/error-codes#h12-request-timeout
-    """
-    return render_template('heroku_custom_503.htm')

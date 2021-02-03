@@ -83,4 +83,4 @@ def process_upload(request):
                   column could not be read as dates."""
 
     # Persist data if all check pass
-    data.rename(file_name).to_pickle('sample.pkl')
+    data.rename(file_name).to_pickle('ts-app-data.temp')

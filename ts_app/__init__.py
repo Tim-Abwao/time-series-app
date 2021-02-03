@@ -1,19 +1,18 @@
 from ts_app.flask_app import server
 import os
-import subprocess
-
-
-app = server
+from waitress import serve
+import webbrowser
 
 
 def run_app():
-    """Launch the app using gunicorn's command line script."""
-    try:
-        print('Launching Time Series App using gunicorn...')
-        subprocess.run(['gunicorn', '-w', '3', 'ts_app:app'])
-    except KeyboardInterrupt:
-        print('Time Series App stopped!')
-        
-        # Remove the cached sample file 
-        if os.path.exists('sample.pkl'):
-            os.remove('sample.pkl')
+    """Start the app server, and launch a browser to view it."""
+
+    # Open a tab in default browser and point it to the app
+    webbrowser.open('http://localhost:8000')
+
+    # Serve the app using waitress
+    serve(server, host='localhost', port=8000)
+
+    # Remove the temporary data store
+    if os.path.isfile('ts-app-data.temp'):
+        os.remove('ts-app-data.temp')

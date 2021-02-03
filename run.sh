@@ -4,4 +4,4 @@ if [ -d venv ]
     then source venv/bin/activate
 fi
 
-gunicorn -w 3 ts_app:server
+waitress-serve --listen=127.0.0.1:8000 ts_app:server

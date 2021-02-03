@@ -1,24 +1,16 @@
 import dash_html_components as html
 import dash_core_components as dcc
 from dash.dependencies import Input, Output
-from ts_app.ts_functions import fit_arima_model, create_arma_sample
-import plotly.graph_objs as go
 import pandas as pd
+import plotly.graph_objs as go
 import time
 from ts_app.dash_app import app
-from ts_app.dashboards.dash_objects import ts_details
+from ts_app.dashboards.model_dashboard import compile_layout
+from ts_app.ts_functions import fit_arima_model, create_arma_sample
 
 
-layout = html.Div([
-    # Main title
-    html.H1('Time Series Modelling'),
-
-    # Container for the dashboard - a 2 column grid
-    html.Div(className='dashboard', children=[
-        # Side-bar with the parameter-selection menus
-        html.Div(className='side-bar', children=[
-            # Sample parameter selectors
-            html.Div(id='sample-params', children=[
+SOURCE = 'sample'
+SAMPLE_PARAMS = html.Div(id='sample-params', children=[
                 html.H3('Sample parameters'),
                 # AR order dropdown
                 html.P('AR Order'),
@@ -34,45 +26,10 @@ layout = html.Div([
                     searchable=False, value=1,
                     options=[{'label': f'{i}', 'value': i}
                              for i in range(1, 5)])
-            ]),
-            # Model parameter selectors
-            html.Div(id='model-params', children=[
-                html.H3('Model parameters'),
-                # AR order dropdown
-                html.P('AR Order'),
-                dcc.Dropdown(
-                    id='model-ar', clearable=False, placeholder='AR order',
-                    searchable=False, value=1,
-                    options=[{'label': f'{i}', 'value': i}
-                             for i in range(1, 5)]),
-                # Differencing order dropdown
-                html.P('Differencing Order'),
-                dcc.Dropdown(
-                    id='model-diff', clearable=False, value=1,
-                    placeholder='Differencing', searchable=False,
-                    options=[{'label': f'{i}', 'value': i}
-                             for i in range(1, 5)]),
-                # MA order dropdown
-                html.P('MA Order'),
-                dcc.Dropdown(
-                    id='model-ma', clearable=False, placeholder='MA order',
-                    searchable=False, value=1,
-                    options=[{'label': f'{i}', 'value': i}
-                             for i in range(1, 5)])
-
             ])
-        ]),  # End of the side-bar
 
-        # Graph container
-        html.Div(className='graph', children=[
-            html.Div(dcc.Graph(id='sample-graph')),
-            html.Div(id='details', children=[
-                dcc.Markdown(ts_details)
-            ])
-        ])
-    ])  # End of graph area
 
-])  # End of app layout definition
+layout = compile_layout(SOURCE, SAMPLE_PARAMS)
 
 
 @app.callback(
@@ -91,12 +48,12 @@ def get_sample(ar_order, ma_order):
     sample = create_arma_sample(ar_order, ma_order, size=250)
 
     # Persist sample
-    sample.rename('sample').to_pickle('sample.pkl')
+    sample.rename('sample').to_pickle('ts-app-data.temp')
     return 'details'
 
 
 @app.callback(
-    Output('sample-graph', 'figure'),
+    Output(f'{SOURCE}-graph', 'figure'),
     [Input('model-ar', 'value'),
      Input('model-diff', 'value'),
      Input('model-ma', 'value'),
@@ -112,7 +69,7 @@ def refit_arima_model(ar_order, diff_order, ma_order, sample_ar, sample_ma):
         The AR order, Differencing order & MA order for the ARIMA model; and
         the AR order and MA order for the sample."""
     time.sleep(1)
-    sample = pd.read_pickle('sample.pkl')
+    sample = pd.read_pickle('ts-app-data.temp')
     predictions, forecast = fit_arima_model(
         sample, ar_order, diff_order, ma_order
     )
