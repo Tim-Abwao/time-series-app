@@ -1,5 +1,4 @@
 .dashboard {
-    font: oblique 1.2em Georgia, serif;
 	display: grid;
 	grid-template-columns: 1fr 3fr;
     grid-template-rows: 1fr;
@@ -8,6 +7,14 @@
 
 .side-bar p{
     margin-bottom: 2px;
+}
+
+dt {
+	font-weight: bold;
+}
+
+dd {
+	margin-bottom: 20px;
 }
 
 a {
@@ -52,8 +59,18 @@ h1 {
 
 .button:hover {
 	background-color: #404040;
-	box-shadow: 5px 10px 10px black;
+	box-shadow: 5px 10px 10px #222;
 }
+
+footer {
+	margin: 10% auto;
+}
+
+
+img {
+	width: 100%;
+}
+
 
 /* Hover Bob */
 

@@ -5,7 +5,7 @@ import pandas as pd
 import plotly.graph_objs as go
 import time
 from ts_app.dash_app import app
-from ts_app.dashboards.model_dashboard import compile_layout
+from ts_app.dashboards.upload_dashboard import compile_layout
 from ts_app.ts_functions import fit_arima_model, create_arma_sample
 
 
@@ -45,7 +45,7 @@ def get_sample(ar_order, ma_order):
     ar_order, ma_order: int
         AR order and MA order respectively.
     """
-    sample = create_arma_sample(ar_order, ma_order, size=250)
+    sample = create_arma_sample(ar_order, ma_order, size=200)
 
     # Persist sample
     sample.rename('sample').to_pickle('ts-app-data.temp')
@@ -87,5 +87,5 @@ def refit_arima_model(ar_order, diff_order, ma_order, sample_ar, sample_ma):
 
     fig.update_layout(
         paper_bgcolor='#eee', plot_bgcolor='#eee',
-        title=f"An {model_info} model fitted on {sample_info}.")
+        title=f"An {model_info} model fitted on {sample_info}")
     return fig

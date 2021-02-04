@@ -1,4 +1,4 @@
-from ts_app.flask_app import server
+from ts_app.index import server
 import os
 from waitress import serve
 import webbrowser

@@ -4,29 +4,17 @@ from werkzeug.utils import secure_filename
 
 
 def allowed_file(filename):
-    """
-    Check whether the uploaded file's extension is allowed.
-    """
-    return "." in filename and filename.rsplit(".", 1)[1].lower() in {"csv"}
-
-
-def valid_csv(file):
-    """Check if the file can be parsed as a pandas Series.
+    """Check whether the uploaded file's extension is allowed.
 
     Parameters:
     ----------
-    file: file object
+    filename: str
     """
-    try:
-        pd.read_csv(file, index_col=0, nrows=5)
-        file.seek(0)  # Go back to file beginning
-        return True
-    except (pd.errors.ParserError, pd.errors.EmptyDataError,
-            UnicodeDecodeError):
-        return False
+    okay_file = {'csv', 'xls', 'xlsx'}
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in okay_file
 
 
-def process_upload(request):
+def process_upload(data, file_name):
     """Get the data from the file uploaded in the given request.
 
     Parameters:
@@ -38,24 +26,14 @@ def process_upload(request):
     -------
     The error, if present, or None if the upload is successful.
     """
-    try:
-        file = request.files["file"]  # get file in request data
-    except KeyError:
-        return "Please try again... no file has been received."
-
-    if allowed_file(file.filename):
-        file_name = secure_filename(file.filename)
+    if allowed_file(file_name):
+        # Clean the file_name
+        file_name = secure_filename(file_name)
     else:
-        return "Please try again... no CSV file detected."
-
-    if valid_csv(file):
-        data = pd.read_csv(file, index_col=0)
-    else:
-        return """Please try again... the uploaded file could not be parsed
-                  as CSV."""
+        return "Please try again... invalid file name."
 
     if (n := len(data)) < 30:
-        return f"""Please try again... The uploaded file has only {n} values,
+        return f"""Please try again... the uploaded file has only {n} values,
                    but the minimum is set at 30."""
 
     try:

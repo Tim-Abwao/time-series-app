@@ -1,13 +1,15 @@
 import json
+import dash_html_components as html
+
 
 definitions = json.loads("""
 [{"title":"Trend",
   "definition":"The general upward(increase) or downward(decrease) progression\
    in the data points."},
  {"title":"Time Series",
-  "definition":"A time series is a series of data points indexed in time order.\
-   For example, daily sales totals over a reasonably lengthy period constitute\
-   a time series."},
+  "definition":"A time series is a series of data points indexed in time\
+   order. For example, daily sales totals over a reasonably lengthy period\
+   constitute a time series."},
  {"title":"Seasonality",
   "definition":"This refers to variations that occur at specific regular\
    intervals e.g. every weekend, month-end or festive period."},
@@ -36,3 +38,16 @@ definitions = json.loads("""
   "definition":"The similarity between the observations of a time series and\
    a delayed copy of itself. The magnitude of the delay is called the lag."}
 ]""")
+
+
+components = sum([[html.Dt(item['title'], id=item['title']),
+                   html.Dd(item['definition'], id=item['definition'])]
+                  for item in definitions], start=[])
+
+layout = html.Div([
+  html.H2('Glossary of Time Series Terms'),
+  html.Dl(components),
+  html.Footer([
+    html.A('Back to home', href='/', className='hvr-bob button')
+  ])
+])

@@ -1,4 +1,4 @@
 from dash import Dash
 
-app = Dash(__name__, url_base_pathname='/dashboard/', title="Time Series App",
-           suppress_callback_exceptions=True)
+app = Dash('ts_app', suppress_callback_exceptions=True,
+           title="Time Series App")

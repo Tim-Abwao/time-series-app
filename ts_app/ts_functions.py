@@ -20,7 +20,7 @@ def create_arma_sample(ar_order=1, ma_order=1, size=100):
     ma = np.linspace(1, 0.9, ma_order+1)  # arbitrary ma coefficients
     sample = tsa.ArmaProcess(ar, ma).generate_sample(size)
     index = pd.date_range(start=date.today(), periods=size, freq='D')
-    return pd.Series(sample, index=index)
+    return pd.Series(sample, index=index, name='sample')
 
 
 def fit_arima_model(data, ar_order=1, diff=0, ma_order=1):

@@ -35,13 +35,15 @@ template = """
     {%css%}
     <style>
         body {
-            background-image: url("assets/background_large.jpg");
-            margin: 5%;
+            background-image: url("/assets/background_large.jpg");
+            margin: 5% 10%;
+            font: oblique 1.25em Georgia, serif;
         }
 
         @media only screen and (max-width: 640px) {
             body {
-                background-image: url("assets/background_small.jpg");
+                background-image: url("/assets/background_small.jpg");
+                margin: 10%;
             }
         }
     </style>
@@ -53,10 +55,6 @@ template = """
         {%config%}
         {%scripts%}
         {%renderer%}
-    </footer>
-    <footer>
-        <a class="hvr-bob button" href="/">Back to Home</a>
-        <a class="hvr-bob button" href="/glossary">Browse Glossary</a>
     </footer>
 </body>
 
