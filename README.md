@@ -13,10 +13,29 @@ You can create a sample, or upload a file, and interactively fit a time series m
 The easiest way to install the app is from [PyPI][3] using:
 
 ```bash
-pip install ts_app
+pip install ts-app
 ```
 
-You can then use the command `ts_app` to start it, and `CTRL` + `C` to stop it.
+You can then use the command
+
+```bash
+ts_app
+```
+
+or even
+
+```bash
+python -m ts_app
+```
+
+to start it. Press `CTRL` + `C` to stop it.
+
+You can also start the app from the python interpreter:
+
+```python
+>>> import ts_app
+>>> ts_app.run_app()
+```
 
 ## Manual set up
 
@@ -42,10 +61,10 @@ You'll need [Python][4] 3.8 and above. Packages used include [statsmodels][5], [
 
 3. Start the app:
 
-    You can use the convenient `run.sh` script:
+    You can use the convenient `run.sh` script, or `waitress`:
 
     ```bash
-    bash run.sh
+    waitress-serve --listen=127.0.0.1:8000 ts_app:server
     ```
 
     then browse to [localhost:8000](http://127.0.0.1:8000) to interact with the web app.
