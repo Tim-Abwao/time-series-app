@@ -6,7 +6,7 @@ A simple web app to learn a little about *[Time Series][1] analysis* and *foreca
 
 You can create a sample, or upload a file, and interactively fit a time series model on it. To give it a try, [click here...][2]
 
-![screencast of the app](https://raw.githubusercontent.com/Tim-Abwao/time-series-app/master/dashboard.gif)
+[![screencast of the app](https://raw.githubusercontent.com/Tim-Abwao/time-series-app/master/dashboard.gif)][2]
 
 ## Installation
 
@@ -16,7 +16,7 @@ The easiest way to install the app is from [PyPI][3] using:
 pip install ts-app
 ```
 
-You can then use the command
+You can then start it using the command
 
 ```bash
 ts_app
@@ -28,9 +28,9 @@ or even
 python -m ts_app
 ```
 
-to start it. Press `CTRL` + `C` to stop it.
+Press `CTRL` + `C` to stop it.
 
-You can also start the app from the python interpreter:
+You can also start the app from an interactive session:
 
 ```python
 >>> import ts_app
@@ -101,7 +101,7 @@ You'll need [Docker][10].
 
 [1]: https://en.wikipedia.org/wiki/Time_series
 [2]: https://time-series-app.herokuapp.com
-[3]: https://pypi.org/
+[3]: https://pypi.org/project/ts-app/
 [4]: https://www.python.org "The Python programming language"
 [5]: https://www.statsmodels.org/stable/index.html
 [6]: https://flask.palletsprojects.com/en/1.1.x/

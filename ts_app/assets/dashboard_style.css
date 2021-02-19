@@ -1,12 +1,12 @@
 .dashboard {
 	display: grid;
 	grid-template-columns: 1fr 3fr;
-    grid-template-rows: 1fr;
-    gap: 2%;
+	grid-template-rows: 1fr;
+	gap: 2%;
 }
 
-.side-bar p{
-    margin-bottom: 2px;
+.side-bar p {
+	margin-bottom: 2px;
 }
 
 dt {
@@ -28,23 +28,23 @@ a:hover {
 }
 
 h1 {
-    margin: 0% 5%;
-    font-style: oblique;
+	margin: 0% 5%;
+	font-style: oblique;
 }
 
 @media screen and (max-width:800px) {
-    .dashboard {
-        display: block;
-        margin: 5%;
-    }
-    .side-bar {
-        max-width: 70%;
-        margin: 5%;
-    }
-    .ts-app {
-        overflow-x: auto;
-        width: 700px;
-    }
+	.dashboard {
+		display: block;
+		margin: 5%;
+	}
+	.side-bar {
+		max-width: 70%;
+		margin: 5%;
+	}
+	.ts-app {
+		overflow-x: auto;
+		width: 700px;
+	}
 }
 
 .button {
@@ -66,11 +66,9 @@ footer {
 	margin: 10% auto;
 }
 
-
 img {
 	width: 100%;
 }
-
 
 /* Hover Bob */
 
