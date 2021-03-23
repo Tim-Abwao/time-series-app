@@ -1,6 +1,7 @@
 # Time Series App
 
 [![PyPI version](https://badge.fury.io/py/ts-app.svg)](https://badge.fury.io/py/ts-app)
+[![Python application](https://github.com/Tim-Abwao/time-series-app/actions/workflows/python-app.yml/badge.svg)](https://github.com/Tim-Abwao/time-series-app/actions/workflows/python-app.yml)
 
 A simple web app to learn a little about *[Time Series][1] analysis* and *forecasting*.
 
