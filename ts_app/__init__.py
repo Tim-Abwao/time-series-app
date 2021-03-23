@@ -1,7 +1,13 @@
-from ts_app.index import server
+import logging
 import os
-from waitress import serve
 import webbrowser
+
+from waitress import serve
+
+from ts_app.index import server
+
+logger = logging.getLogger('waitress')
+logger.setLevel(logging.ERROR)
 
 
 __version__ = '0.0.7'
