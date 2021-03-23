@@ -4,6 +4,9 @@ from waitress import serve
 import webbrowser
 
 
+__version__ = '0.0.7'
+
+
 def run_app():
     """Start the app server, and launch a browser to view it."""
 
