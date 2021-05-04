@@ -4,7 +4,7 @@ import webbrowser
 
 from waitress import serve
 
-from ts_app.index import server
+from ts_app.dashboard import server
 
 logger = logging.getLogger('waitress')
 logger.setLevel(logging.ERROR)
