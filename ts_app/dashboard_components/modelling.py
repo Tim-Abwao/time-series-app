@@ -30,8 +30,8 @@ param_imput = html.Div(id='model-params', children=[
 ])
 
 graph = html.Div(className='graph-container', children=[
-    dcc.Loading([
-        dcc.Graph(id='time-series-graph')
+    dcc.Loading(color='#777', children=[
+        dcc.Graph(id='time-series-graph'),
     ])
 ])
 
