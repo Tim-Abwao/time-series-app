@@ -2,11 +2,9 @@ import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
 import plotly.graph_objs as go
-import os
-import time
 from dash.dependencies import Input, Output
 from ts_app.dash_app import app
-from ts_app.ts_functions import fit_arima_model, create_arma_sample
+from ts_app.ts_functions import create_arma_sample, fit_arima_model
 
 
 param_imput = html.Div(id='model-params', children=[
@@ -42,29 +40,43 @@ graph = html.Div(className='graph-container', children=[
     Output('time-series-graph', 'figure'),
     [Input('model-ar', 'value'),
      Input('model-diff', 'value'),
-     Input('model-ma', 'value')]
+     Input('model-ma', 'value'),
+     Input('url', 'pathname'),
+     Input('sample-data-store', 'data'),
+     Input('upload-data-store', 'data')]
 )
-def refit_arima_model(ar_order, diff_order, ma_order):
+def refit_arima_model(
+        ar_order, diff_order, ma_order, input_source, sample, upload):
     """Fit an ARIMA model each time a model parameter is modified.
 
-    Parameters:
-    ---------
-    ar_order, ma_order, diff_order: int
+    Parameters
+    ----------
+    ar_order, ma_order, diff_order : int
         The AR order, Differencing order & MA order for the ARIMA model.
-    info: str
-        Output from the upload-processing function. Included here to trigger
-        model re-fitting on file upload.
+    input_souce : {'/upload', '/sample'}
+        The data source.
+    sample, upload : dash_core_components.Store
+        Store objects containing the sample data and uploaded-file data
+        respectively.
     """
-    time.sleep(1)
-    if os.path.isfile('ts-app-data.temp'):
-        data = pd.read_pickle('ts-app-data.temp')
-    else:
+    if input_source == '/upload':
+        data_store = upload
+    elif input_source == '/sample':
+        data_store = sample
+
+    if data_store is None:
+        filename = 'sample'
         data = create_arma_sample()
+    else:
+        filename = data_store['filename']
+        json_data = data_store['data']
+        data = pd.read_json(json_data, orient='index', typ='series')
+
     predictions, forecast = fit_arima_model(
         data, ar_order, diff_order, ma_order
     )
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=data.index, y=data,
+    fig.add_trace(go.Scatter(y=data, x=data.index,
                              mode='lines', name='actual data'))
     fig.add_trace(go.Scatter(x=predictions.index, y=predictions,
                              mode='lines',  name='predictions'))
@@ -73,9 +85,7 @@ def refit_arima_model(ar_order, diff_order, ma_order):
 
     model_info = f"ARIMA({ar_order}, {diff_order}, {ma_order})"
 
-    sample_info = f'{data.name}'
-
     fig.update_layout(
         paper_bgcolor='#eee', plot_bgcolor='#eee',
-        title=f"An {model_info} model fitted on {sample_info}")
+        title=f"An {model_info} model fitted on {filename}")
     return fig
