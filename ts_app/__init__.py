@@ -6,8 +6,10 @@ from waitress import serve
 
 from ts_app.dashboard import server
 
-logger = logging.getLogger('waitress')
-logger.setLevel(logging.ERROR)
+# Only log errors. `ConvergenceWarning`s and `ValueWarning`s are all too
+# frequent when fitting the statsmodels ARIMA model on arbitrary data.
+logging.basicConfig(level=logging.ERROR)
+logging.captureWarnings(True)
 
 
 __version__ = '0.0.7'
