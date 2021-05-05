@@ -6,9 +6,9 @@ from werkzeug.utils import secure_filename
 def allowed_file(filename):
     """Check whether the uploaded file's extension is allowed.
 
-    Parameters:
+    Parameters
     ----------
-    filename: str
+    filename : str
     """
     okay_file = {'csv', 'xls', 'xlsx'}
     return "." in filename and filename.rsplit(".", 1)[1].lower() in okay_file
@@ -17,14 +17,17 @@ def allowed_file(filename):
 def process_upload(data, file_name):
     """Get the data from the file uploaded in the given request.
 
-    Parameters:
+    Parameters
     ----------
-    request: flask.Request
-        A Flask request object with data from the file-upload-form.
+    data : pandas.Dataframe
+        The data extracted from the file.
+    file_name : str
+        The uploaded file's name.
 
-    Returns:
+    Returns
     -------
-    The error, if present, or None if the upload is successful.
+    The error, if present. Or a pandas Series with the data's last column, if
+    the uploaded file is valid.
     """
     if allowed_file(file_name):
         # Clean the file_name
@@ -59,6 +62,3 @@ def process_upload(data, file_name):
     except (dtParserError, ValueError):
         return """Please try again... it seems that the values in the 1st
                   column could not be read as dates."""
-
-    # Persist data if all check pass
-    data.rename(file_name).to_pickle('ts-app-data.temp')
