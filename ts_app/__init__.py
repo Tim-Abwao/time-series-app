@@ -19,9 +19,10 @@ def run_app():
     """Start the app server, and launch a browser to view it."""
 
     # Open a tab in default browser and point it to the app
-    webbrowser.open('http://localhost:8000')
+    webbrowser.open('http://localhost:8000', new=1)
 
     # Serve the app using waitress
+    print('Starting server at http://localhost:8000 ...')
     serve(server, host='localhost', port=8000)
 
     # Remove the temporary data store
