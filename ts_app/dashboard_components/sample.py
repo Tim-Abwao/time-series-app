@@ -1,9 +1,8 @@
-import dash_html_components as html
 import dash_core_components as dcc
+import dash_html_components as html
 from dash.dependencies import Input, Output
 from ts_app.dash_app import app
 from ts_app.ts_functions import create_arma_sample
-
 
 input_layout = html.Div(id='sample-params', children=[
     html.H3('Sample parameters'),
@@ -23,20 +22,25 @@ input_layout = html.Div(id='sample-params', children=[
 
 
 @app.callback(
-    Output('details', 'title'),
+    Output('sample-data-store', 'data'),
     [Input('sample-ar', 'value'),
      Input('sample-ma', 'value')]
 )
 def get_sample(ar_order, ma_order):
     """Create an ARMA sample with the given parameters.
 
-    Parameters:
+    Parameters
     ----------
-    ar_order, ma_order: int
+    ar_order, ma_order : int
         AR order and MA order respectively.
+
+    Returns
+    -------
+    A dictionary with the sample's name and data.
     """
     sample = create_arma_sample(ar_order, ma_order, size=200)
 
-    # Persist sample
-    sample.rename('sample').to_pickle('ts-app-data.temp')
-    return 'details'
+    return {
+        'filename': 'sample',
+        'data': sample.to_json()
+    }
