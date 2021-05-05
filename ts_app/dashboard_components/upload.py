@@ -64,7 +64,7 @@ def upload_file(contents, filename):
         ]), {'color': 'orangered'}, None
     # Process the parsed data and return info if an error is present
     if (error := process_upload(df, filename)) is not None:
-        return error, {'color': 'orangered'}
+        return error, {'color': 'orangered'}, None
 
     return (
         f'Analysing {filename}',

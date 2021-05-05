@@ -55,7 +55,7 @@ def process_upload(data, file_name):
         data.index = pd.to_datetime(data.index)
         # If date frequency can't be inferred, or is not consistent, some
         # statsmodels functions tend to break.
-        if pd.infer_freq(data.index) is None:
+        if pd.infer_freq(data.index) in {None, 'N'}:
             return """Please try again... a uniform date frequency (which is
                       needed in some of the time series functions used) could
                       not be determined."""
