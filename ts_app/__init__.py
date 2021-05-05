@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.ERROR)
 logging.captureWarnings(True)
 
 
-__version__ = '0.0.7'
+__version__ = '0.1.0'
 
 
 def run_app():
