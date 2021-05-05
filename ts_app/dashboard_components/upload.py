@@ -10,47 +10,54 @@ from ts_app.file_upload import process_upload
 
 input_layout = html.Div([
     # File upload button
-    dcc.Upload(html.Button('Upload a file', className='hvr-bob button'),
-               id='upload-data', min_size=10, accept='.csv,.xls,.xlsx'),
-    html.P(id='file-info')])
+    dcc.Upload(
+        id='upload-data', accept='.csv,.xls,.xlsx', min_size=10,
+        children=[
+            html.Button('Upload a file', className='hvr-bob button'),
+        ]),
+    html.P(id='file-info')
+])
 
 
 @app.callback(
-    Output('file-info', 'children'),
+    [Output('file-info', 'children'),
+     Output('file-info', 'style')],
     [Input('upload-data', 'contents'),
      Input('upload-data', 'filename')]
 )
 def upload_file(contents, filename):
-    """Validate and store uploaded files.
+    """Validate, process and store uploaded files.
 
-    parameters:
+    parameters
     ----------
-    contents: str
+    contents : str
         base64 encoded string with the file's contents
-    filename: str
+    filename : str
+        The name of the uploaded file
     """
-    if contents:  # if a file is uploaded
-        content_type, content_string = contents.split(',')
-        decoded = b64decode(content_string)
-        try:
-            if 'csv' in filename:
-                # If the user uploaded a CSV file
-                df = pd.read_csv(StringIO(decoded.decode('utf-8')),
-                                 index_col=0)
-            elif 'xls' in filename:
-                # If the user uploaded an excel file
-                df = pd.read_excel(BytesIO(decoded), index_col=0)
-
-            # Process the parsed data and return info if an error is present
-            if (error := process_upload(df, filename)):
-                return error
-
-            return f'Analysing {filename}'
-
-        except Exception as e:
-            print(e)
-            return html.Div([
-                'There was an error processing this file.'
-            ])
+    if contents is None:
+        return '', {}
     else:
-        return ''  # No information since there's no file content
+        content_type, content_string = contents.split(',')
+    # Decode file content
+    file_content = b64decode(content_string)
+
+    try:
+        if 'csv' in filename:
+            # If the user uploaded a CSV file
+            df = pd.read_csv(StringIO(file_content.decode('utf-8')),
+                             index_col=0)
+        elif 'xls' in filename:
+            # If the user uploaded an excel file
+            df = pd.read_excel(BytesIO(file_content), index_col=0)
+
+    except Exception as e:
+        print(e)
+        return html.Div([
+            'There was an error processing the file.'
+        ]), {'color': 'orangered'}
+    # Process the parsed data and return info if an error is present
+    if (error := process_upload(df, filename)):
+        return error, {'color': 'orangered'}
+
+    return f'Analysing {filename}', {'color': '#31bf2c'}
