@@ -65,7 +65,7 @@ def refit_arima_model(
         data_store = sample
 
     if data_store is None:
-        filename = 'sample'
+        filename = 'a random sample'
         data = create_arma_sample()
     else:
         filename = data_store['filename']

@@ -41,6 +41,6 @@ def get_sample(ar_order, ma_order):
     sample = create_arma_sample(ar_order, ma_order, size=200)
 
     return {
-        'filename': 'sample',
+        'filename': f'an ARMA({ar_order}, {ma_order}) sample',
         'data': sample.to_json()
     }
