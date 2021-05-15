@@ -1,8 +1,11 @@
 import dash_core_components as dcc
 import dash_html_components as html
 
-layout = html.Div([
-    dcc.Markdown("""
+layout = html.Div(
+    [
+        # Introduction
+        dcc.Markdown(
+            """
 # Time Series App
 
 ---
@@ -20,7 +23,9 @@ estimate future values.
 To give it a try, you can upload a file or create a sample to analyse:
 
 [1]: https://en.wikipedia.org/wiki/Time_series
-"""),
-    html.A('Upload a file', href='/upload', className='hvr-bob button'),
-    html.A('Process a sample', href='/sample', className='hvr-bob button')
-])
+"""
+        ),
+        html.A("Upload a file", href="/upload", className="hvr-bob button"),
+        html.A("Process a sample", href="/sample", className="hvr-bob button"),
+    ]
+)

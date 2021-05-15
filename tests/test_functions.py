@@ -7,7 +7,7 @@ def test_sample_creation():
     default_sample = create_arma_sample()
     assert isinstance(default_sample, pd.Series)
     assert default_sample.shape == (100,)
-    assert default_sample.index.dtype == 'datetime64[ns]'
+    assert default_sample.index.dtype == "datetime64[ns]"
 
 
 def test_ts_prediction():
@@ -16,4 +16,4 @@ def test_ts_prediction():
     predictions, forecast = fit_arima_model(data)
     assert predictions.shape == (31,)
     assert forecast.shape == (15,)
-    assert predictions.index.dtype == forecast.index.dtype == 'datetime64[ns]'
+    assert predictions.index.dtype == forecast.index.dtype == "datetime64[ns]"

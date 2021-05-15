@@ -1,5 +1,4 @@
 import logging
-import os
 import webbrowser
 
 from waitress import serve
@@ -12,19 +11,16 @@ logging.basicConfig(level=logging.ERROR)
 logging.captureWarnings(True)
 
 
-__version__ = '0.1.0'
+__version__ = '0.1.1rc0'
 
 
 def run_app():
     """Start the app server, and launch a browser to view it."""
 
-    # Open a tab in default browser and point it to the app
+    # Open a new window of the default browser and point it to the where the
+    # app is running.
     webbrowser.open('http://localhost:8000', new=1)
 
     # Serve the app using waitress
     print('Starting server at http://localhost:8000 ...')
     serve(server, host='localhost', port=8000)
-
-    # Remove the temporary data store
-    if os.path.isfile('ts-app-data.temp'):
-        os.remove('ts-app-data.temp')
