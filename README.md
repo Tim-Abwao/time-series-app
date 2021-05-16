@@ -3,23 +3,26 @@
 [![PyPI version](https://badge.fury.io/py/ts-app.svg)](https://badge.fury.io/py/ts-app)
 [![Python application](https://github.com/Tim-Abwao/time-series-app/actions/workflows/python-app.yml/badge.svg)](https://github.com/Tim-Abwao/time-series-app/actions/workflows/python-app.yml)
 
-A simple web app to learn a little about *[Time Series][wiki_time_series] analysis* and *forecasting*.
+A dashboard application to learn a little about, and apply *[Time Series][wiki_time_series] analysis* & *forecasting*.
 
-You can create a sample, or upload a file, and interactively fit a time series model on it. To give it a try, [click here...][live-link]
-
-[![screencast of the app](https://raw.githubusercontent.com/Tim-Abwao/time-series-app/master/dashboard.gif)][live-link]
+You can create a sample, or upload a file, and interactively fit a time series model on it. 
 
 The dashboard is built with [Dash][dash], and the time series models are fitted using [Statsmodels][statsmodels].
 
+You can [try it out here][live-link].
+
+[![screencast of the app](https://raw.githubusercontent.com/Tim-Abwao/time-series-app/master/dashboard.gif)][live-link]
+
+
 ## Installation
 
-The easiest way to install the app is from [PyPI][pypi], using:
+The easiest way to install the app is from [PyPI][pypi]:
 
 ```bash
 pip install ts-app
 ```
 
-You could also install it directly from the **GitHub** repository using:
+You could also install it directly from the **GitHub** repository:
 
 ```bash
 pip install https://github.com/tim-abwao/time-series-app/archive/main.tar.gz
@@ -27,7 +30,7 @@ pip install https://github.com/tim-abwao/time-series-app/archive/main.tar.gz
 
 ## Basic Usage
 
-You can use the command `ts_app` to launch the app.
+The command `ts_app` launches the app:
 
 ```bash
 ts_app
