@@ -14,13 +14,21 @@ logging.captureWarnings(True)
 __version__ = '0.1.1'
 
 
-def run_app():
-    """Start the app server, and launch a browser to view it."""
+def run_app(host='localhost', port=8000):
+    """Start the app server, and launch a browser to view it.
+
+    Parameters
+    ----------
+    host : str, optional
+        A host-name or IP address, default "localhost"
+    port : int, optional
+        The TCP port on which to listen, default 8000
+    """
 
     # Open a new window of the default browser and point it to the where the
     # app is running.
-    webbrowser.open('http://localhost:8000', new=1)
+    webbrowser.open(f'http://{host}:{port}', new=1)
 
     # Serve the app using waitress
     print('Starting server at http://localhost:8000 ...')
-    serve(server, host='localhost', port=8000)
+    serve(server, host=host, port=port)
