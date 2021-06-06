@@ -1,3 +1,4 @@
+
 import logging
 import webbrowser
 
@@ -5,13 +6,14 @@ from waitress import serve
 
 from ts_app.dashboard import server
 
-# Only log errors. `ConvergenceWarning`s and `ValueWarning`s are all too
-# frequent when fitting the statsmodels ARIMA model on arbitrary data.
-logging.basicConfig(level=logging.ERROR)
-logging.captureWarnings(True)
-
 
 __version__ = '0.1.1'
+
+# Set logging level to INFO
+logging.basicConfig(level="INFO")
+
+# Set waitress.queue logging level to ERROR
+logging.getLogger("waitress.queue").setLevel("ERROR")
 
 
 def run_app(host='localhost', port=8000):
@@ -30,5 +32,4 @@ def run_app(host='localhost', port=8000):
     webbrowser.open(f'http://{host}:{port}', new=1)
 
     # Serve the app using waitress
-    print('Starting server at http://localhost:8000 ...')
     serve(server, host=host, port=port)
