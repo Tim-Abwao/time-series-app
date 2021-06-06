@@ -1,8 +1,13 @@
+import warnings
 from datetime import date
 
 import numpy as np
 import pandas as pd
 from statsmodels.api import tsa
+
+# Ignore warnings from statsmodels. `ConvergenceWarning`s and `ValueWarning`s
+# are all too frequent when fitting models on arbitrary data.
+warnings.filterwarnings("ignore", module="statsmodels")
 
 
 def create_arma_sample(ar_order=1, ma_order=1, size=100):
