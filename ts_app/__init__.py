@@ -5,7 +5,7 @@ from waitress import serve
 
 from ts_app.dashboard import server
 
-__version__ = "0.1.1"
+__version__ = "0.2.0a"
 
 # Set logging level to INFO
 logging.basicConfig(level="INFO")
@@ -14,7 +14,7 @@ logging.basicConfig(level="INFO")
 logging.getLogger("waitress.queue").setLevel("ERROR")
 
 
-def run_app(host="localhost", port=8000):
+def run_app(host="localhost", port=8000, launch_browser=True):
     """Start the app server, and launch a browser to view it.
 
     Parameters
@@ -23,11 +23,13 @@ def run_app(host="localhost", port=8000):
         A host-name or IP address, default "localhost"
     port : int, optional
         The TCP port on which to listen, default 8000
+    launch_browser : bool
+        Whether or not to launch a web browser to where the server is running
     """
-
-    # Open a new window of the default browser and point it to the where the
-    # app is running.
-    webbrowser.open(f"http://{host}:{port}", new=1)
+    if launch_browser is True:
+        # Open a new tab if possible, or a new window of the default browser,
+        # and point it to where the server is running.
+        webbrowser.open(f"http://{host}:{port}")
 
     # Serve the app using waitress
     serve(server, host=host, port=port)
