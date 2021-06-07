@@ -1,7 +1,7 @@
 import argparse
 
 
-def process_cli_args():
+def process_cli_args(*args):
     """Create arguments and collect input from the command line."""
     parser = argparse.ArgumentParser(
         prog="ts_app",
@@ -25,4 +25,8 @@ def process_cli_args():
         action="store_true",
         help="Avoid openning a browser tab or window.",
     )
-    return parser.parse_args()
+    if args:  # Parse supplied args. Helpful in tests.
+        print(args)
+        return parser.parse_args(args)
+    else:  # Parse arguments from `sys.argv`
+        return parser.parse_args()
