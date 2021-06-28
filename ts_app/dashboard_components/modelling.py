@@ -18,17 +18,17 @@ param_input = html.Div(
             placeholder="AR order",
             searchable=False,
             value=1,
-            options=[{"label": f"{i}", "value": i} for i in range(1, 5)],
+            options=[{"label": f"{i}", "value": i} for i in range(6)],
         ),
         # Differencing order dropdown
         html.P("Differencing Order"),
         dcc.Dropdown(
             id="model-diff",
             clearable=False,
-            value=1,
+            value=0,
             placeholder="Differencing",
             searchable=False,
-            options=[{"label": f"{i}", "value": i} for i in range(1, 5)],
+            options=[{"label": f"{i}", "value": i} for i in range(6)],
         ),
         # MA order dropdown
         html.P("MA Order"),
@@ -38,7 +38,7 @@ param_input = html.Div(
             placeholder="MA order",
             searchable=False,
             value=1,
-            options=[{"label": f"{i}", "value": i} for i in range(1, 5)],
+            options=[{"label": f"{i}", "value": i} for i in range(6)],
         ),
     ],
 )
