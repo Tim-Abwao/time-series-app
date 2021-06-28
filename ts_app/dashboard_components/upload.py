@@ -14,10 +14,20 @@ input_layout = html.Div(
         dcc.Upload(
             id="upload-data",
             accept=".csv,.xls,.xlsx",
-            min_size=10,
+            className="file-upload",
             children=[
-                html.Button("Upload a file", className="hvr-bob button"),
+                "Click or Drag and Drop",
+                html.P("Expected file properties:"),
+                html.Ul(
+                    children=[
+                        html.Li("At most 7MiB"),
+                        html.Li("Dates in first column"),
+                        html.Li("Numeric data in right-most column"),
+                    ]
+                ),
             ],
+            min_size=32,
+            max_size=1024 ** 2 * 7,  # 7MiB
         ),
         # Container for the filename or error message
         html.P(id="file-info"),

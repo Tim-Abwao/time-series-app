@@ -8,6 +8,16 @@
 	margin-bottom: 2px;
 }
 
+.file-upload {
+	border: 2px dotted #404040;
+	border-radius: 8px;
+	padding: 4%;
+}
+
+.file-upload p, ul {
+	font-size: 0.7em;
+}
+
 dt {
 	font-weight: bold;
 }
