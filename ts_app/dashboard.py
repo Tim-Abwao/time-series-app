@@ -1,3 +1,4 @@
+from typing import Optional
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
@@ -12,53 +13,47 @@ from ts_app.dashboard_components import (
     upload,
 )
 
-# Use a custom HTML template
-app.index_string = resources.template
-
+app.index_string = resources.html_template
 server = app.server
 
-
 app.layout = html.Div(
-    # Display current page
     [dcc.Location(id="url", refresh=False), html.Div(id="page-content")]
 )
 
 
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
-def render_page(pathname):
+def render_page(pathname: str) -> Optional[html.Div]:
     """Display the page at the given pathname.
 
     Parameters
     ----------
     path_name : str
         The url to a page or dashboard layout.
+
+    Returns
+    -------
+    Optional[dash_html_components.Div.Div]
+        Dashboard content.
     """
-    if pathname == "/upload":
-        # Get the dashboard layout with input from uploaded files
-        data_source = upload.input_layout
-    elif pathname == "/sample":
-        # Get the dashboard layout which generates sample input data
-        data_source = sample.input_layout
-    elif pathname == "/glossary":
-        # Display the glossary page
+    if pathname == "/glossary":
         return glossary.layout
+    elif pathname == "/sample":
+        data_input_form = sample.input_layout
+    elif pathname == "/upload":
+        data_input_form = upload.input_layout
     else:
-        # Display the home page
         return home_page.layout
 
-    # If the pathname is "/upload" or "/sample", create the appropriate
-    # dashboard.
+    # If pathname in {"/upload", "/sample"}, create the appropriate dashboard.
     return html.Div(
         id="dashboard",
         className="dashboard",
         children=[
-            # Sidebar with data & model input
+            # Sidebar with data & model input forms
             html.Div(
-                className="sidebar",
+                className="side-bar",
                 children=[
-                    # `data_source`: dropdowns to create a sample, or a file
-                    # upload button.
-                    html.Div(data_source, id="data-source"),
+                    html.Div(data_input_form, id="data-source"),
                     # Container for sample data
                     dcc.Store(id="sample-data-store"),
                     # Container for uploaded data
@@ -67,16 +62,23 @@ def render_page(pathname):
                     modelling.param_input,
                 ],
             ),
+            # Time series plots
             html.Div(
-                [
-                    # A line graph of the fitted model, with predictions and
-                    # forecast.
-                    modelling.graph,
-                    # Paragraphs with time series information
-                    dcc.Markdown(resources.ts_details),
-                    # Footer links to "home" and "glossary"
-                    html.Footer(
-                        [
+                className="plots-and-text",
+                children=[
+                    html.Div(
+                        className="line-plot",
+                        children=[
+                            modelling.lineplot,
+                            dcc.Markdown(resources.ts_details),
+                        ],
+                    ),
+                    html.Div(
+                        modelling.component_plots, className="component-plot"
+                    ),
+                    html.Div(
+                        className="footer",
+                        children=[
                             html.A(
                                 "Back to home",
                                 href="/",
@@ -87,9 +89,9 @@ def render_page(pathname):
                                 href="/glossary",
                                 className="hvr-bob button",
                             ),
-                        ]
+                        ],
                     ),
-                ]
+                ],
             ),
         ],
     )

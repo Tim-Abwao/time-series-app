@@ -6,10 +6,11 @@ from ts_app.ts_functions import create_arma_sample
 
 input_layout = html.Div(
     id="sample-params",
+    className="param-input",
     children=[
         html.H3("Sample parameters"),
         # AR order dropdown
-        html.P("AR Order"),
+        html.Label("AR Order", htmlFor="sample-ar"),
         dcc.Dropdown(
             id="sample-ar",
             clearable=False,
@@ -19,7 +20,7 @@ input_layout = html.Div(
             options=[{"label": f"{i}", "value": i} for i in range(1, 5)],
         ),
         # MA order dropdown
-        html.P("MA Order"),
+        html.Label("MA Order", htmlFor="sample-ma"),
         dcc.Dropdown(
             id="sample-ma",
             clearable=False,
@@ -36,7 +37,7 @@ input_layout = html.Div(
     Output("sample-data-store", "data"),
     [Input("sample-ar", "value"), Input("sample-ma", "value")],
 )
-def get_sample(ar_order, ma_order):
+def get_sample(ar_order: int, ma_order: int) -> dict:
     """Create an ARMA sample with the given parameters.
 
     Parameters
@@ -46,9 +47,10 @@ def get_sample(ar_order, ma_order):
 
     Returns
     -------
-    A dictionary with the sample's name and data, for storage.
+    dict
+        The sample's name and data.
     """
-    sample = create_arma_sample(ar_order, ma_order, size=200)
+    sample = create_arma_sample(ar_order, ma_order, size=150)
 
     return {
         "filename": f"an ARMA({ar_order}, {ma_order}) sample",

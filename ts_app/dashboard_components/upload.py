@@ -1,5 +1,6 @@
 from base64 import b64decode
 from io import BytesIO, StringIO
+from typing import Optional, Tuple
 
 import dash_core_components as dcc
 import dash_html_components as html
@@ -23,13 +24,14 @@ input_layout = html.Div(
                         html.Li("At most 7MiB"),
                         html.Li("Dates in first column"),
                         html.Li("Numeric data in right-most column"),
+                        html.Li("At least 32 rows"),
                     ]
                 ),
             ],
             min_size=32,
             max_size=1024 ** 2 * 7,  # 7MiB
         ),
-        # Container for the filename or error message
+        # Container for the file-name or error message
         html.P(id="file-info"),
     ]
 )
@@ -43,7 +45,9 @@ input_layout = html.Div(
     ],
     [Input("upload-data", "contents"), Input("upload-data", "filename")],
 )
-def upload_file(contents, filename):
+def upload_file(
+    contents: str, filename: str
+) -> Tuple[str, dict, Optional[dict]]:
     """Extract, validate and process data from uploaded files.
 
     parameters
@@ -55,51 +59,45 @@ def upload_file(contents, filename):
 
     Returns
     -------
-    A tuple - (file_info message, file_info style, data to store).
+    Tuple[str, dict, dict]
+        (file-info message, file-info style, data to store).
     """
     if contents is None:
-        # If no file has been uploaded
         return (
             "",  # No file information
             {},  # No special style
             None,  # No data to store
         )
     else:
-        content_type, content_string = contents.split(",")
+        content_string = contents.split(",")[1]
 
-    # Decode file content
     file_content = b64decode(content_string)
 
-    # Pack the contents in a DataFrame
     try:
         if ".csv" in filename:
-            # If the user uploaded a CSV file
             df = pd.read_csv(
                 StringIO(file_content.decode("utf-8")), index_col=0
             )
         elif ".xls" in filename:
-            # If the user uploaded an excel file
             df = pd.read_excel(BytesIO(file_content), index_col=0)
     except Exception as e:
         print(e)
         return (
             html.Div(["There was an error processing the file."]),
-            {"color": "orangered"},  # Error-message text color
+            {"color": "orangered"},
             None,  # No data to store
         )
 
-    # Process the parsed data
     if (error := process_upload(data=df)) is not None:
-        # If an error message is returned
         return (
-            error,  # Error message
-            {"color": "orangered"},  # Error-message text color
+            error,
+            {"color": "orangered"},
             None,  # No data to store
         )
     else:
         # If file-upload and data-extraction succeed
         return (
-            f"Analysing {filename}",  # Uploaded file's name
-            {"color": "#31bf2c"},  # Successful-upload text color
+            f"Analysing {filename}",
+            {"color": "#31bf2c"},
             {"filename": filename, "data": df.iloc[:, -1].to_json()},
         )
