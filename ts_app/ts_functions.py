@@ -1,3 +1,4 @@
+from typing import Tuple
 import warnings
 from datetime import date
 
@@ -10,7 +11,9 @@ from statsmodels.api import tsa
 warnings.filterwarnings("ignore", module="statsmodels")
 
 
-def create_arma_sample(ar_order=1, ma_order=1, size=100):
+def create_arma_sample(
+    ar_order: int = 1, ma_order: int = 1, size: int = 100
+) -> pd.Series:
     """Get a random ARMA sample.
 
     Parameters
@@ -20,7 +23,8 @@ def create_arma_sample(ar_order=1, ma_order=1, size=100):
 
     Returns
     -------
-    An ARMA sample as a pandas Series.
+    pandas.Series
+        An ARMA sample.
     """
     ar_coeff = np.linspace(1, -0.9, ar_order + 1)  # arbitrary ar coefficients
     ma_coeff = np.linspace(1, 0.9, ma_order + 1)  # arbitrary ma coefficients
@@ -30,7 +34,9 @@ def create_arma_sample(ar_order=1, ma_order=1, size=100):
     return pd.Series(sample, index=index, name="sample")
 
 
-def fit_arima_model(data, ar_order=1, diff=0, ma_order=1):
+def fit_arima_model(
+    data: pd.Series, ar_order: int = 1, diff: int = 0, ma_order: int = 1
+) -> Tuple[pd.Series, pd.Series]:
     """Fit an ARIMA model on the data and get predictions.
 
     Parameters
@@ -43,15 +49,13 @@ def fit_arima_model(data, ar_order=1, diff=0, ma_order=1):
 
     Returns
     -------
-    In-sample predictions covering the latter 30% of the data, and a 14-period
-    out-of-sample forecast.
+    Tuple[pd.Series, pd.Series]
+        In-sample predictions covering the latter 30% of the data, and a
+        14-period out-of-sample forecast.
     """
-    # Fit an ARIMA model
     arima_model = tsa.arima.ARIMA(data, order=(ar_order, diff, ma_order)).fit()
-    # Get in-sample predictions
     n = len(data)
     predictions = arima_model.predict(start=int(0.7 * n), end=n)
-    # Get forecast
     forecast = arima_model.predict(start=n, end=n + 14)
 
     return predictions, forecast
