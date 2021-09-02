@@ -8,43 +8,41 @@ from ts_app.dashboard import server
 
 __version__ = "0.3.1"
 
-# Set logging level to INFO
 logging.basicConfig(level="INFO")
 
-# Set waitress.queue logging level to ERROR
+# Suppress benign queue warnings
 logging.getLogger("waitress.queue").setLevel("ERROR")
 
 
-def run_app(host="localhost", port=8000, launch_browser=True):
-    """Start the app server, and launch a browser to view it.
+def run_app(
+    host: str = "http://localhost",
+    port: int = 8000,
+    launch_browser: bool = True,
+) -> None:
+    """Start the app server, and launch a web browser to it.
 
     Parameters
     ----------
     host : str, optional
-        A host-name or IP address, default "localhost"
+        A host-name or IP address, default "http://localhost"
     port : int, optional
         The TCP port on which to listen, default 8000
     launch_browser : bool
-        Whether or not to launch a web browser to where the server is running
+        Whether or not to launch a web browser to view the app
     """
     if launch_browser is True:
-        # Open a new tab if possible, or a new window of the default browser,
-        # and point it to where the server is running.
-        webbrowser.open(f"http://{host}:{port}")
+        webbrowser.open(f"{host}:{port}")
 
-    # Serve the app using waitress
-    serve(server, host=host, port=port)
+    serve(server, host=host.lstrip("http://"), port=port)
 
 
-def run_in_cli():
+def run_in_cli() -> None:
     """Start the app server using input collected from the command line
     interface.
     """
     args = process_cli_args()
 
-    if args.no_browser is False:
-        # Open a new tab if possible, or a new window of the default browser,
-        # and point it to where the server is running.
-        webbrowser.open(f"http://{args.host}:{args.port}")
-    # Serve the app using waitress
-    serve(server, host=args.host, port=args.port)
+    if not args.no_browser:
+        webbrowser.open(f"{args.host}:{args.port}")
+
+    serve(server, host=args.host.lstrip("http://"), port=args.port)
