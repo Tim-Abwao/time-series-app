@@ -1,4 +1,4 @@
-from ts_app import run_in_cli
+from ts_app.dashboard import app
 
 if __name__ == "__main__":
-    run_in_cli()
+    app.run_server(debug=True)
