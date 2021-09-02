@@ -1,12 +1,14 @@
 import argparse
 
 
-def process_cli_args(*args):
+def process_cli_args():
     """Create arguments and collect input from the command line."""
     parser = argparse.ArgumentParser(
         prog="ts_app",
-        description="A simple dashboard application to learn time series"
-        + " basics and interactively fit ARIMA models.",
+        description=(
+            "A simple dashboard application to learn time series basics and"
+            " interactively fit ARIMA models."
+        ),
     )
     parser.add_argument(
         "-p",
@@ -17,7 +19,7 @@ def process_cli_args(*args):
     )
     parser.add_argument(
         "--host",
-        default="localhost",
+        default="http://localhost",
         help="A host-name or IP address (default: %(default)r).",
     )
     parser.add_argument(
@@ -25,8 +27,4 @@ def process_cli_args(*args):
         action="store_true",
         help="Avoid openning a browser tab or window.",
     )
-    if args:  # Parse supplied args. Helpful in tests.
-        print(args)
-        return parser.parse_args(args)
-    else:  # Parse arguments from `sys.argv`
-        return parser.parse_args()
+    return parser.parse_args()
