@@ -1,29 +1,5 @@
-.dashboard {
-	display: grid;
-	grid-template-columns: 1fr 3fr;
-	gap: 2%;
-}
-
-.side-bar p {
-	margin-bottom: 2px;
-}
-
-.file-upload {
-	border: 2px dotted #404040;
-	border-radius: 8px;
-	padding: 4%;
-}
-
-.file-upload p, ul {
-	font-size: 0.7em;
-}
-
-dt {
-	font-weight: bold;
-}
-
-dd {
-	margin-bottom: 20px;
+body {
+	margin: 10% 5%;
 }
 
 a {
@@ -36,34 +12,41 @@ a:hover {
 	color: darkcyan;
 }
 
-h1 {
-	margin: 0% 5%;
-	font-style: oblique;
+dt {
+	font-weight: bold;
 }
 
-@media screen and (max-width:800px) {
-	.dashboard {
-		display: block;
-		margin: 5%;
-	}
-	.side-bar {
-		max-width: 70%;
-		margin: 5%;
-	}
-	.ts-app {
-		overflow-x: auto;
-		width: 700px;
-	}
+dd {
+	margin-bottom: 20px;
+}
+
+h1 {
+	text-align: center;
+}
+
+hr {
+	max-width: 80%;
+}
+
+img {
+	width: 100%;
+}
+
+label {
+	display: inline-block;
+	margin: 15px 4px 4px;
 }
 
 .button {
-	background-color: slategrey;
-	padding: 15px 40px;
-	border: none;
-	margin: 2%;
 	font-size: 0.8em;
-	text-decoration: none;
+	background-color: slategrey;
 	color: #fff;
+	margin: 4%;
+	justify-content: center;
+	padding: 15px;
+	text-decoration: none;
+	text-align: center;
+	width: 180px;
 }
 
 .button:hover {
@@ -71,16 +54,59 @@ h1 {
 	box-shadow: 5px 10px 10px #222;
 }
 
-footer {
-	margin: 10% auto;
+.file-upload {
+	border: 2px dotted #404040;
+	border-radius: 8px;
+	padding: 6%;
 }
 
-img {
-	width: 100%;
+.file-upload p, ul {
+	font-size: 0.7em;
 }
 
-/* Hover Bob */
+.footer {
+	margin: auto;
+	text-align: center;
+}
 
+.param-input {
+	margin-bottom: 8%;
+}
+
+.param-input h3 {
+	margin-bottom: 0px;
+}
+
+@media only screen and (min-width: 768px) {
+	body {margin: 10% 12%;}
+
+	hr {max-width: 45%;}
+}
+
+@media only screen and (min-width: 1024px) {
+	body {
+		margin: 3%;
+	}
+
+	.dashboard {
+		display: grid;
+		grid-template-columns: 1fr 4fr;
+		gap: 2%;
+	}
+
+	.home-page-content, .glossary-content{
+		margin: auto;
+		max-width: 65%;
+	}
+	
+	.plots-and-text {
+		display: grid;
+		grid-template-columns: 64% 34%;
+		gap: 2%;
+	}
+}
+
+/* "Hover Bob" button effect */
 @-webkit-keyframes hvr-bob {
 	0% {
 		-webkit-transform: translateY(-8px);
