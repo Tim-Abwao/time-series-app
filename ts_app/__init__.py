@@ -36,7 +36,7 @@ def run_app(
     serve(server, host=host.lstrip("http://"), port=port)
 
 
-def run_in_cli() -> None:
+def _run_in_cli() -> None:
     """Start the app server using input collected from the command line
     interface.
     """
@@ -45,4 +45,4 @@ def run_in_cli() -> None:
     if not args.no_browser:
         webbrowser.open(f"{args.host}:{args.port}")
 
-    serve(server, host=args.host.lstrip("http://"), port=args.port)
+    serve(server, host=args.host.split("://")[-1], port=args.port)
