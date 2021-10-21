@@ -6,7 +6,7 @@ from waitress import serve
 from ts_app.cli import process_cli_args
 from ts_app.dashboard import server
 
-__version__ = "0.4.0"
+__version__ = "0.5.0"
 
 logging.basicConfig(level="INFO")
 
