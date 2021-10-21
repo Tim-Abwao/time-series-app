@@ -36,7 +36,7 @@ def process_upload(data: pd.DataFrame) -> Optional[str]:
                 "(which is needed in some of the time series functions used) "
                 "could not be determined."
             )
-    except (dtParserError, ValueError):
+    except (dtParserError, TypeError, ValueError):
         return (
             "Please try again... it seems that the values in the 1st column "
             "could not be read as dates."

@@ -2,18 +2,16 @@ from base64 import b64decode
 from io import BytesIO, StringIO
 from typing import Optional, Tuple
 
-import dash_core_components as dcc
-import dash_html_components as html
 import pandas as pd
+from dash import dcc, html
 from dash.dependencies import Input, Output
 from ts_app.dash_app import app
 from ts_app.file_upload import process_upload
 
 input_layout = html.Div(
     [
-        # File upload button
         dcc.Upload(
-            id="upload-data",
+            id="file-upload",
             accept=".csv,.xls,.xlsx",
             className="file-upload",
             children=[
@@ -31,7 +29,6 @@ input_layout = html.Div(
             min_size=32,
             max_size=1024 ** 2 * 7,  # 7MiB
         ),
-        # Container for the file-name or error message
         html.P(id="file-info"),
     ]
 )
@@ -41,16 +38,16 @@ input_layout = html.Div(
     [
         Output("file-info", "children"),
         Output("file-info", "style"),
-        Output("upload-data-store", "data"),
+        Output("file-upload-store", "data"),
     ],
-    [Input("upload-data", "contents"), Input("upload-data", "filename")],
+    [Input("file-upload", "contents"), Input("file-upload", "filename")],
 )
 def upload_file(
     contents: str, filename: str
 ) -> Tuple[str, dict, Optional[dict]]:
     """Extract, validate and process data from uploaded files.
 
-    parameters
+    Parameters
     ----------
     contents : str
         Base64-encoded string with the file's contents
@@ -70,27 +67,26 @@ def upload_file(
         )
     else:
         content_string = contents.split(",")[1]
-
-    file_content = b64decode(content_string)
+        file_content = b64decode(content_string)
 
     try:
-        if ".csv" in filename:
+        if filename.endswith(".csv"):
             df = pd.read_csv(
                 StringIO(file_content.decode("utf-8")), index_col=0
             )
-        elif ".xls" in filename:
+        elif filename.endswith(".xls") or filename.endswith(".xlsx"):
             df = pd.read_excel(BytesIO(file_content), index_col=0)
-    except Exception as e:
-        print(e)
+    except Exception as error:
+        print(error)
         return (
             html.Div(["There was an error processing the file."]),
             {"color": "orangered"},
             None,  # No data to store
         )
 
-    if (error := process_upload(data=df)) is not None:
+    if (validation_error := process_upload(data=df)) is not None:
         return (
-            error,
+            validation_error,
             {"color": "orangered"},
             None,  # No data to store
         )

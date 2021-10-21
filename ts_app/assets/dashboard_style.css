@@ -1,5 +1,7 @@
 body {
-	margin: 10% 5%;
+	background-image: url("/assets/background_small.jpg");
+	font: oblique 1.1em Georgia, serif;
+	margin: 7% 5%;
 }
 
 a {
@@ -8,8 +10,8 @@ a {
 }
 
 a:hover {
+	color: teal;
 	text-decoration: none;
-	color: darkcyan;
 }
 
 dt {
@@ -40,9 +42,9 @@ label {
 .button {
 	font-size: 0.8em;
 	background-color: slategrey;
+	border-radius: 4px;
 	color: #fff;
 	margin: 4%;
-	justify-content: center;
 	padding: 15px;
 	text-decoration: none;
 	text-align: center;
@@ -58,6 +60,7 @@ label {
 	border: 2px dotted #404040;
 	border-radius: 8px;
 	padding: 6%;
+	margin-top: 10%;
 }
 
 .file-upload p, ul {
@@ -77,36 +80,65 @@ label {
 	margin-bottom: 0px;
 }
 
-@media only screen and (min-width: 768px) {
-	body {margin: 10% 12%;}
+#component-plots {
+	margin-bottom: 7%;
+}
 
-	hr {max-width: 45%;}
+#line-plot {
+	height: 40vh;
+}
+
+@media only screen and (min-width: 768px) {
+	body {
+		background-image: url("/assets/background_large.jpg");
+		margin: 10%;
+	}
+	hr {
+		max-width: 45%;
+	}
+	img {
+		height: 40vh;
+	}
+	#component-plots {
+		margin-bottom: 5%;
+	}
+	#line-plot {
+		height: 35vh;
+	}
 }
 
 @media only screen and (min-width: 1024px) {
 	body {
 		margin: 3%;
 	}
-
-	.dashboard {
+	.dashboard-content {
 		display: grid;
 		grid-template-columns: 1fr 4fr;
-		gap: 2%;
+		gap: 20px;
 	}
-
-	.home-page-content, .glossary-content{
+	.home-page-content, .glossary-content {
+		font-size: 1.1em;
 		margin: auto;
-		max-width: 65%;
+		max-width: 70%;
 	}
-	
-	.plots-and-text {
+	.file-upload {
+		margin-top: 10%;
+	}
+	.graphs-and-guide {
 		display: grid;
-		grid-template-columns: 64% 34%;
-		gap: 2%;
+		grid-template-columns: 1fr 2fr;
+		gap: 20px;
+	}
+	#component-plots {
+		height: 80vh;
+	}
+	#line-plot {
+		height: 42vh;
 	}
 }
 
 /* "Hover Bob" button effect */
+
 @-webkit-keyframes hvr-bob {
 	0% {
 		-webkit-transform: translateY(-8px);

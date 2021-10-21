@@ -1,6 +1,4 @@
-from typing import Optional
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc, html
 from dash.dependencies import Input, Output
 
 from ts_app.dash_app import app
@@ -8,12 +6,10 @@ from ts_app.dashboard_components import (
     glossary,
     home_page,
     modelling,
-    resources,
     sample,
     upload,
 )
 
-app.index_string = resources.html_template
 server = app.server
 
 app.layout = html.Div(
@@ -22,80 +18,57 @@ app.layout = html.Div(
 
 
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
-def render_page(pathname: str) -> Optional[html.Div]:
+def render_page(pathname: str) -> html.Div:
     """Display the page at the given pathname.
 
     Parameters
     ----------
     path_name : str
-        The url to a page or dashboard layout.
+        The url to a page.
 
     Returns
     -------
-    Optional[dash_html_components.Div.Div]
-        Dashboard content.
+    dash.html.Div.Div
+        Page content.
     """
     if pathname == "/glossary":
         return glossary.layout
     elif pathname == "/sample":
-        data_input_form = sample.input_layout
+        return generate_dashboard(data_source=sample.input_layout)
     elif pathname == "/upload":
-        data_input_form = upload.input_layout
+        return generate_dashboard(data_source=upload.input_layout)
     else:
         return home_page.layout
 
-    # If pathname in {"/upload", "/sample"}, create the appropriate dashboard.
+
+def generate_dashboard(data_source: html.Div) -> html.Div:
+    """Get a dashboard layout with the given `data_source`.
+
+    Parameters
+    ----------
+    data_source : dash.html.Div.Div
+        A html form to collect input
+
+    Returns
+    -------
+    dash.html.Div.Div
+        Dashboard layout.
+    """
     return html.Div(
-        id="dashboard",
-        className="dashboard",
+        id="dashboard-content",
+        className="dashboard-content",
         children=[
-            # Sidebar with data & model input forms
+            # Sidebar with input forms
             html.Div(
                 className="side-bar",
                 children=[
-                    html.Div(data_input_form, id="data-source"),
-                    # Container for sample data
+                    html.Div(data_source, id="data-source"),
                     dcc.Store(id="sample-data-store"),
-                    # Container for uploaded data
-                    dcc.Store(id="upload-data-store"),
-                    # Dropdowns for setting model parameters
-                    modelling.param_input,
+                    dcc.Store(id="file-upload-store"),
+                    modelling.model_param_input,
                 ],
             ),
-            # Time series plots
-            html.Div(
-                className="plots-and-text",
-                children=[
-                    html.Div(
-                        className="line-plot",
-                        children=[
-                            modelling.lineplot,
-                            dcc.Markdown(resources.ts_details),
-                        ],
-                    ),
-                    html.Div(
-                        modelling.component_plots, className="component-plot"
-                    ),
-                    html.Div(
-                        className="footer",
-                        children=[
-                            html.A(
-                                "Back to home",
-                                href="/",
-                                className="hvr-bob button",
-                            ),
-                            html.A(
-                                "Browse glossary",
-                                href="/glossary",
-                                className="hvr-bob button",
-                            ),
-                        ],
-                    ),
-                ],
-            ),
+            # Time series forecasting plots and guide
+            modelling.graphs_and_guide,
         ],
     )
-
-
-if __name__ == "__main__":
-    app.run_server(debug=True)

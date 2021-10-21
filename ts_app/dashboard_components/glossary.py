@@ -1,11 +1,9 @@
 import json
 from pkgutil import get_data
 
-import dash_html_components as html
+from dash import html
 
-# Get glossary data as binary string
 glossary_data = get_data("ts_app", "assets/glossary.json")
-
 definitions = json.loads(glossary_data.decode())
 
 title_definition_pairs = sum(  # Concatenate

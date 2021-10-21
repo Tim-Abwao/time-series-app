@@ -3,7 +3,7 @@
 [![PyPI version](https://badge.fury.io/py/ts-app.svg)](https://badge.fury.io/py/ts-app)
 [![Python application](https://github.com/Tim-Abwao/time-series-app/actions/workflows/python-app.yml/badge.svg)](https://github.com/Tim-Abwao/time-series-app/actions/workflows/python-app.yml)
 
-A dashboard application to learn a little about, and apply *[Time Series][wiki_time_series] analysis* & *forecasting*.
+A dashboard application to help learn a little about, and apply *[Time Series][wiki_time_series] analysis* & *forecasting* concepts.
 
 You can create a sample, or upload a file, and interactively fit a time series model on it.
 
@@ -11,7 +11,7 @@ The dashboard is built with [Dash][dash], and the time series models are fitted 
 
 You can [try it out here][live-link].
 
-[![screencast of the app](https://raw.githubusercontent.com/Tim-Abwao/time-series-app/master/dashboard.gif)][live-link]
+[![screencast of the app](https://raw.githubusercontent.com/Tim-Abwao/time-series-app/master/screencast.gif)][live-link]
 
 ## Installation
 

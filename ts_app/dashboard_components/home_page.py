@@ -1,31 +1,14 @@
-import dash_core_components as dcc
-import dash_html_components as html
+from pkgutil import get_data
+
+from dash import dcc, html
+
+page_content = get_data("ts_app", "assets/home-page.md").decode("utf-8")
 
 layout = html.Div(
     className="home-page-content",
     children=[
         # Introduction
-        dcc.Markdown(
-            """
-# Time Series App
-
----
-
-A simple application that illustrates basic [time series analysis][1]
-techniques. A [glossary](/glossary) of terms is available to help get familiar
-with the main concepts.
-
-In a nutshell, Time Series Analysis purposes to learn and emulate the
-behaviour of data over time. Time Series Forecasting then leverages this
-insight to estimate future values.
-
-![An example of time series analysis results, plotted](/assets/ts.svg)
-
-To give it a try, you can upload a file or create a sample to analyse:
-
-[1]: https://en.wikipedia.org/wiki/Time_series
-"""
-        ),
+        dcc.Markdown(page_content),
         html.Div(
             className="footer",
             children=[

@@ -1,5 +1,4 @@
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc, html
 from dash.dependencies import Input, Output
 from ts_app.dash_app import app
 from ts_app.ts_functions import create_arma_sample
@@ -38,7 +37,7 @@ input_layout = html.Div(
     [Input("sample-ar", "value"), Input("sample-ma", "value")],
 )
 def get_sample(ar_order: int, ma_order: int) -> dict:
-    """Create an ARMA sample with the given parameters.
+    """Generate a random ARMA sample with the given parameters.
 
     Parameters
     ----------
@@ -48,9 +47,9 @@ def get_sample(ar_order: int, ma_order: int) -> dict:
     Returns
     -------
     dict
-        The sample's name and data.
+        The sample's description and data.
     """
-    sample = create_arma_sample(ar_order, ma_order, size=150)
+    sample = create_arma_sample(ar_order, ma_order, size=365)
 
     return {
         "filename": f"an ARMA({ar_order}, {ma_order}) sample",
