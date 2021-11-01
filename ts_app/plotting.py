@@ -27,6 +27,7 @@ def plot_ts_components(
     fig = make_subplots(
         rows=3,
         cols=1,
+        shared_xaxes=True,
         subplot_titles=("Trend", "Seasonal", "Residuals"),
     )
     fig.add_trace(
@@ -48,9 +49,10 @@ def plot_ts_components(
         showlegend=False,
         title=f"Seasonal Decomposition for {file_name}",
         title_font_size=13,
+        xaxis1_showticklabels=True,
+        xaxis2_showticklabels=True
     )
     fig.update_traces(hovertemplate="%{x}: <b>%{y:,.4f}</b>")
-    fig.update_xaxes(fixedrange=True)
     fig.update_yaxes(fixedrange=True)
     return fig
 
