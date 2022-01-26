@@ -44,7 +44,7 @@ def plot_ts_components(
         y=seasonal,
         mode="lines",
         name="seasonal",
-        line_color="lime",
+        line_color="seagreen",
         row=2,
         col=1,
     )
@@ -108,7 +108,7 @@ def plot_forecast(
             x=actual_data.index,
             mode="lines",
             name="actual data",
-            line_color="#9999ff"
+            line_color="#8888ff",
         ),
     )
     fig.add_scatter(
@@ -128,13 +128,14 @@ def plot_forecast(
 
     fig.update_layout(
         font_family="serif",
+        hovermode="x unified",
         margin={"l": 10, "t": 80, "r": 10, "b": 10},
         paper_bgcolor="#eee",
         plot_bgcolor="#eee",
         title=f"An {model_info} model fitted on {file_name}",
         title_font_size=13,
     )
-    fig.update_traces(hovertemplate="%{x}: <b>%{y:,.4f}</b>", line_width=1)
+    fig.update_traces(hovertemplate="<b>%{y:,.4f}</b>", line_width=1)
     fig.update_xaxes(fixedrange=True)
     fig.update_yaxes(fixedrange=True)
     return fig
