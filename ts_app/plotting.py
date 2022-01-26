@@ -30,29 +30,46 @@ def plot_ts_components(
         shared_xaxes=True,
         subplot_titles=("Trend", "Seasonal", "Residuals"),
     )
-    fig.add_trace(
-        go.Scatter(x=trend.index, y=trend, name="trend"), row=1, col=1
+    fig.add_scatter(
+        x=trend.index,
+        y=trend,
+        mode="lines",
+        name="trend",
+        line_color="navy",
+        row=1,
+        col=1,
     )
-    fig.add_trace(
-        go.Scatter(x=seasonal.index, y=seasonal, name="seasonal"), row=2, col=1
+    fig.add_scatter(
+        x=seasonal.index,
+        y=seasonal,
+        mode="lines",
+        name="seasonal",
+        line_color="lime",
+        row=2,
+        col=1,
     )
-    fig.add_trace(
-        go.Scatter(x=residuals.index, y=residuals, name="residuals"),
+    fig.add_scatter(
+        x=residuals.index,
+        y=residuals,
+        mode="lines",
+        name="residuals",
+        line_color="#ff3322",
         row=3,
         col=1,
     )
     fig.update_annotations(font_size=12)  # subplot titles are annotations
     fig.update_layout(
-        margin={"l": 10, "t": 60, "r": 10, "b": 10},
+        font_family="serif",
+        margin={"l": 10, "t": 80, "r": 10, "b": 10},
         paper_bgcolor="#eee",
         plot_bgcolor="#eee",
         showlegend=False,
         title=f"Seasonal Decomposition for {file_name}",
-        title_font_size=13,
+        title_font_size=14,
         xaxis1_showticklabels=True,
-        xaxis2_showticklabels=True
+        xaxis2_showticklabels=True,
     )
-    fig.update_traces(hovertemplate="%{x}: <b>%{y:,.4f}</b>")
+    fig.update_traces(hovertemplate="%{x}: <b>%{y:,.4f}</b>", line_width=1)
     fig.update_yaxes(fixedrange=True)
     return fig
 
@@ -91,28 +108,33 @@ def plot_forecast(
             x=actual_data.index,
             mode="lines",
             name="actual data",
+            line_color="#9999ff"
         ),
     )
-    fig.add_trace(
-        go.Scatter(
-            x=predictions.index,
-            y=predictions,
-            mode="lines",
-            name="predictions",
-        )
+    fig.add_scatter(
+        x=predictions.index,
+        y=predictions,
+        mode="lines",
+        name="predictions",
+        line_color="navy",
     )
-    fig.add_trace(
-        go.Scatter(x=forecast.index, y=forecast, mode="lines", name="forecast")
+    fig.add_scatter(
+        x=forecast.index,
+        y=forecast,
+        mode="lines",
+        name="forecast",
+        line_color="lime",
     )
 
     fig.update_layout(
-        margin={"l": 10, "t": 60, "r": 10, "b": 10},
+        font_family="serif",
+        margin={"l": 10, "t": 80, "r": 10, "b": 10},
         paper_bgcolor="#eee",
         plot_bgcolor="#eee",
         title=f"An {model_info} model fitted on {file_name}",
         title_font_size=13,
     )
-    fig.update_traces(hovertemplate="%{x}: <b>%{y:,.4f}</b>")
+    fig.update_traces(hovertemplate="%{x}: <b>%{y:,.4f}</b>", line_width=1)
     fig.update_xaxes(fixedrange=True)
     fig.update_yaxes(fixedrange=True)
     return fig
