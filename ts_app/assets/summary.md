@@ -1,4 +1,4 @@
-## Guide
+### Guide
 
 Graphs reveal the [trend](/glossary#Trend) in the data, and help assess the **goodness of fit**. In general, a good model should reasonably replicate the behaviour of the historical data.
 

@@ -71,7 +71,7 @@ graphs_and_guide = html.Div(
                         ),
                     ],
                 ),
-                dcc.Markdown(summary),
+                dcc.Markdown(summary, className="guide"),
                 html.Div(
                     className="footer",
                     children=[

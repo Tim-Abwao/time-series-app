@@ -1,6 +1,6 @@
 body {
 	background-image: url("/assets/background_small.jpg");
-	font: oblique 1.1em Georgia, serif;
+	font: oblique 1em Georgia, serif;
 	margin: 7% 5%;
 }
 
@@ -93,15 +93,19 @@ label {
 		background-image: url("/assets/background_large.jpg");
 		margin: 10%;
 	}
+
 	hr {
 		max-width: 45%;
 	}
+
 	img {
 		height: 40vh;
 	}
+
 	#component-plots {
 		margin-bottom: 5%;
 	}
+
 	#line-plot {
 		height: 35vh;
 	}
@@ -111,29 +115,38 @@ label {
 	body {
 		margin: 3%;
 	}
+
 	.dashboard-content {
 		display: grid;
 		grid-template-columns: 1fr 4fr;
 		gap: 20px;
 	}
+
 	.home-page-content, .glossary-content {
-		font-size: 1.1em;
 		margin: auto;
 		max-width: 70%;
 	}
+
 	.file-upload {
 		margin-top: 10%;
 	}
+
 	.graphs-and-guide {
 		display: grid;
 		grid-template-columns: 1fr 2fr;
-		gap: 20px;
+		gap: 30px;
 	}
+
 	#component-plots {
-		height: 80vh;
+		height: 85vh;
 	}
+
 	#line-plot {
-		height: 42vh;
+		height: 45vh;
+	}
+
+	.guide {
+		font-size: 0.85em;
 	}
 }
 
@@ -144,10 +157,12 @@ label {
 		-webkit-transform: translateY(-8px);
 		transform: translateY(-8px);
 	}
+
 	50% {
 		-webkit-transform: translateY(-4px);
 		transform: translateY(-4px);
 	}
+
 	100% {
 		-webkit-transform: translateY(-8px);
 		transform: translateY(-8px);
@@ -159,10 +174,12 @@ label {
 		-webkit-transform: translateY(-8px);
 		transform: translateY(-8px);
 	}
+
 	50% {
 		-webkit-transform: translateY(-4px);
 		transform: translateY(-4px);
 	}
+
 	100% {
 		-webkit-transform: translateY(-8px);
 		transform: translateY(-8px);
