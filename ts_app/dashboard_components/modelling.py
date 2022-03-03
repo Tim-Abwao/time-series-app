@@ -78,12 +78,12 @@ graphs_and_guide = html.Div(
                         html.A(
                             "Back to home",
                             href="/",
-                            className="hvr-bob button",
+                            className="button",
                         ),
                         html.A(
                             "Browse glossary",
                             href="/glossary",
-                            className="hvr-bob button",
+                            className="button",
                         ),
                     ],
                 ),

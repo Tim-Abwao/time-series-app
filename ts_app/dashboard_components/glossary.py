@@ -29,7 +29,7 @@ layout = html.Div(
         html.Div(
             className="footer",
             children=[
-                html.A("Back to home", href="/", className="hvr-bob button")
+                html.A("Back to home", href="/", className="button")
             ],
         ),
     ]

@@ -13,12 +13,12 @@ layout = html.Div(
             className="footer",
             children=[
                 html.A(
-                    "Upload a file", href="/upload", className="hvr-bob button"
+                    "Upload a file", href="/upload", className="button"
                 ),
                 html.A(
                     "Process a sample",
                     href="/sample",
-                    className="hvr-bob button",
+                    className="button",
                 ),
             ],
         ),
