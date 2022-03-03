@@ -40,7 +40,7 @@ A simple dashboard application to learn time series basics and interactively fit
 optional arguments:
   -h, --help            show this help message and exit
   -p PORT, --port PORT  The TCP port on which to listen (default: 8000).
-  --host HOST           A host-name or IP address (default: 'http://localhost').
+  --host HOST           A host-name or IP address (default: '0.0.0.0').
   --no-browser          Avoid openning a browser tab or window.
 ```
 

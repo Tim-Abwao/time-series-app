@@ -8,7 +8,7 @@ def test_default_args(monkeypatch):
     monkeypatch.setattr(sys, "argv", ["ts_app"])
     args = process_cli_args()
 
-    assert args.host == "http://localhost"
+    assert args.host == "0.0.0.0"
     assert args.port == 8000
     assert args.no_browser is False
 

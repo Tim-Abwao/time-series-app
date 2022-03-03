@@ -15,25 +15,23 @@ logging.getLogger("waitress.queue").setLevel("ERROR")
 
 
 def run_app(
-    host: str = "http://localhost",
-    port: int = 8000,
-    launch_browser: bool = True,
+    host: str = "0.0.0.0", port: int = 8000, launch_browser: bool = True
 ) -> None:
     """Start the app server, and launch a web browser to it.
 
     Parameters
     ----------
     host : str, optional
-        A host-name or IP address, default "http://localhost"
+        A host-name or IP address, default "0.0.0.0".
     port : int, optional
-        The TCP port on which to listen, default 8000
+        The TCP port on which to listen, default 8000.
     launch_browser : bool
-        Whether or not to launch a web browser to view the app
+        Whether or not to launch a web browser to view the app.
     """
     if launch_browser is True:
         webbrowser.open(f"{host}:{port}")
 
-    serve(server, host=host.lstrip("http://"), port=port)
+    serve(server, host=host, port=port)
 
 
 def _run_in_cli() -> None:
