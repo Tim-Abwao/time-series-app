@@ -23,5 +23,5 @@ scipy==1.8.0
 six==1.16.0
 statsmodels==0.13.2
 tenacity==8.0.1
-waitress==2.0.0
+waitress==2.1.1
 Werkzeug==2.0.3
