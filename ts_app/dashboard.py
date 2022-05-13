@@ -19,17 +19,13 @@ app.layout = html.Div(
 
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
 def render_page(pathname: str) -> html.Div:
-    """Display the page at the given pathname.
+    """Display the page at the given `pathname`.
 
-    Parameters
-    ----------
-    path_name : str
-        The url to a page.
+    Args:
+        pathname (str): The url to a page.
 
-    Returns
-    -------
-    dash.html.Div.Div
-        Page content.
+    Returns:
+        dash.html.Div.Div: Page content.
     """
     if pathname == "/glossary":
         return glossary.layout
@@ -44,15 +40,11 @@ def render_page(pathname: str) -> html.Div:
 def generate_dashboard(data_source: html.Div) -> html.Div:
     """Get a dashboard layout with the given `data_source`.
 
-    Parameters
-    ----------
-    data_source : dash.html.Div.Div
-        A html form to collect input
+    Args:
+        data_source (dash.html.Div.Div): A html form to collect input.
 
-    Returns
-    -------
-    dash.html.Div.Div
-        Dashboard layout.
+    Returns:
+        dash.html.Div.Div: Dashboard layout.
     """
     return html.Div(
         id="dashboard-content",

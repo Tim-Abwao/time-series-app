@@ -1,7 +1,7 @@
 import argparse
 
 
-def process_cli_args():
+def process_cli_args() -> None:
     """Create arguments and collect input from the command line."""
     parser = argparse.ArgumentParser(
         prog="ts_app",

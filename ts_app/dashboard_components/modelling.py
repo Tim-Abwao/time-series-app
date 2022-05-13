@@ -1,5 +1,5 @@
 from pkgutil import get_data
-from typing import Tuple
+from typing import Optional, Tuple
 
 import pandas as pd
 import plotly.graph_objs as go
@@ -112,26 +112,23 @@ def model_and_predict(
     diff_order: int,
     ma_order: int,
     input_source: str,
-    sample: dict,
-    upload: dict,
+    sample: Optional[dict],
+    upload: Optional[dict],
 ) -> Tuple[go.Figure, go.Figure]:
     """Fit an ARIMA model each time model parameters or input data are
     modified, then plot the results.
 
-    Parameters
-    ----------
-    ar_order, ma_order, diff_order : int
-        The AR order, Differencing order and MA order for the ARIMA model.
-    input_souce : {"/upload", "/sample"}
-        The data source.
-    sample, upload : dict
-        Stored sample-data or uploaded-file-data respectively.
+    Args:
+        ar_order (int): AR order.
+        diff_order (int): Differencing order.
+        ma_order (int): MA order.
+        input_source (str): The data source.
+        sample (Optional[dict]): Stored sample data, if any.
+        upload (Optional[dict]): Uploaded data, if any.
 
-    Returns
-    -------
-    tuple
-        A line-plot of the forecast results, and subplots with seasonal
-        decomposition estimates.
+    Returns:
+        Tuple[plotly.graph_objs._figure.Figure, ...]: A line-plot of the
+        forecast results, and subplots with seasonal decomposition estimates.
     """
     if input_source == "/upload" and upload is not None:
         filename = upload["filename"]

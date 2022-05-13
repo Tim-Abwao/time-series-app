@@ -8,21 +8,14 @@ def plot_ts_components(
 ) -> go.Figure:
     """Get subplots of time series components (trend, seasonal, residuals).
 
-    Parameters
-    ----------
-    trend : Series
-        Estimated trend component
-    seasonal : Series
-        Estimated seasonal component
-    residuals : Series
-        Estimated residual component
-    file_name : str
-        Data source info
+    Args:
+        trend (pandas.Series): Estimated trend component.
+        seasonal (pandas.Series): Estimated seasonal component.
+        residuals (pandas.Series): Estimated residual component.
+        file_name (str): Data source information.
 
-    Returns
-    -------
-    plotly.graph_objs._figure.Figure
-        Subplots of time series compoments.
+    Returns:
+        plotly.graph_objs._figure.Figure: Subplots of time series components.
     """
     fig = make_subplots(
         rows=3,
@@ -84,25 +77,18 @@ def plot_forecast(
     file_name: str,
 ) -> go.Figure:
     """Get a line-plot of the data, along with predicted values and a
-    13-period forecast.
+    14-period forecast.
 
-    Parameters
-    ----------
-    actual_data : Series
-        The original/input data
-    predictions : Series
-        In-sample predicted values
-    forecast : Series
-        Out-of-sample predicted values
-    model_info : str
-        A description of the model's type and order
-    file_name : str
-        Input data source information.
+    Args:
+        actual_data (pandas.Series): The original/input data.
+        predictions (pandas.Series): In-sample predicted values.
+        forecast (pandas.Series): Out-of-sample forecast values.
+        model_info (str): A description of the model's type and order.
+        file_name (str): Input data source information.
 
-    Returns
-    -------
-    plotly.graph_objs._figure.Figurego.Figure
-        A line-plot of time series forecasting results.
+    Returns:
+        plotly.graph_objs._figure.Figure: A line-plot of time series
+        forecasting results.
     """
     fig = go.Figure(
         go.Scatter(

@@ -5,17 +5,13 @@ from dateutil.parser import ParserError as dtParserError
 
 
 def process_upload(data: pd.DataFrame) -> Optional[str]:
-    """Validate the data from the uploaded file.
+    """Validate the data obtained from an uploaded file.
 
-    Parameters
-    ----------
-    data : pandas.DataFrame
-        The data extracted from the file.
+    Args:
+        data (pandas.DataFrame): The data extracted from the file.
 
-    Returns
-    -------
-    Optional[str]
-        The error found, if any.
+    Returns:
+        Optional[str]: The error found, if any.
     """
     if (n := len(data)) < 32:
         return (

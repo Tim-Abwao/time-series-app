@@ -27,7 +27,7 @@ input_layout = html.Div(
                 ),
             ],
             min_size=32,
-            max_size=1024 ** 2 * 7,  # 7MiB
+            max_size=1024**2 * 7,  # 7MiB
         ),
         html.P(id="file-info"),
     ]
@@ -45,19 +45,15 @@ input_layout = html.Div(
 def upload_file(
     contents: str, filename: str
 ) -> Tuple[str, dict, Optional[dict]]:
-    """Extract, validate and process data from uploaded files.
+    """Extract and validate data from uploaded files.
 
-    Parameters
-    ----------
-    contents : str
-        Base64-encoded string with the file's contents
-    filename : str
-        The name of the uploaded file
+    Args:
+        contents (str): Base64-encoded string with the file's contents.
+        filename (str): The name of the uploaded file.
 
-    Returns
-    -------
-    Tuple[str, dict, dict]
-        (file-info message, file-info style, data to store).
+    Returns:
+        Tuple[str, dict, Optional[dict]]: file-info message, file-info style
+        and the data-dict to store.
     """
     if contents is None:
         return (

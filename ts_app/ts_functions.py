@@ -16,15 +16,13 @@ def create_arma_sample(
 ) -> pd.Series:
     """Get a random ARMA sample.
 
-    Parameters
-    ----------
-    ar_order, ma_order, size : int
-        Values for the desired AR order, MA order and sample size.
+    Args:
+        ar_order (int, optional): Desired AR order. Defaults to 1.
+        ma_order (int, optional): Desired MA order. Defaults to 1.
+        size (int, optional): Desired sample size. Defaults to 100.
 
-    Returns
-    -------
-    pandas.Series
-        An ARMA sample.
+    Returns:
+        pandas.Series: An ARMA sample.
     """
     ar_coeff = np.linspace(1, -0.9, ar_order + 1)  # arbitrary ar coefficients
     ma_coeff = np.linspace(1, 0.9, ma_order + 1)  # arbitrary ma coefficients
@@ -39,19 +37,15 @@ def fit_arima_model(
 ) -> Tuple[pd.Series, pd.Series]:
     """Fit an ARIMA model on the data and get predictions.
 
-    Parameters
-    ----------
-    data : pandas.Series
-        The data to model, indexed by date.
-    ar_order, ma_order, diff : int
-        Values for the AR order, MA order and degree of Differencing
-        respectively.
+    Args:
+        data (pandas.Series): The data to model, with a DatetimeIndex.
+        ar_order (int, optional): AR order. Defaults to 1.
+        diff (int, optional): Differencing order. Defaults to 0.
+        ma_order (int, optional): MA order. Defaults to 1.
 
-    Returns
-    -------
-    Tuple[pd.Series, pd.Series]
-        In-sample predictions covering the latter 30% of the data, and a
-        14-period out-of-sample forecast.
+    Returns:
+        Tuple[pandas.Series, pandas.Series]: In-sample predictions covering
+        the latter 30% of the data, and a 14-period out-of-sample forecast.
     """
     arima_model = tsa.arima.ARIMA(data, order=(ar_order, diff, ma_order)).fit()
     n = len(data)

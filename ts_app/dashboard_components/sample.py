@@ -37,17 +37,14 @@ input_layout = html.Div(
     [Input("sample-ar", "value"), Input("sample-ma", "value")],
 )
 def get_sample(ar_order: int, ma_order: int) -> dict:
-    """Generate a random ARMA sample with the given parameters.
+    """Generate a random ARMA sample with the provided parameters.
 
-    Parameters
-    ----------
-    ar_order, ma_order : int
-        AR order and MA order respectively.
+    Args:
+        ar_order (int): AR order.
+        ma_order (int): MA order.
 
-    Returns
-    -------
-    dict
-        The sample's description and data.
+    Returns:
+        dict: The sample's description and data.
     """
     sample = create_arma_sample(ar_order, ma_order, size=365)
 

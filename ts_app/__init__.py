@@ -19,14 +19,11 @@ def run_app(
 ) -> None:
     """Start the app server, and launch a web browser to it.
 
-    Parameters
-    ----------
-    host : str, optional
-        A host-name or IP address, default "0.0.0.0".
-    port : int, optional
-        The TCP port on which to listen, default 8000.
-    launch_browser : bool
-        Whether or not to launch a web browser to view the app.
+    Args:
+        host (str, optional): A host-name/IP address. Defaults to "0.0.0.0".
+        port (int, optional): TCP port to listen at. Defaults to 8000.
+        launch_browser (bool, optional): Whether to launch a web browser to
+            view the app. Defaults to True.
     """
     if launch_browser is True:
         webbrowser.open(f"{host}:{port}")
