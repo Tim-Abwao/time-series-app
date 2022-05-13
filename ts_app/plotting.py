@@ -29,6 +29,7 @@ def plot_ts_components(
         cols=1,
         shared_xaxes=True,
         subplot_titles=("Trend", "Seasonal", "Residuals"),
+        vertical_spacing=0.24,
     )
     fig.add_scatter(
         x=trend.index,
@@ -70,6 +71,7 @@ def plot_ts_components(
         xaxis2_showticklabels=True,
     )
     fig.update_traces(hovertemplate="%{x}: <b>%{y:,.4f}</b>", line_width=1)
+    fig.update_xaxes(rangeslider=dict(visible=True, thickness=0.035))
     fig.update_yaxes(fixedrange=True)
     return fig
 
@@ -136,6 +138,6 @@ def plot_forecast(
         title_font_size=13,
     )
     fig.update_traces(hovertemplate="<b>%{y:,.4f}</b>", line_width=1)
-    fig.update_xaxes(fixedrange=True)
+    fig.update_xaxes(rangeslider=dict(visible=True, thickness=0.15))
     fig.update_yaxes(fixedrange=True)
     return fig

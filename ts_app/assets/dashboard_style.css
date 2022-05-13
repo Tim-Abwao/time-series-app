@@ -83,6 +83,7 @@ label {
 }
 
 #component-plots {
+	height: 60vh;
 	margin-bottom: 7%;
 }
 
