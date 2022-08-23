@@ -1,9 +1,12 @@
-from dash import dcc, html
+from dash import dcc, html, callback
+import dash
 from dash.dependencies import Input, Output
-from ts_app.dash_app import app
+from ts_app.components import modelling
 from ts_app.ts_functions import create_arma_sample
 
-input_layout = html.Div(
+dash.register_page(__name__)
+
+sample_input = html.Div(
     id="sample-params",
     className="param-input",
     children=[
@@ -31,8 +34,9 @@ input_layout = html.Div(
     ],
 )
 
+layout = modelling.generate_layout(sample_input)
 
-@app.callback(
+@callback(
     Output("sample-data-store", "data"),
     [Input("sample-ar", "value"), Input("sample-ma", "value")],
 )

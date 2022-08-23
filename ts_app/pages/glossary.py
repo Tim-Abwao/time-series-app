@@ -1,18 +1,20 @@
 import json
 from pkgutil import get_data
 
+import dash
 from dash import html
 
-glossary_data = get_data("ts_app", "assets/glossary.json")
-definitions = json.loads(glossary_data.decode())
+dash.register_page(__name__)
 
-title_definition_pairs = sum(  # Concatenate
+GLOSSARY_DATA = json.loads(get_data("ts_app", "assets/glossary.json"))
+
+title_definition_pairs = sum(  # Concatenate list comprehension items
     [
         [
             html.Dt(item["title"], id=item["title"]),
             html.Dd(item["definition"], id=item["definition"]),
         ]
-        for item in sorted(definitions, key=lambda x: x["title"])
+        for item in sorted(GLOSSARY_DATA, key=lambda x: x["title"])
     ],
     start=[],
 )
@@ -28,9 +30,7 @@ layout = html.Div(
         ),
         html.Div(
             className="footer",
-            children=[
-                html.A("Back to home", href="/", className="button")
-            ],
+            children=[html.A("Back to home", href="/", className="button")],
         ),
     ]
 )

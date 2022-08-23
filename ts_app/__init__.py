@@ -4,7 +4,7 @@ import webbrowser
 from waitress import serve
 
 from ts_app.cli import process_cli_args
-from ts_app.dashboard import server
+from ts_app.dash_app import app
 
 __version__ = "0.8.0"
 
@@ -28,7 +28,7 @@ def run_app(
     if launch_browser is True:
         webbrowser.open(f"{host}:{port}")
 
-    serve(server, host=host, port=port)
+    serve(app.server, host=host, port=port)
 
 
 def _run_in_cli() -> None:
@@ -40,4 +40,4 @@ def _run_in_cli() -> None:
     if not args.no_browser:
         webbrowser.open(f"{args.host}:{args.port}")
 
-    serve(server, host=args.host.split("://")[-1], port=args.port)
+    serve(app.server, host=args.host.split("://")[-1], port=args.port)

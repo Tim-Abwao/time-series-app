@@ -2,13 +2,17 @@ from base64 import b64decode
 from io import BytesIO, StringIO
 from typing import Optional, Tuple
 
+from ts_app.components import modelling
 import pandas as pd
-from dash import dcc, html
+import dash
+from dash import dcc, html, callback
 from dash.dependencies import Input, Output
-from ts_app.dash_app import app
 from ts_app.file_upload import process_upload
 
-input_layout = html.Div(
+dash.register_page(__name__)
+
+
+file_input = html.Div(
     [
         dcc.Upload(
             id="file-upload",
@@ -33,8 +37,10 @@ input_layout = html.Div(
     ]
 )
 
+layout = modelling.generate_layout(file_input)
 
-@app.callback(
+
+@callback(
     [
         Output("file-info", "children"),
         Output("file-info", "style"),

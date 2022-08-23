@@ -3,11 +3,11 @@ from typing import Optional, Tuple
 
 import pandas as pd
 import plotly.graph_objs as go
-from dash import dcc, html
+import dash
+from dash import dcc, html, callback
 from dash.dependencies import Input, Output
 from statsmodels.tsa.api import seasonal_decompose
 from ts_app import plotting
-from ts_app.dash_app import app
 from ts_app.ts_functions import create_arma_sample, fit_arima_model
 
 summary = get_data("ts_app", "assets/summary.md").decode()
@@ -93,7 +93,38 @@ graphs_and_guide = html.Div(
 )
 
 
-@app.callback(
+def generate_layout(data_source: html.Div) -> html.Div:
+    """Get a dashboard layout with the given `data_source`.
+
+    Args:
+        data_source (dash.html.Div.Div): A html form to collect input.
+
+    Returns:
+        dash.html.Div.Div: Dashboard layout.
+    """
+    return html.Div(
+        id="dashboard-content",
+        className="dashboard-content",
+        children=[
+            # Current path
+            dcc.Location(id="current-page"),
+            # Sidebar with input forms
+            html.Div(
+                className="side-bar",
+                children=[
+                    html.Div(data_source, id="data-source"),
+                    dcc.Store(id="sample-data-store"),
+                    dcc.Store(id="file-upload-store"),
+                    model_param_input,
+                ],
+            ),
+            # Time series forecasting plots and guide
+            graphs_and_guide,
+        ],
+    )
+
+
+@callback(
     [
         Output("line-plot", "figure"),
         Output("component-plots", "figure"),
@@ -102,7 +133,7 @@ graphs_and_guide = html.Div(
         Input("model-ar", "value"),
         Input("model-diff", "value"),
         Input("model-ma", "value"),
-        Input("url", "pathname"),
+        Input("current-page", "pathname"),
         Input("sample-data-store", "data"),
         Input("file-upload-store", "data"),
     ],
@@ -130,6 +161,7 @@ def model_and_predict(
         Tuple[plotly.graph_objs._figure.Figure, ...]: A line-plot of the
         forecast results, and subplots with seasonal decomposition estimates.
     """
+    
     if input_source == "/upload" and upload is not None:
         filename = upload["filename"]
         data = pd.read_json(upload["data"], orient="index", typ="series")

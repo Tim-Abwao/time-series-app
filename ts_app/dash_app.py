@@ -1,4 +1,5 @@
-from dash import Dash
+import dash
+from dash import Dash, html
 
 app = Dash(
     "ts_app",
@@ -11,4 +12,7 @@ app = Dash(
             "content": "width=device-width, initial-scale=1.0",
         }
     ],
+    use_pages=True,
 )
+
+app.layout = html.Div(dash.page_container)
