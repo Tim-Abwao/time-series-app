@@ -2,17 +2,15 @@ from base64 import b64decode
 from io import BytesIO, StringIO
 from typing import Optional, Tuple
 
-from ts_app.components import modelling
-import pandas as pd
 import dash
-from dash import dcc, html, callback
-from dash.dependencies import Input, Output
+import pandas as pd
+from dash import Input, Output, callback, dcc, html
+from ts_app.components import modelling
 from ts_app.file_upload import process_upload
 
 dash.register_page(__name__)
 
-
-file_input = html.Div(
+file_upload_component = html.Div(
     [
         dcc.Upload(
             id="file-upload",
@@ -37,7 +35,7 @@ file_input = html.Div(
     ]
 )
 
-layout = modelling.generate_layout(file_input)
+layout = modelling.generate_layout(input_source=file_upload_component)
 
 
 @callback(
@@ -48,7 +46,7 @@ layout = modelling.generate_layout(file_input)
     ],
     [Input("file-upload", "contents"), Input("file-upload", "filename")],
 )
-def upload_file(
+def get_upload_data(
     contents: str, filename: str
 ) -> Tuple[str, dict, Optional[dict]]:
     """Extract and validate data from uploaded files.
@@ -81,7 +79,7 @@ def upload_file(
     except Exception as error:
         print(error)
         return (
-            html.Div(["There was an error processing the file."]),
+            "There was an error processing the file.",
             {"color": "orangered"},
             None,  # No data to store
         )
