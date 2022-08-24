@@ -64,7 +64,7 @@ Graphs reveal the [trend](/glossary#Trend) in the data, and help assess the
 behaviour of the historical data.
 
 Graphs also help discover [seasonal](/glossary#Seasonality) and
-[cyclic patterns](/glossary#Cyclic%20patterns). These usually manifest as
+[cyclic patterns](/glossary#Cyclic-patterns). These usually manifest as
 occasional peaks or troughs.
 
 [Autocorrelation][1] and [Partial-Autocorrelation][2] plots can provide hints
