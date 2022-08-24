@@ -3,14 +3,10 @@ from typing import Optional, Tuple
 
 import pandas as pd
 import plotly.graph_objs as go
-import dash
-from dash import dcc, html, callback
-from dash.dependencies import Input, Output
+from dash import Input, Output, callback, dcc, html
 from statsmodels.tsa.api import seasonal_decompose
 from ts_app import plotting
 from ts_app.ts_functions import create_arma_sample, fit_arima_model
-
-summary = get_data("ts_app", "assets/summary.md").decode()
 
 model_param_input = html.Div(
     id="model-params",
@@ -50,54 +46,35 @@ model_param_input = html.Div(
     ],
 )
 
-graphs_and_guide = html.Div(
-    className="graphs-and-guide",
-    children=[
-        dcc.Loading(
-            color="#777",
-            children=[
-                dcc.Graph(id="component-plots"),
-            ],
-        ),
-        html.Div(
-            className="line-plot-and-summary",
-            children=[
-                dcc.Loading(
-                    color="#777",
-                    children=[
-                        dcc.Graph(
-                            id="line-plot",
-                            config={"toImageButtonOptions": {"format": "svg"}},
-                        ),
-                    ],
-                ),
-                dcc.Markdown(summary, className="guide"),
-                html.Div(
-                    className="footer",
-                    children=[
-                        html.A(
-                            "Back to home",
-                            href="/",
-                            className="button",
-                        ),
-                        html.A(
-                            "Browse glossary",
-                            href="/glossary",
-                            className="button",
-                        ),
-                    ],
-                ),
-            ],
-        ),
+seasonal_decomposition_plot = dcc.Loading(
+    dcc.Graph(id="component-plots"), color="#777"
+)
+
+forecast_line_plot = dcc.Loading(
+    dcc.Graph(
+        id="line-plot", config={"toImageButtonOptions": {"format": "svg"}}
+    ),
+    color="#777",
+)
+
+explanatory_text = dcc.Markdown(
+    get_data("ts_app", "assets/summary.md").decode(), className="guide"
+)
+
+footer_buttons = html.Div(
+    [
+        html.A("Back to home", href="/", className="button"),
+        html.A("Browse glossary", href="/glossary", className="button"),
     ],
+    className="footer",
 )
 
 
-def generate_layout(data_source: html.Div) -> html.Div:
-    """Get a dashboard layout with the given `data_source`.
+def generate_layout(input_source: html.Div) -> html.Div:
+    """Get a dashboard layout with the given `input_source`.
 
     Args:
-        data_source (dash.html.Div.Div): A html form to collect input.
+        input_source (dash.html.Div.Div): A html form to collect input.
 
     Returns:
         dash.html.Div.Div: Dashboard layout.
@@ -112,14 +89,27 @@ def generate_layout(data_source: html.Div) -> html.Div:
             html.Div(
                 className="side-bar",
                 children=[
-                    html.Div(data_source, id="data-source"),
+                    html.Div(input_source, id="data-source"),
                     dcc.Store(id="sample-data-store"),
                     dcc.Store(id="file-upload-store"),
                     model_param_input,
                 ],
             ),
             # Time series forecasting plots and guide
-            graphs_and_guide,
+            html.Div(
+                className="graphs-and-guide",
+                children=[
+                    seasonal_decomposition_plot,
+                    html.Div(
+                        [
+                            forecast_line_plot,
+                            explanatory_text,
+                            footer_buttons,
+                        ],
+                        className="line-plot-and-summary",
+                    ),
+                ],
+            ),
         ],
     )
 
@@ -158,10 +148,10 @@ def model_and_predict(
         upload (Optional[dict]): Uploaded data, if any.
 
     Returns:
-        Tuple[plotly.graph_objs._figure.Figure, ...]: A line-plot of the
-        forecast results, and subplots with seasonal decomposition estimates.
+        Tuple[Figure, Figure]: A line-plot of the forecast results, and
+        subplots with seasonal decomposition estimates.
     """
-    
+
     if input_source == "/upload" and upload is not None:
         filename = upload["filename"]
         data = pd.read_json(upload["data"], orient="index", typ="series")
