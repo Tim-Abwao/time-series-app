@@ -19,7 +19,7 @@ def process_cli_args() -> None:
     )
     parser.add_argument(
         "--host",
-        default="0.0.0.0",
+        default="localhost",
         help="A host-name or IP address (default: %(default)r).",
     )
     parser.add_argument(

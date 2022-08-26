@@ -36,12 +36,12 @@ sys.excepthook = custom_hook
 
 
 def run_app(
-    host: str = "0.0.0.0", port: int = 8000, launch_browser: bool = True
+    host: str = "localhost", port: int = 8000, launch_browser: bool = True
 ) -> None:
     """Start the app server, and launch a web browser to it.
 
     Args:
-        host (str, optional): A host-name/IP address. Defaults to "0.0.0.0".
+        host (str, optional): A host-name/IP address. Defaults to "localhost".
         port (int, optional): TCP port to listen at. Defaults to 8000.
         launch_browser (bool, optional): Whether to launch a web browser to
             view the app. Defaults to True.
