@@ -9,22 +9,18 @@ You can create a sample, or upload a file, and interactively fit a time series m
 
 The dashboard is built with [Dash][dash], and the time series models are fitted using [Statsmodels][statsmodels].
 
-You can [try it out here][live-link].
+You can [try it out here][live-link], courtesy of [Render][render].
 
-[![screencast of the app](https://raw.githubusercontent.com/Tim-Abwao/time-series-app/master/screencast.gif)][live-link]
+>**NOTE:** Free-hosted apps on *Render* might take a while to load since they are shut down when not in use.
+
+![screencast of the app](https://raw.githubusercontent.com/Tim-Abwao/time-series-app/master/screencast.gif)
 
 ## Installation
 
-The easiest way to install the app is from [PyPI][pypi]:
+The easiest way to get the app is from [PyPI][pypi]:
 
 ```bash
 pip install ts-app
-```
-
-You could also install it directly from the **GitHub** repository:
-
-```bash
-pip install https://github.com/tim-abwao/time-series-app/archive/main.tar.gz
 ```
 
 ## Basic Usage
@@ -54,7 +50,8 @@ You can also start the app from an interactive session:
 Afterwards, press `CTRL` + `C` to stop the server.
 
 [wiki_time_series]: https://en.wikipedia.org/wiki/Time_series
-[live-link]: https://time-series-app.herokuapp.com
+[live-link]: https://time-series-app.onrender.com
 [dash]: https://dash.plotly.com/
+[render]: https://render.com/
 [statsmodels]: https://www.statsmodels.org/stable/index.html
 [pypi]:  https://pypi.org/project/ts-app/
