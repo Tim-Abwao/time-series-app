@@ -8,7 +8,7 @@ import waitress
 from ts_app.cli import process_cli_args
 from ts_app.dash_app import app
 
-__version__ = "0.9.0"
+__version__ = "0.9.1"
 
 logging.basicConfig(level="INFO")
 
