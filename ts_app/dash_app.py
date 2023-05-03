@@ -4,7 +4,7 @@ from dash import Dash, html
 app = Dash(
     "ts_app",
     suppress_callback_exceptions=True,
-    external_scripts=["https://cdn.plot.ly/plotly-basic-2.9.0.min.js"],
+    external_scripts=["https://cdn.plot.ly/plotly-2.22.0.min.js"],
     title="Time Series App",
     meta_tags=[
         {
