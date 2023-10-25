@@ -23,4 +23,4 @@ statsmodels==0.13.5
 tenacity==8.2.2
 tzdata==2023.3
 waitress==2.1.2
-Werkzeug==2.3.3
+Werkzeug==3.0.1
