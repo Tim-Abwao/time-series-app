@@ -1,3 +1,4 @@
+from io import StringIO
 from typing import Optional, Tuple
 
 import pandas as pd
@@ -174,10 +175,14 @@ def model_and_predict(
 
     if input_source == "/upload" and upload is not None:
         filename = upload["filename"]
-        data = pd.read_json(upload["data"], orient="index", typ="series")
+        data = pd.read_json(
+            StringIO(upload["data"]), orient="index", typ="series"
+        )
     elif input_source == "/sample" and sample is not None:
         filename = sample["filename"]
-        data = pd.read_json(sample["data"], orient="index", typ="series")
+        data = pd.read_json(
+            StringIO(sample["data"]), orient="index", typ="series"
+        )
     else:
         filename = "a random sample"
         data = create_arma_sample()
